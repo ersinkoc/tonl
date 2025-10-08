@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * TONL CLI - Command line interface for TONL format
  */

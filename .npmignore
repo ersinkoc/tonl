@@ -1,0 +1,51 @@
+# Source files
+src/
+*.ts
+!*.d.ts
+
+# Debug files
+dist/debug_*.js
+dist/src/
+
+# Test files
+test/
+*.test.ts
+
+# Development files
+.vscode/
+.gitignore
+ROADMAP.md
+PROJECT.md
+CONTRIBUTING.md
+
+# Build artifacts
+*.js.map
+*.d.ts.map
+
+# Node modules
+node_modules/
+
+# Development logs
+*.log
+npm-debug.log*
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Keep docs directory
+# docs/
+
+# Temporary files
+tmp/
+temp/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/settings.json
+
+# Debug and testing files
+debug*.js
