@@ -2,7 +2,7 @@
 
 This document outlines the future development plans for TONL (Token-Optimized Notation Language).
 
-## Current Status (v0.2.0) - ✅ Released
+## Current Status (v0.3.0) - ✅ Released
 
 **October 6, 2025**
 
@@ -11,16 +11,19 @@ This document outlines the future development plans for TONL (Token-Optimized No
 - [x] CLI with encode/decode/stats commands
 - [x] Smart encoding with delimiter optimization
 - [x] Type inference and schema hints
-- [x] Complete test suite
+- [x] Complete test suite (40/40 tests passing)
 - [x] Performance benchmarks
 - [x] Full documentation
 - [x] Round-trip JSON compatibility
 - [x] Multiple delimiter support
 - [x] Nested object/array handling
+- [x] 2025 LLM Tokenizer Updates (16 models supported)
+- [x] Real-world token estimation algorithms
+- [x] Enhanced CLI with comprehensive tokenizer support
 
 ---
 
-## Short Term (v0.3.0) - Next 2-3 Months
+## Short Term (v0.4.0) - Next 2-3 Months
 
 ### 🎯 Priority Features
 
@@ -43,7 +46,7 @@ This document outlines the future development plans for TONL (Token-Optimized No
 
 ---
 
-## Medium Term (v0.4.0) - 3-6 Months
+## Medium Term (v0.5.0) - 3-6 Months
 
 ### 🚀 Major Features
 
@@ -58,7 +61,7 @@ This document outlines the future development plans for TONL (Token-Optimized No
 
 ---
 
-## Long Term (v0.5.0) - 6-12 Months
+## Long Term (v0.6.0) - 6-12 Months
 
 ### 🌟 Platform Features
 
@@ -104,9 +107,10 @@ This document outlines the future development plans for TONL (Token-Optimized No
 | Version | Target Date | Focus |
 |---------|-------------|-------|
 | v0.2.0 | Oct 6, 2025 | ✅ Initial Release |
-| v0.3.0 | Feb 2025 | CLI & Developer Experience |
-| v0.4.0 | May 2025 | Streaming API |
-| v0.5.0 | Aug 2025 | Multi-Language Support |
+| v0.3.0 | Oct 16, 2025 | ✅ 2025 Tokenizer Updates |
+| v0.4.0 | Feb 2025 | Enhanced CLI & Developer Experience |
+| v0.5.0 | May 2025 | Streaming API |
+| v0.6.0 | Aug 2025 | Multi-Language Support |
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "name": "tonl",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Token-Optimized Notation Language - A text-first, LLM-friendly serialization format",
   "homepage": "https://github.com/ersinkoc/tonl",
   "repository": {
