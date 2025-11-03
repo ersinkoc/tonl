@@ -1,0 +1,21 @@
+@schema v1
+@strict true
+@description "User management system schema"
+@version "1.0.0"
+
+# User type definition
+User: obj
+  id: u32 required
+  username: str required min:3 max:20 pattern:^[a-zA-Z0-9_]+$
+  email: str required pattern:email lowercase:true
+  firstName: str required min:1 max:50 trim:true
+  lastName: str required min:1 max:50 trim:true
+  age: u32? min:13 max:150
+  roles: list<str> required min:1 unique:true
+  createdAt: str required pattern:date
+  updatedAt: str required pattern:date
+  metadata: obj?
+
+# Root schema
+users: list<User> required min:1
+totalCount: u32 required

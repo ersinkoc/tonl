@@ -1,0 +1,6 @@
+@schema v1
+@strict true
+
+name: str required min:2
+age: u32 required min:0 max:150
+email: str required pattern:email

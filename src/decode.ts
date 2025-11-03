@@ -2,10 +2,11 @@
  * TONL Decoder - Converts TONL format back to JSON
  */
 
-import type { TONLValue, TONLObject, TONLArray, TONLParseContext, TONLDelimiter } from "./types.js";
+import type { TONLValue, TONLObject, TONLArray, TONLParseContext, TONLDelimiter, TONLColumnDef } from "./types.js";
 import { parseTONLLine, parseHeaderLine, parseObjectHeader, detectDelimiter } from "./parser.js";
 import { coerceValue, inferTypeFromString } from "./infer.js";
 import { unquote } from "./utils/strings.js";
+import { TONLParseError } from "./errors/index.js";
 
 /**
  * Main decode function
@@ -25,7 +26,9 @@ export function decodeTONL(text: string, opts: {
   const context: TONLParseContext = {
     header: {},
     strict,
-    delimiter: opts.delimiter || ","
+    delimiter: opts.delimiter || ",",
+    allLines: lines,
+    currentLine: 0
   };
 
   let dataStartIndex = 0;
@@ -44,7 +47,13 @@ export function decodeTONL(text: string, opts: {
           } else if (header.value === ',' || header.value === '|' || header.value === ';') {
             context.header.delimiter = header.value;
           } else {
-            throw new Error(`Invalid delimiter: ${header.value}`);
+            throw new TONLParseError(
+              `Invalid delimiter: ${header.value}`,
+              i,
+              undefined,
+              line,
+              `Valid delimiters are: , | \\t ;`
+            );
           }
         }
       }
@@ -105,7 +114,7 @@ function parseContent(content: string, context: TONLParseContext): any {
       const valuePart = singleLineMatch[3].trim();
 
       // Parse columns
-      const columns: Array<{ name: string; type?: string }> = [];
+      const columns: TONLColumnDef[] = [];
       if (columnsStr) {
         const colParts = columnsStr.split(',');
         for (const colPart of colParts) {
@@ -115,7 +124,7 @@ function parseContent(content: string, context: TONLParseContext): any {
           if (colonIndex > 0) {
             columns.push({
               name: trimmed.slice(0, colonIndex).trim(),
-              type: trimmed.slice(colonIndex + 1).trim()
+              type: trimmed.slice(colonIndex + 1).trim() as any
             });
           } else {
             columns.push({ name: trimmed });
@@ -249,7 +258,7 @@ function parseObjectBlock(header: ReturnType<typeof parseObjectHeader>, lines: s
       const valuePart = singleLineMatch[3].trim();
 
       // Parse columns
-      const columns: Array<{ name: string; type?: string }> = [];
+      const columns: TONLColumnDef[] = [];
       if (columnsStr) {
         const colParts = columnsStr.split(',');
         for (const colPart of colParts) {
@@ -259,7 +268,7 @@ function parseObjectBlock(header: ReturnType<typeof parseObjectHeader>, lines: s
           if (colonIndex > 0) {
             columns.push({
               name: trimmed.slice(0, colonIndex).trim(),
-              type: trimmed.slice(colonIndex + 1).trim()
+              type: trimmed.slice(colonIndex + 1).trim() as any
             });
           } else {
             columns.push({ name: trimmed });

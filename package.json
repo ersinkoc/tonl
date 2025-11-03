@@ -1,7 +1,7 @@
 {
   "name": "tonl",
-  "version": "0.3.5",
-  "description": "Token-Optimized Notation Language - A text-first, LLM-friendly serialization format",
+  "version": "0.4.0",
+  "description": "Token-Optimized Notation Language - A text-first, LLM-friendly serialization format with schema validation",
   "homepage": "https://github.com/ersinkoc/tonl",
   "repository": {
     "type": "git",
@@ -25,6 +25,14 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./schema": {
+      "types": "./dist/src/schema/index.d.ts",
+      "import": "./dist/src/schema/index.js"
+    },
+    "./parser": {
+      "types": "./dist/src/parser/index.d.ts",
+      "import": "./dist/src/parser/index.js"
+    },
     "./package.json": "./package.json"
   },
   "main": "dist/index.js",
@@ -47,7 +55,12 @@
     "format",
     "llm",
     "compact",
-    "typescript"
+    "typescript",
+    "schema",
+    "validation",
+    "token-optimization",
+    "data-format",
+    "parser"
   ],
   "author": "Ersin KOÇ",
   "license": "MIT",

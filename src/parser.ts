@@ -2,7 +2,7 @@
  * Core parsing utilities for TONL format
  */
 
-import type { ParserState, ParserMode, TONLDelimiter } from "./types.js";
+import type { ParserState, ParserMode, TONLDelimiter, TONLObjectHeader, TONLColumnDef } from "./types.js";
 
 /**
  * Parse a single TONL line into array of field values
@@ -104,12 +104,7 @@ export function parseHeaderLine(line: string): { key: string; value: string } | 
 /**
  * Parse object header like: users[2]{id:u32,name:str,role:str}:
  */
-export function parseObjectHeader(line: string): {
-  key: string;
-  isArray: boolean;
-  arrayLength?: number;
-  columns: Array<{ name: string; type?: string }>;
-} | null {
+export function parseObjectHeader(line: string): TONLObjectHeader | null {
   const trimmed = line.trim();
   if (!trimmed.endsWith(":")) {
     return null;
@@ -150,7 +145,7 @@ export function parseObjectHeader(line: string): {
   }
 
   // Parse column definitions {col1:type1,col2:type2,...}
-  const columns: Array<{ name: string; type?: string }> = [];
+  const columns: TONLColumnDef[] = [];
   const colMatch = content.match(/^\{(.+)\}$/);
   if (colMatch) {
     const colContent = colMatch[1];
@@ -164,7 +159,7 @@ export function parseObjectHeader(line: string): {
       if (colonIndex > 0) {
         columns.push({
           name: trimmed.slice(0, colonIndex).trim(),
-          type: trimmed.slice(colonIndex + 1).trim()
+          type: trimmed.slice(colonIndex + 1).trim() as any
         });
       } else {
         columns.push({ name: trimmed });

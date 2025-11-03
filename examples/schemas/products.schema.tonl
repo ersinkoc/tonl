@@ -1,0 +1,31 @@
+@schema v1
+@description "E-commerce product catalog schema"
+
+# Product variant
+Variant: obj
+  sku: str required min:3 max:50 pattern:^[A-Z0-9-]+$
+  size: str? pattern:^(XS|S|M|L|XL|XXL)$
+  color: str? min:3 max:30
+  price: f64 required min:0.01 multipleOf:0.01
+  stock: u32 required min:0
+
+# Product category
+Category: obj
+  id: u32 required
+  name: str required min:2 max:100
+  slug: str required min:2 max:100 pattern:^[a-z0-9-]+$
+
+# Main product type
+Product: obj
+  id: u32 required
+  name: str required min:3 max:200
+  description: str required min:10 max:2000
+  category: Category required
+  variants: list<Variant> required min:1
+  tags: list<str> max:20 unique:true
+  images: list<str> required min:1 max:10 pattern:url
+  rating: f64? min:0 max:5
+  reviewCount: u32 default:0
+
+# Root
+products: list<Product> required

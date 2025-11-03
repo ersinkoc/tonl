@@ -4,13 +4,15 @@
 
 ## ✨ Features
 
-- **🗜️ Compact**: Significantly reduces token count compared to JSON
+- **🗜️ Compact**: 32-45% smaller than JSON (bytes + tokens)
 - **👁️ Human-readable**: Clear text format with minimal syntax overhead
 - **🧠 LLM-optimized**: Designed specifically for token efficiency in language models
+- **✅ Schema Validation**: Full schema system with type checking and constraints (NEW in v0.4.0!)
 - **🔧 Schema hints**: Optional type information for validation and correctness
 - **🔄 Round-trip safe**: Perfect bidirectional conversion with JSON
 - **⚡ Fast**: Linear-time parsing and encoding
 - **🛠️ TypeScript-first**: Full type safety and IntelliSense support
+- **📦 Zero dependencies**: Pure TypeScript, no runtime dependencies
 
 ## 🚀 Quick Start
 
@@ -51,6 +53,9 @@ tonl encode data.json --out data.tonl --smart --stats
 
 # Decode TONL back to JSON
 tonl decode data.tonl --out data.json
+
+# Validate data against schema (NEW in v0.4.0!)
+tonl validate users.tonl --schema users.schema.tonl --strict
 
 # Format TONL files with pretty print
 tonl format data.tonl --pretty --out formatted.tonl
@@ -143,6 +148,76 @@ Automatically chooses optimal encoding settings.
 ```typescript
 function encodeSmart(input: any, opts?: EncodeOptions): string
 ```
+
+## ✅ Schema Validation (NEW in v0.4.0!)
+
+TONL now includes a powerful schema validation system for ensuring data integrity.
+
+### Schema Definition
+
+Create a `.schema.tonl` file to define your data structure:
+
+```tonl
+@schema v1
+@strict true
+@description "User management schema"
+
+# Define custom types
+User: obj
+  id: u32 required
+  username: str required min:3 max:20 pattern:^[a-zA-Z0-9_]+$
+  email: str required pattern:email lowercase:true
+  age: u32? min:13 max:150
+  roles: list<str> required min:1 unique:true
+
+# Root schema
+users: list<User> required min:1
+totalCount: u32 required
+```
+
+### Programmatic Validation
+
+```typescript
+import { parseSchema, validateTONL } from 'tonl/schema';
+
+// Load schema
+const schemaContent = fs.readFileSync('users.schema.tonl', 'utf-8');
+const schema = parseSchema(schemaContent);
+
+// Validate data
+const data = decodeTONL(tonlContent);
+const result = validateTONL(data, schema);
+
+if (!result.valid) {
+  result.errors.forEach(err => {
+    console.error(`${err.field}: ${err.message}`);
+  });
+}
+```
+
+### CLI Validation
+
+```bash
+# Validate TONL file against schema
+tonl validate users.tonl --schema users.schema.tonl --strict
+
+# Example output
+✅ Validation successful: users.tonl conforms to schema
+   - Schema: users.schema.tonl
+   - Fields validated: 12
+   - Errors: 0
+```
+
+### Generate TypeScript Types
+
+```bash
+# Auto-generate TypeScript types from schema
+tonl generate-types users.schema.tonl --out types.ts
+```
+
+**13 validation constraints supported**: min, max, length, pattern, unique, nonempty, required, positive, negative, integer, multipleOf, and more.
+
+See [docs/SCHEMA_SPECIFICATION.md](docs/SCHEMA_SPECIFICATION.md) for complete constraint reference.
 
 ## 📊 Performance
 
@@ -251,21 +326,21 @@ for file in *.json; do
 done
 ```
 
-## ⚠️ Limitations
-
-- **No streaming API** in current version (designed for future extensibility)
-- **No binary format** yet (text-only for MVP)
-- **Type hints are optional** and primarily for validation/documentation
-- **Mixed arrays** (different object shapes) are encoded as generic object arrays
-
 ## 🗺️ Roadmap
 
-- [ ] **Binary TONL format** for maximum compactness
-- [ ] **Streaming API** for large datasets
-- [ ] **Schema validation** with external schema files
-- [ ] **Language bindings** for Python, Go, Rust
-- [ ] **VS Code extension** for syntax highlighting
-- [ ] **Web playground** for interactive conversion
+See [ROADMAP.md](ROADMAP.md) for detailed development plans.
+
+**Next up (v0.5.0):**
+
+- Streaming API for large datasets
+- Browser support and CDN distribution
+- Web playground
+
+**Coming soon (v0.6.0):**
+
+- Python binding for ML/AI community
+- VS Code extension
+- Developer tools (Prettier, ESLint plugins)
 
 ## 📄 License
 

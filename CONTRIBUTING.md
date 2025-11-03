@@ -1,14 +1,32 @@
 # Contributing to TONL
 
-Thank you for your interest in contributing to TONL (Token-Optimized Notation Language)! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to TONL (Token-Optimized Notation Language)! We're excited to have you join our mission to build the best LLM-optimized data serialization format.
+
+> 📘 **New to TONL?** Check out the [README](README.md) and [Strategic Plan](STRATEGIC_PLAN.md) first!
+
+---
+
+## Table of Contents
+- [Getting Started](#-getting-started)
+- [How to Contribute](#-how-to-contribute)
+- [Development Workflow](#-development-workflow)
+- [Testing](#-testing)
+- [Code Style](#-code-style)
+- [Documentation](#-documentation)
+- [Code Review](#-code-review-process)
+- [Areas for Contribution](#-areas-for-contribution)
+- [Code of Conduct](#-code-of-conduct)
+
+---
 
 ## 🏠 Getting Started
 
 ### Prerequisites
-- Node.js 18.0.0 or higher
-- TypeScript 5.0 or higher
-- Git and a GitHub account
+- **Node.js** 18.0.0 or higher
+- **TypeScript** 5.0 or higher
+- **Git** and a GitHub account
 - Familiarity with JSON and data serialization concepts
+- (Optional) Experience with LLMs and tokenization
 
 ### Development Setup
 1. Fork the repository
@@ -181,25 +199,142 @@ For new features:
 
 ## 🎯 Areas for Contribution
 
-### High Priority
-- Performance optimizations
-- Bug fixes and stability improvements
-- Additional parser format support
-- CLI enhancements and new commands
-- Test coverage improvements
+> 💡 **Looking for your first contribution?** Check issues labeled [`good first issue`](https://github.com/ersinkoc/tonl/labels/good%20first%20issue) or [`help wanted`](https://github.com/ersinkoc/tonl/labels/help%20wanted)
 
-### Medium Priority
-- Language bindings (Python, Go, Rust)
-- Web playground and tools
-- VS Code extension
-- Additional delimiter support
-- Schema validation features
+### 🔴 Critical Priority (v0.4.0 - Next 3 Months)
 
-### Low Priority
-- Experimental features
-- Minor documentation improvements
-- Tooling and build improvements
-- Example applications
+**We need help with:**
+
+1. **Type Safety Improvements**
+   - Eliminating `any` types from codebase
+   - Adding comprehensive type guards
+   - Improving TypeScript strict mode compliance
+   - **Impact**: Foundation for all future development
+   - **Skills**: TypeScript, type systems
+
+2. **Schema Validation System** 🌟 FLAGSHIP
+   - Designing TONL Schema Language (TSL)
+   - Implementing schema parser
+   - Building validation engine
+   - TypeScript type generation
+   - **Impact**: Critical for enterprise adoption
+   - **Skills**: Parser design, validation logic, code generation
+
+3. **Parser Refactoring**
+   - Splitting large files into modules
+   - Reducing cyclomatic complexity
+   - Improving maintainability
+   - **Impact**: Code health and extensibility
+   - **Skills**: Refactoring, architecture, testing
+
+4. **Enhanced Error Reporting**
+   - Line/column tracking
+   - Rich error messages with suggestions
+   - Error recovery strategies
+   - **Impact**: Developer experience
+   - **Skills**: Parser implementation, UX design
+
+### 🟡 High Priority (v0.5.0-0.6.0 - 3-9 Months)
+
+5. **Streaming API Implementation**
+   - Node.js streams support
+   - Async iterators
+   - Web Streams API
+   - **Impact**: Large file support
+   - **Skills**: Node.js streams, async programming
+
+6. **Python Binding** 🌟
+   - Pure Python implementation
+   - PyPI package
+   - Pandas/Jupyter integration
+   - **Impact**: ML/AI community access
+   - **Skills**: Python, packaging, data science
+
+7. **Browser Support**
+   - Multi-format bundling (ESM, UMD, IIFE)
+   - CDN distribution
+   - Web Worker support
+   - **Impact**: Platform expansion
+   - **Skills**: Build tools, browser APIs
+
+8. **VS Code Extension**
+   - Syntax highlighting
+   - IntelliSense
+   - Schema validation
+   - **Impact**: Developer experience
+   - **Skills**: VS Code API, Language Server Protocol
+
+### 🟢 Medium Priority (v0.7.0+ - 9+ Months)
+
+9. **Binary Format Specification**
+   - Binary encoding design
+   - Performance optimization
+   - **Skills**: Binary protocols, compression
+
+10. **Additional Language Bindings**
+    - Go implementation
+    - Rust implementation
+    - **Skills**: Go, Rust, FFI
+
+11. **Framework Integrations**
+    - Express/Fastify middleware
+    - Database adapters
+    - **Skills**: Framework knowledge, API design
+
+### 🔬 Research & Experimental
+
+12. **Advanced Algorithms**
+    - Delta encoding
+    - Dictionary compression
+    - AI-powered adaptive encoding
+    - **Skills**: Algorithms, compression, ML
+
+---
+
+## 🎁 Contribution Ideas by Skill Level
+
+### Beginner-Friendly
+- 📝 Fix typos in documentation
+- 🧪 Add test cases for edge scenarios
+- 📚 Write usage examples
+- 🐛 Report bugs with detailed reproduction steps
+- 💬 Answer questions in Discussions
+
+### Intermediate
+- 🔧 Fix reported bugs
+- ✨ Implement CLI enhancements
+- 📖 Write tutorials and guides
+- 🧪 Improve test coverage
+- 🎨 Improve error messages
+
+### Advanced
+- 🏗️ Design and implement schema system
+- ⚡ Performance optimizations
+- 🔬 Parser improvements
+- 🌐 Language bindings
+- 📊 Streaming API
+
+---
+
+## 🎓 Learning Resources
+
+### Understanding TONL
+- [README.md](README.md) - Project overview
+- [SPECIFICATION.md](docs/SPECIFICATION.md) - Format specification
+- [API.md](docs/API.md) - API reference
+- [STRATEGIC_PLAN.md](STRATEGIC_PLAN.md) - Vision and roadmap
+
+### Technical Background
+- **Parsing**: [Crafting Interpreters](https://craftinginterpreters.com/)
+- **Tokenization**: [OpenAI Tokenizer](https://platform.openai.com/tokenizer)
+- **TypeScript**: [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+- **Testing**: [Node.js Test Runner](https://nodejs.org/api/test.html)
+
+### Similar Projects (for inspiration)
+- CSV/TSV - Tabular simplicity
+- JSON - Developer ergonomics
+- Protocol Buffers - Schema systems
+- MessagePack - Binary efficiency
 
 ## 📞 Getting Help
 
@@ -244,13 +379,12 @@ Contributors are recognized in:
 - Special thanks in major releases
 - Community highlights and showcases
 
-Thank you for contributing to TONL! 🚀
-
 ---
 
-## 📞 Contact
+## 📞 Questions?
 
-- **Project Maintainer**: Ersin KOÇ
-- **Email**: ersin@tonl.dev
-- **GitHub**: @ersinkoc
-- **Website**: [tonl.dev](https://tonl.dev)
+- **Issues**: [GitHub Issues](https://github.com/ersinkoc/tonl/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ersinkoc/tonl/discussions)
+- **Repository**: [github.com/ersinkoc/tonl](https://github.com/ersinkoc/tonl)
+
+Thank you for contributing to TONL! 🚀

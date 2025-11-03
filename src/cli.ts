@@ -5,6 +5,7 @@
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { encodeTONL, decodeTONL, encodeSmart } from "./index.js";
 import { estimateTokens } from "./utils/metrics.js";
+import { parseSchema, validateTONL, generateTypeScript } from "./schema/index.js";
 
 interface CLIOptions {
   out?: string;
@@ -16,6 +17,7 @@ interface CLIOptions {
   stats?: boolean;
   strict?: boolean;
   pretty?: boolean;
+  schema?: string;
   tokenizer?: "gpt-5" | "gpt-4.5" | "gpt-4o" | "claude-3.5" | "gemini-2.0" | "llama-4" | "o200k" | "cl100k";
 }
 
@@ -36,6 +38,8 @@ function parseArgs(args: string[]): { command: string; file: string; options: CL
       case "decode":
       case "stats":
       case "format":
+      case "validate":
+      case "generate-types":
         command = arg;
         break;
       case "--out":
@@ -76,6 +80,10 @@ function parseArgs(args: string[]): { command: string; file: string; options: CL
         if (["gpt-5", "gpt-4.5", "gpt-4o", "claude-3.5", "gemini-2.0", "llama-4", "o200k", "cl100k"].includes(nextArg)) {
           options.tokenizer = nextArg as any;
         }
+        i++;
+        break;
+      case "--schema":
+        options.schema = nextArg;
         i++;
         break;
       default:
@@ -242,9 +250,88 @@ function main() {
         break;
       }
 
+      case "validate": {
+        if (!file.endsWith('.tonl')) {
+          console.error("❌ Error: Validate command requires a .tonl file");
+          process.exit(1);
+        }
+
+        if (!options.schema) {
+          console.error("❌ Error: --schema <file.schema.tonl> is required");
+          process.exit(1);
+        }
+
+        // Check schema file exists
+        if (!existsSync(options.schema)) {
+          console.error(`❌ Error: Schema file '${options.schema}' not found`);
+          process.exit(1);
+        }
+
+        // Load schema
+        const schemaContent = readFileSync(options.schema, 'utf-8');
+        const schema = parseSchema(schemaContent);
+
+        // Parse data
+        const data = decodeTONL(input, {
+          delimiter: options.delimiter,
+          strict: options.strict
+        });
+
+        // Validate
+        const result = validateTONL(data, schema);
+
+        if (result.valid) {
+          console.log(`✅ Validation successful: ${file} conforms to schema`);
+          console.log(`   - Schema: ${options.schema}`);
+          console.log(`   - Fields validated: ${schema.rootFields.length}`);
+          console.log(`   - Errors: 0`);
+        } else {
+          console.log(`❌ Validation failed: ${result.errors.length} error(s) found\n`);
+          result.errors.forEach((err, idx) => {
+            console.log(`Error ${idx + 1}: ${err.field}`);
+            console.log(`  ${err.message}`);
+            if (err.expected) console.log(`  Expected: ${err.expected}`);
+            if (err.actual) console.log(`  Actual: ${err.actual}`);
+            console.log('');
+          });
+          process.exit(1);
+        }
+        break;
+      }
+
+      case "generate-types": {
+        if (!file.endsWith('.schema.tonl')) {
+          console.error("❌ Error: generate-types requires a .schema.tonl file");
+          process.exit(1);
+        }
+
+        if (!options.out) {
+          console.error("❌ Error: --out <file.ts> is required for generate-types");
+          process.exit(1);
+        }
+
+        // Load schema
+        const schemaContent = readFileSync(file, 'utf-8');
+        const schema = parseSchema(schemaContent);
+
+        // Generate TypeScript
+        const tsCode = generateTypeScript(schema, {
+          exportAll: true,
+          readonly: false,
+          strict: false
+        });
+
+        // Write output
+        writeFileSync(options.out, tsCode);
+        console.log(`✅ Generated TypeScript types: ${options.out}`);
+        console.log(`   - Custom types: ${schema.customTypes.size}`);
+        console.log(`   - Root fields: ${schema.rootFields.length}`);
+        break;
+      }
+
       default:
         console.error(`❌ Error: Unknown command '${command}'`);
-        console.log("Available commands: encode, decode, stats, format");
+        console.log("Available commands: encode, decode, stats, format, validate, generate-types");
         process.exit(1);
     }
 
@@ -264,6 +351,8 @@ Usage:
   tonl decode <file.tonl> [--out <file.json>] [--strict]
   tonl stats  <file.{json,tonl}> [--tokenizer <type>]
   tonl format <file.tonl> [--pretty] [--out <file.tonl>] [options]
+  tonl validate <file.tonl> --schema <file.schema.tonl> [--strict]
+  tonl generate-types <file.schema.tonl> --out <file.ts>
 
 Options:
   --out <file>           Output file (default: stdout)
@@ -275,6 +364,7 @@ Options:
   --stats               Show compression statistics
   --strict              Enable strict parsing mode
   --pretty              Format with proper indentation (for format command)
+  --schema <file>       Schema file for validation (.schema.tonl)
   --tokenizer <type>    Token estimation (gpt-5, gpt-4.5, gpt-4o, claude-3.5, gemini-2.0, llama-4, o200k, cl100k)
 
 Examples:
@@ -282,7 +372,8 @@ Examples:
   tonl decode data.tonl --out data.json --strict
   tonl stats data.json --tokenizer gpt-5
   tonl format data.tonl --pretty --out formatted.tonl
-  tonl format data.tonl --pretty --indent 4
+  tonl validate users.tonl --schema users.schema.tonl --strict
+  tonl generate-types users.schema.tonl --out types.ts
 `);
   process.exit(0);
 }

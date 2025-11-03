@@ -2,9 +2,9 @@
  * Core type definitions for TONL format
  */
 
-export type TONLPrimitive = string | number | boolean | null;
+export type TONLPrimitive = string | number | boolean | null | undefined;
 export type TONLValue = TONLPrimitive | TONLObject | TONLArray;
-export interface TONLObject { [key: string]: TONLValue; }
+export interface TONLObject { [key: string]: TONLValue | undefined; }
 export type TONLArray = TONLValue[];
 
 export type TONLTypeHint = "u32" | "i32" | "f64" | "bool" | "null" | "str" | "obj" | "list";
@@ -44,6 +44,8 @@ export interface TONLParseContext {
   header: TONLHeader;
   strict: boolean;
   delimiter: TONLDelimiter;
+  currentLine?: number;      // Current line being parsed (for error reporting)
+  allLines?: string[];       // All lines (for error context)
 }
 
 export interface TONLEncodeContext {

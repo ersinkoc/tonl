@@ -1,0 +1,31 @@
+@schema v1
+@strict true
+@description "Application configuration schema"
+
+# Database configuration
+DatabaseConfig: obj
+  host: str required pattern:^[a-zA-Z0-9.-]+$
+  port: u32 required min:1 max:65535
+  database: str required min:1 max:64
+  username: str required
+  password: str required min:8
+  ssl: bool default:true
+  connectionPool: obj
+    min: u32 default:5 min:1
+    max: u32 default:20 min:1
+
+# Server configuration
+ServerConfig: obj
+  port: u32 required min:1024 max:65535
+  host: str default:"0.0.0.0"
+  cors: bool default:true
+  rateLimit: obj?
+    windowMs: u32 default:900000
+    maxRequests: u32 default:100
+
+# Root configuration
+config: obj required
+  server: ServerConfig required
+  database: DatabaseConfig required
+  environment: str required pattern:^(development|staging|production)$
+  debug: bool default:false

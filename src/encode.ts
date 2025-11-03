@@ -182,10 +182,10 @@ function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): s
       const childContext = { ...context, currentIndent: context.currentIndent + 1 };
 
       for (const item of arr) {
-        if (!item) continue;
+        if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
         const rowValues: string[] = [];
         for (const col of columns) {
-          const value = item[col];
+          const value = (item as TONLObject)[col];
           if (value === null) {
             rowValues.push("null");
           } else if (value !== undefined) {
@@ -302,9 +302,9 @@ function encodeSingleLineTabularValue(value: TONLValue, key: string, context: TO
         const columnDefs = columns.join(",");
         const rowValues: string[] = [];
         for (const item of value) {
-          if (!item) continue;
+          if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
           for (const col of columns) {
-            const colValue = item[col];
+            const colValue = (item as TONLObject)[col];
             if (colValue === null || colValue === undefined) {
               rowValues.push("null");
             } else if (typeof colValue === "object" && colValue !== null) {
@@ -333,7 +333,10 @@ function encodeSingleLineTabularValue(value: TONLValue, key: string, context: TO
         parts.push(`${k}: null`);
       } else if (typeof val === "object" && val !== null) {
         // Nested object - recursively encode as single line
-        parts.push(`${k}{${Object.keys(val).filter(v => val[v] !== undefined).sort().join(",")}: ${encodeSingleLineTabularValue(val, k, context)}`);
+        const valObj = val as TONLObject | TONLArray;
+        if (!Array.isArray(valObj)) {
+          parts.push(`${k}{${Object.keys(valObj).filter(v => valObj[v] !== undefined).sort().join(",")}: ${encodeSingleLineTabularValue(valObj, k, context)}`);
+        }
       } else {
         const quoted = tripleQuoteIfNeeded(String(val), context.delimiter);
         parts.push(`${k}: ${quoted}`);
