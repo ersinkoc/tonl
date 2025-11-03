@@ -7,7 +7,9 @@
 - **🗜️ Compact**: 32-45% smaller than JSON (bytes + tokens)
 - **👁️ Human-readable**: Clear text format with minimal syntax overhead
 - **🧠 LLM-optimized**: Designed specifically for token efficiency in language models
-- **✅ Schema Validation**: Full schema system with type checking and constraints (NEW in v0.4.0!)
+- **✅ Schema Validation**: Full schema system with type checking and constraints (v0.4.0)
+- **🌊 Streaming API**: Handle 100GB+ files with <100MB memory (NEW in v0.5.0!)
+- **🌐 Browser Support**: Tiny bundles (<7KB gzipped) for web apps (NEW in v0.5.0!)
 - **🔧 Schema hints**: Optional type information for validation and correctness
 - **🔄 Round-trip safe**: Perfect bidirectional conversion with JSON
 - **⚡ Fast**: Linear-time parsing and encoding
@@ -54,7 +56,7 @@ tonl encode data.json --out data.tonl --smart --stats
 # Decode TONL back to JSON
 tonl decode data.tonl --out data.json
 
-# Validate data against schema (NEW in v0.4.0!)
+# Validate data against schema
 tonl validate users.tonl --schema users.schema.tonl --strict
 
 # Format TONL files with pretty print
@@ -62,6 +64,44 @@ tonl format data.tonl --pretty --out formatted.tonl
 
 # Compare sizes and token costs
 tonl stats data.json --tokenizer gpt-5
+```
+
+### Streaming API (NEW in v0.5.0!)
+
+```typescript
+import { createEncodeStream, createDecodeStream } from 'tonl/stream';
+import { createReadStream, createWriteStream } from 'fs';
+
+// Stream large files efficiently
+createReadStream('huge.json')
+  .pipe(createEncodeStream({ smart: true }))
+  .pipe(createWriteStream('huge.tonl'));
+
+// Async iterators
+import { encodeIterator, decodeIterator } from 'tonl/stream';
+
+for await (const tonlLine of encodeIterator(dataStream)) {
+  console.log(tonlLine);
+}
+```
+
+### Browser Usage (NEW in v0.5.0!)
+
+```html
+<!-- ESM (modern browsers) -->
+<script type="module">
+  import { encodeTONL, decodeTONL } from 'https://cdn.jsdelivr.net/npm/tonl@0.5.0/+esm';
+
+  const data = { users: [{ id: 1, name: "Alice" }] };
+  const tonl = encodeTONL(data);
+  console.log(tonl);
+</script>
+
+<!-- UMD (universal) -->
+<script src="https://unpkg.com/tonl@0.5.0/dist/browser/tonl.umd.js"></script>
+<script>
+  const tonl = TONL.encodeTONL({ hello: "world" });
+</script>
 ```
 
 ## 📖 Format Specification
@@ -330,16 +370,20 @@ done
 
 See [ROADMAP.md](ROADMAP.md) for detailed development plans.
 
-**Next up (v0.5.0):**
+**✅ Completed (v0.5.0):**
 
-- Streaming API for large datasets
-- Browser support and CDN distribution
-- Web playground
+- ✅ Streaming API for large datasets (100GB+ files, <100MB memory)
+- ✅ Browser support and CDN distribution (<7KB bundles)
+- ✅ Schema validation system with TypeScript generation
+- ✅ Full TypeScript strict mode compliance
+- ✅ Windows CLI fix and cross-platform compatibility
+- ✅ Robust null value handling in typed fields
 
-**Coming soon (v0.6.0):**
+**Next up (v0.6.0):**
 
+- Web playground with live conversion
 - Python binding for ML/AI community
-- VS Code extension
+- VS Code extension with syntax highlighting
 - Developer tools (Prettier, ESLint plugins)
 
 ## 📄 License

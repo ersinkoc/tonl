@@ -57,8 +57,8 @@ This release adds **streaming API** for handling large files and **browser suppo
   - Error handling tests
   - Large array tests (1000 items)
   - Memory efficiency tests (100 chunks)
-  - **88/88 tests passing** (100% success rate)
-  - **26 test suites** (up from 20)
+  - **100/100 tests passing** (100% success rate)
+  - **30 test suites** (up from 20)
 
 - **Browser Test Page**: Interactive HTML test page
   - `examples/browser-test.html` - Manual browser testing
@@ -81,6 +81,19 @@ This release adds **streaming API** for handling large files and **browser suppo
   - Can handle 100GB+ files
   - Memory footprint: <100MB regardless of file size
   - No performance regression in existing features
+
+### Fixed
+
+- **Windows CLI Execution**: Added shebang (`#!/usr/bin/env node`) to `cli.ts`
+  - Windows now correctly executes CLI commands instead of opening in editor
+  - Cross-platform compatibility improved
+  - npm automatically generates proper `.cmd` and `.ps1` wrappers
+
+- **Null Value Handling in Typed Fields**: Fixed `coerceValue` to accept null values for all types
+  - Previously threw `Invalid u32 value: null` error when decoding null values in typed fields
+  - Now correctly handles null values even when type hints specify primitive types (u32, i32, f64, etc.)
+  - Maintains type safety while allowing nullable fields
+  - Example: `ReportsTo:u32` can now correctly decode `null` values
 
 ### Migration Guide
 
