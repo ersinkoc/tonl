@@ -12,7 +12,7 @@ import { parsePath, QueryEvaluator } from './query/index.js';
 import { entries, keys, values, deepEntries, deepKeys, deepValues, walk, type WalkCallback, type WalkOptions, countNodes, find, findAll, some, every } from './navigation/index.js';
 import { readFileSync, writeFileSync } from 'fs';
 import { promises as fs } from 'fs';
-import { set as setByPath } from './modification/setter.js';
+import { set as setByPath, deleteValue as deleteByPath, push as pushToArray, pop as popFromArray, merge as mergeAtPath } from './modification/index.js';
 
 /**
  * Document statistics
@@ -440,6 +440,45 @@ export class TONLDocument {
       throw new Error(result.error || 'Set operation failed');
     }
     // Recreate evaluator with updated data
+    this.evaluator = new QueryEvaluator(this.data);
+    return this;
+  }
+
+  /**
+   * Delete a value at a specific path
+   */
+  delete(pathExpression: string): this {
+    const result = deleteByPath(this.data, pathExpression);
+    if (!result.success) {
+      throw new Error(result.error || 'Delete operation failed');
+    }
+    this.evaluator = new QueryEvaluator(this.data);
+    return this;
+  }
+
+  /**
+   * Push to array
+   */
+  push(arrayPath: string, ...values: any[]): number {
+    const length = pushToArray(this.data, arrayPath, ...values);
+    this.evaluator = new QueryEvaluator(this.data);
+    return length;
+  }
+
+  /**
+   * Pop from array
+   */
+  pop(arrayPath: string): any {
+    const value = popFromArray(this.data, arrayPath);
+    this.evaluator = new QueryEvaluator(this.data);
+    return value;
+  }
+
+  /**
+   * Merge object
+   */
+  merge(pathExpression: string, updates: Record<string, any>): this {
+    mergeAtPath(this.data, pathExpression, updates);
     this.evaluator = new QueryEvaluator(this.data);
     return this;
   }
