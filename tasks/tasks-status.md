@@ -74,9 +74,9 @@
   - Completion Date: 2025-11-04
 
 - [ ] **T006** - API Documentation & Examples (P2, 3 days)
-  - Status: 🔴 Not Started
-  - Assignee: TBD
-  - Dependencies: T005
+  - Status: 🟡 In Progress
+  - Assignee: Claude
+  - Dependencies: T005 ✅
   - Blocks: None
 
 - [ ] **T007** - Integration Tests (P1, 4 days)
