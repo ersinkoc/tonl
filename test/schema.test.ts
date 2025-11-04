@@ -4,7 +4,7 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { parseSchema, validateTONL } from '../dist/src/schema/index.js';
+import { parseSchema, validateTONL } from '../dist/schema/index.js';
 
 describe('Schema parser', () => {
   it('should parse basic schema with primitives', () => {

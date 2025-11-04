@@ -5,7 +5,7 @@
 
 import { describe, test } from "node:test";
 import assert from "node:assert";
-import { encodeTONL, decodeTONL } from "../dist/src/index.js";
+import { encodeTONL, decodeTONL } from "../dist/index.js";
 
 describe("Edge Cases - Empty and Special Strings", () => {
   test("should handle empty strings correctly", () => {
@@ -113,7 +113,7 @@ describe("Edge Cases - Numeric Types", () => {
   });
 
   test("should infer correct types for number bounds", async () => {
-    const { inferPrimitiveType } = await import("../dist/src/infer.js");
+    const { inferPrimitiveType } = await import("../dist/infer.js");
     
     // u32 range: 0 to 4294967295
     assert.strictEqual(inferPrimitiveType(0), 'u32');

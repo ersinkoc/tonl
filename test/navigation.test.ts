@@ -17,7 +17,7 @@ import {
   findAll,
   some,
   every
-} from '../dist/src/navigation/index.js';
+} from '../dist/navigation/index.js';
 
 describe('Navigation & Iteration API - T004', () => {
   const testData = {

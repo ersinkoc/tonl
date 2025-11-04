@@ -4,8 +4,8 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { encodeTONL, decodeTONL, encodeSmart } from '../dist/src/index.js';
-import { parseSchema, validateTONL, generateTypeScript } from '../dist/src/schema/index.js';
+import { encodeTONL, decodeTONL, encodeSmart } from '../dist/index.js';
+import { parseSchema, validateTONL, generateTypeScript } from '../dist/schema/index.js';
 
 describe('Integration - Complete workflow', () => {
   it('should handle encode → validate → decode workflow', () => {

@@ -23,7 +23,7 @@ import {
   QueryCache,
   getGlobalCache,
   resetGlobalCache
-} from '../dist/src/query/index.js';
+} from '../dist/query/index.js';
 
 describe('Query Evaluator - T002', () => {
   // Test data

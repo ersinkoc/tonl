@@ -4,7 +4,7 @@
 
 import { test, describe } from "node:test";
 import assert from "node:assert";
-import { encodeTONL, decodeTONL, encodeSmart } from "../dist/src/index.js";
+import { encodeTONL, decodeTONL, encodeSmart } from "../dist/index.js";
 
 describe("encode/decode round-trip", () => {
   test("should round-trip simple object", () => {

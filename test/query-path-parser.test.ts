@@ -13,7 +13,7 @@
 
 import { test, describe } from 'node:test';
 import assert from 'node:assert';
-import { parsePath, tokenize, validate, analyzeAST, astToString } from '../dist/src/query/index.js';
+import { parsePath, tokenize, validate, analyzeAST, astToString } from '../dist/query/index.js';
 
 describe('Query Path Parser - T001', () => {
   // ========================================

@@ -4,7 +4,7 @@
 
 import { test, describe } from "node:test";
 import assert from "node:assert";
-import { encodeTONL, decodeTONL } from "../dist/src/index.js";
+import { encodeTONL, decodeTONL } from "../dist/index.js";
 import { readFileSync, writeFileSync, unlinkSync, existsSync, mkdirSync } from "fs";
 import { execSync } from "child_process";
 import { join } from "path";

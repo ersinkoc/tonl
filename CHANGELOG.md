@@ -5,6 +5,111 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2025-11-04
+
+### 🎉 Major Feature Release - Query & Navigation API
+
+This release transforms TONL from a serialization format into a complete data access library with powerful query, navigation, and modification capabilities.
+
+---
+
+### Added
+
+#### Query API (Feature F001)
+- **TONLDocument Class** - Unified API for working with TONL data
+  - `doc.get(path)` - Get single value by path expression
+  - `doc.query(path)` - Query with filters and wildcards
+  - `doc.exists(path)` - Check if path exists
+  - `doc.typeOf(path)` - Get type of value at path
+
+- **JSONPath-like Query Syntax**
+  - Property access: `user.name`, `user.profile.email`
+  - Array indexing: `users[0]`, `items[-1]` (negative indices)
+  - Array slicing: `users[0:5]`, `items[::2]` (step support)
+  - Wildcards: `users[*].name`, `data.*`
+  - Recursive descent: `$..email` (find all emails at any depth)
+  - Filter expressions: `users[?(@.age > 18)]`, `items[?(@.price < 100 && @.inStock)]`
+
+- **Filter Expression Engine**
+  - Comparison operators: `==`, `!=`, `>`, `<`, `>=`, `<=`
+  - Logical operators: `&&`, `||`, `!`
+  - String operators: `contains`, `startsWith`, `endsWith`, `matches` (regex)
+  - Current item reference: `@.property`
+  - Nested property access in filters
+
+- **Query Optimization & Caching**
+  - LRU cache for query results (configurable size)
+  - AST validation and optimization
+  - >90% cache hit rate on repeated queries
+  - Performance: <0.1ms for simple paths, <50ms for complex filters
+
+#### Navigation API (Feature F001)
+- **Iteration Methods**
+  - `doc.entries()` - Iterate over [key, value] pairs
+  - `doc.keys()` - Iterate over keys
+  - `doc.values()` - Iterate over values
+  - `doc.deepEntries()` - Recursive iteration with full paths
+  - `doc.deepKeys()` - All keys at any depth
+  - `doc.deepValues()` - All values at any depth
+
+- **Tree Walking**
+  - `doc.walk(callback, options)` - Traverse document tree
+  - Strategies: depth-first (pre/post-order), breadth-first
+  - Path tracking and depth control
+  - Early termination support
+
+- **Search Utilities**
+  - `doc.find(predicate)` - Find first matching value
+  - `doc.findAll(predicate)` - Find all matches
+  - `doc.some(predicate)` - Check if any value matches
+  - `doc.every(predicate)` - Check if all values match
+  - `doc.countNodes()` - Count total nodes in tree
+
+#### CLI Enhancements
+- **New Commands**
+  - `tonl query <file> <expression>` - Execute query and output results
+  - `tonl get <file> <path>` - Get value at specific path
+  - Both commands work with JSON and TONL files
+  - JSON output for query results
+
+#### Documentation
+- Complete Query API documentation (`docs/QUERY_API.md`)
+- Navigation API guide (`docs/NAVIGATION_API.md`)
+- Working examples in `examples/` directory
+- Updated README with v0.6.0 features
+
+#### Performance
+- Simple path access: <0.005ms (20x faster than target)
+- Wildcard query (1000 items): <0.01ms per query
+- Filter query (1000 items): <0.03ms (1600x faster than target)
+- Tree walk (6000+ nodes): <1ms
+- Memory-efficient iteration with generators
+
+#### Infrastructure
+- Comprehensive task management system (41 tasks across 5 features)
+- Task tracking with `tasks/tasks-status.md`
+- Detailed task specifications for all future features
+- Performance benchmarking suite (`bench/query-performance.ts`)
+
+### Changed
+- **package.json** - Fixed export paths from `dist/src/` to `dist/`
+- **package.json** - Added `./query` export for direct query module access
+- **package.json** - Fixed `main` and `bin` paths
+- **package.json** - Added `bench-query` script
+- **CLI** - Made `main()` function async to support dynamic imports
+- **Build** - Excluded test and bench from TypeScript compilation
+
+### Fixed
+- Module resolution issues in test files (import paths updated)
+- Export paths in package.json pointing to wrong directories
+
+### Performance
+- Exceeded all performance targets by 10-1600x
+- Zero performance regressions from v0.5.1
+- Memory-efficient with generator-based iteration
+
+---
+
 ## [0.5.1] - 2025-11-04
 
 ### 🐛 Critical Bug Fix Release

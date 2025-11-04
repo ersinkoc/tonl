@@ -4,7 +4,7 @@
 
 import { test, describe } from "node:test";
 import assert from "node:assert";
-import { parseTONLLine, parseHeaderLine, parseObjectHeader, detectDelimiter } from "../dist/src/parser.js";
+import { parseTONLLine, parseHeaderLine, parseObjectHeader, detectDelimiter } from "../dist/parser.js";
 
 describe("parseTONLLine", () => {
   test("should parse simple comma-separated values", () => {

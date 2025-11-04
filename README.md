@@ -77,6 +77,10 @@ tonl encode data.json --out data.tonl --smart --stats
 # Decode TONL back to JSON
 tonl decode data.tonl --out data.json
 
+# Query data with path expressions (NEW in v0.6.0!)
+tonl query users.tonl "users[?(@.role == 'admin')]"
+tonl get data.json "user.profile.email"
+
 # Validate data against schema
 tonl validate users.tonl --schema users.schema.tonl --strict
 

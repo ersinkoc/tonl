@@ -5,7 +5,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { Readable, Writable } from 'stream';
-import { createEncodeStream, createDecodeStream, encodeIterator, decodeIterator } from '../dist/src/stream/index.js';
+import { createEncodeStream, createDecodeStream, encodeIterator, decodeIterator } from '../dist/stream/index.js';
 
 describe('Streaming - createEncodeStream', () => {
   it('should encode NDJSON stream to TONL', (t, done) => {

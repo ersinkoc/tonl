@@ -22,27 +22,31 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./schema": {
-      "types": "./dist/src/schema/index.d.ts",
-      "import": "./dist/src/schema/index.js"
+      "types": "./dist/schema/index.d.ts",
+      "import": "./dist/schema/index.js"
     },
     "./parser": {
-      "types": "./dist/src/parser/index.d.ts",
-      "import": "./dist/src/parser/index.js"
+      "types": "./dist/parser/index.d.ts",
+      "import": "./dist/parser/index.js"
     },
     "./stream": {
-      "types": "./dist/src/stream/index.d.ts",
-      "import": "./dist/src/stream/index.js"
+      "types": "./dist/stream/index.d.ts",
+      "import": "./dist/stream/index.js"
+    },
+    "./query": {
+      "types": "./dist/query/index.d.ts",
+      "import": "./dist/query/index.js"
     },
     "./package.json": "./package.json"
   },
-  "main": "dist/src/index.js",
+  "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "tonl": "dist/src/cli.js"
+    "tonl": "dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
@@ -53,6 +57,7 @@
     "bench": "npm run build && node dist/bench/bench-bytes.js",
     "bench-tokens": "npm run build && node dist/bench/bench-tokens.js",
     "bench-comprehensive": "npm run build && node dist/bench/comprehensive-bench.js",
+    "bench-query": "npm run build && node bench/query-performance.ts",
     "link": "npm run build && npm link",
     "clean": "rimraf dist"
   },

@@ -2,7 +2,7 @@
  * Query API Performance Benchmarks (T009)
  */
 
-import { TONLDocument } from '../dist/src/index.js';
+import { TONLDocument } from '../dist/index.js';
 
 // Generate test data
 const largeData = {

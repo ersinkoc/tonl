@@ -14,7 +14,7 @@
 
 import { test, describe } from 'node:test';
 import assert from 'node:assert';
-import { parsePath, evaluate, QueryEvaluator } from '../dist/src/query/index.js';
+import { parsePath, evaluate, QueryEvaluator } from '../dist/query/index.js';
 
 describe('Filter Expression Engine - T003', () => {
   // Helper to create fresh test data for each test
