@@ -26,91 +26,81 @@
 </head>
 <body class="gradient-bg flex items-center justify-center">
 
-    <div class="w-full h-full flex items-center justify-center px-20 py-16">
-        <div class="w-full">
+    <div class="w-full h-full flex flex-col justify-center px-24 py-20">
 
-            <!-- Top Section -->
-            <div class="flex items-center justify-between mb-16">
-
-                <!-- Left: Logo and Title -->
-                <div class="flex items-center gap-6">
-                    <div class="w-28 h-28 bg-white rounded-3xl flex items-center justify-center shadow-2xl">
-                        <span class="text-7xl font-black gradient-bg bg-clip-text text-transparent">T</span>
-                    </div>
-                    <div class="text-white">
-                        <h1 class="text-7xl font-black mb-2">TONL</h1>
-                        <p class="text-3xl font-light opacity-90">32-45% Smaller than JSON</p>
-                    </div>
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-12">
+            <div class="flex items-center gap-6">
+                <div class="w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
+                    <span class="text-6xl font-black gradient-bg bg-clip-text text-transparent">T</span>
                 </div>
-
-                <!-- Right: Stats -->
-                <div class="flex gap-6">
-                    <div class="bg-white bg-opacity-20 backdrop-blur-md rounded-2xl px-8 py-6 text-center border-2 border-white border-opacity-40">
-                        <div class="text-5xl font-black text-white">496</div>
-                        <div class="text-white text-lg font-semibold opacity-90">Tests</div>
-                    </div>
-                    <div class="bg-white bg-opacity-20 backdrop-blur-md rounded-2xl px-8 py-6 text-center border-2 border-white border-opacity-40">
-                        <div class="text-5xl font-black text-white">0</div>
-                        <div class="text-white text-lg font-semibold opacity-90">Bugs</div>
-                    </div>
+                <div class="text-white">
+                    <h1 class="text-7xl font-black">TONL</h1>
+                    <p class="text-2xl opacity-90 mt-1">LLM-friendly serialization format</p>
                 </div>
-
             </div>
+            <div class="text-white text-3xl font-bold">
+                tonl.dev
+            </div>
+        </div>
 
-            <!-- Code Comparison -->
-            <div class="grid grid-cols-2 gap-8">
+        <!-- Code Comparison -->
+        <div class="grid grid-cols-2 gap-8 mb-8">
 
-                <!-- JSON -->
-                <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-white font-bold text-2xl">JSON</span>
-                        <span class="px-5 py-2 bg-red-500 text-white rounded-xl font-black text-lg shadow-lg">366 bytes</span>
-                    </div>
-                    <div class="bg-gray-900 rounded-2xl p-8 shadow-2xl h-80">
-                        <pre class="text-gray-400 text-base leading-relaxed"><code>{
+            <!-- JSON -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-white font-bold text-2xl">JSON</span>
+                    <span class="px-5 py-2 bg-red-500 text-white rounded-xl font-bold shadow-lg">212 tokens</span>
+                </div>
+                <div class="bg-gray-900 rounded-2xl p-6 shadow-2xl">
+                    <pre class="text-gray-400 text-sm leading-relaxed"><code>{
   <span class="text-blue-400">"users"</span>: [
-    {
-      <span class="text-blue-400">"id"</span>: <span class="text-orange-400">1</span>,
-      <span class="text-blue-400">"name"</span>: <span class="text-green-400">"Alice"</span>,
-      <span class="text-blue-400">"role"</span>: <span class="text-green-400">"admin"</span>
-    },
-    {
-      <span class="text-blue-400">"id"</span>: <span class="text-orange-400">2</span>,
-      <span class="text-blue-400">"name"</span>: <span class="text-green-400">"Bob"</span>,
-      <span class="text-blue-400">"role"</span>: <span class="text-green-400">"user"</span>
-    }
+    { <span class="text-blue-400">"id"</span>: <span class="text-orange-400">1</span>, <span class="text-blue-400">"name"</span>: <span class="text-green-400">"Alice"</span>, <span class="text-blue-400">"role"</span>: <span class="text-green-400">"admin"</span> },
+    { <span class="text-blue-400">"id"</span>: <span class="text-orange-400">2</span>, <span class="text-blue-400">"name"</span>: <span class="text-green-400">"Bob"</span>, <span class="text-blue-400">"role"</span>: <span class="text-green-400">"user"</span> }
   ]
 }</code></pre>
-                    </div>
                 </div>
+                <div class="text-white text-right mt-2 opacity-75">366 bytes</div>
+            </div>
 
-                <!-- TONL -->
-                <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-white font-bold text-2xl">TONL</span>
-                        <span class="px-5 py-2 bg-green-500 text-white rounded-xl font-black text-lg shadow-lg">284 bytes</span>
-                    </div>
-                    <div class="bg-gray-900 rounded-2xl p-8 shadow-2xl border-4 border-green-400 h-80">
-                        <pre class="text-gray-300 text-base leading-relaxed"><code><span class="text-purple-400">#version</span> <span class="text-green-400">1.0</span>
+            <!-- TONL -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-white font-bold text-2xl">TONL</span>
+                    <span class="px-5 py-2 bg-green-500 text-white rounded-xl font-bold shadow-lg">131 tokens</span>
+                </div>
+                <div class="bg-gray-900 rounded-2xl p-6 shadow-2xl border-4 border-green-400">
+                    <pre class="text-gray-300 text-sm leading-relaxed"><code><span class="text-purple-400">#version</span> <span class="text-green-400">1.0</span>
 <span class="text-blue-400">users</span>[<span class="text-orange-400">2</span>]{<span class="text-yellow-400">id,name,role</span>}:
   <span class="text-orange-400">1</span>, Alice, admin
   <span class="text-orange-400">2</span>, Bob, user</code></pre>
-                    </div>
                 </div>
-
-            </div>
-
-            <!-- Bottom -->
-            <div class="mt-10 flex items-center justify-between">
-                <div class="bg-white text-purple-900 rounded-2xl px-10 py-4 shadow-2xl">
-                    <code class="text-2xl font-black">npm install tonl</code>
-                </div>
-                <div class="text-white text-2xl font-black opacity-90">
-                    github.com/ersinkoc/tonl
-                </div>
+                <div class="text-white text-right mt-2 opacity-75">284 bytes</div>
             </div>
 
         </div>
+
+        <!-- Savings Highlight -->
+        <div class="bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl px-12 py-8 shadow-2xl">
+            <div class="flex items-center justify-center gap-12 text-white">
+                <div class="text-center">
+                    <div class="text-6xl font-black mb-2">-22%</div>
+                    <div class="text-2xl font-semibold">Bytes</div>
+                </div>
+                <div class="text-6xl font-black">+</div>
+                <div class="text-center">
+                    <div class="text-6xl font-black mb-2">-38%</div>
+                    <div class="text-2xl font-semibold">Tokens</div>
+                </div>
+                <div class="text-6xl font-black">=</div>
+                <div class="text-center">
+                    <div class="text-5xl font-black mb-2">💰</div>
+                    <div class="text-2xl font-semibold">LLM Cost Savings</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </body>
