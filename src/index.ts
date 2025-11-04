@@ -71,3 +71,6 @@ export { FileEditor, type FileEditorOptions, type DiffResult, type DiffEntry } f
 
 // Export Streaming API (NEW in v0.7.5!)
 export { streamQuery, streamAggregate, streamCount, streamCollect, StreamPipeline, type StreamQueryOptions } from './stream/index.js';
+
+// Export REPL (NEW in v0.8.0!)
+export { TONLREPL, type REPLOptions } from './repl/index.js';
