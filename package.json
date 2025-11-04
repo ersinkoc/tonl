@@ -73,7 +73,17 @@
     "validation",
     "token-optimization",
     "data-format",
-    "parser"
+    "parser",
+    "query",
+    "jsonpath",
+    "indexing",
+    "streaming",
+    "repl",
+    "data-platform",
+    "crud",
+    "diff",
+    "ai",
+    "gpt"
   ],
   "author": "Ersin KOÇ",
   "license": "MIT",
