@@ -5,7 +5,7 @@
   "homepage": "https://github.com/ersinkoc/tonl",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ersinkoc/tonl.git"
+    "url": "git+https://github.com/ersinkoc/tonl.git"
   },
   "bugs": {
     "url": "https://github.com/ersinkoc/tonl/issues"
