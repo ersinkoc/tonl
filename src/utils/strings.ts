@@ -20,6 +20,11 @@ export function needsQuoting(value: string, delimiter: TONLDelimiter): boolean {
   // Quote special numeric strings to distinguish from actual Infinity/NaN
   if (value === 'Infinity' || value === '-Infinity' || value === 'NaN') return true;
 
+  // Quote strings that look like numbers to prevent type confusion
+  if (/^-?\d+$/.test(value)) return true;                          // Integer-like strings
+  if (/^-?\d*\.\d+$/.test(value)) return true;                     // Decimal-like strings
+  if (/^-?\d+\.?\d*e[+-]?\d+$/i.test(value)) return true;          // Scientific notation strings
+
   return value.includes(delimiter) ||
          value.includes(':') ||
          value.includes('{') ||
