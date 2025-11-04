@@ -1,0 +1,7 @@
+#version 1.0
+root{project}:
+  project{id,owner,tasks}:
+    id: 1
+    owner{id,name}: id: 10 name: Alice
+    tasks[1]{id,title}:
+      100 , Task 1

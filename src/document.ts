@@ -8,7 +8,7 @@
 import type { TONLValue, EncodeOptions, DecodeOptions } from './types.js';
 import { encodeTONL } from './encode.js';
 import { decodeTONL } from './decode.js';
-import { parsePath, QueryEvaluator } from './query/index.js';
+import { parsePath, QueryEvaluator, resetGlobalCache } from './query/index.js';
 import { entries, keys, values, deepEntries, deepKeys, deepValues, walk, type WalkCallback, type WalkOptions, countNodes, find, findAll, some, every } from './navigation/index.js';
 import { readFileSync, writeFileSync } from 'fs';
 import { promises as fs } from 'fs';
@@ -442,7 +442,8 @@ export class TONLDocument {
     if (!result.success) {
       throw new Error(result.error || 'Set operation failed');
     }
-    // Recreate evaluator with updated data
+    // Clear cache and recreate evaluator with updated data
+    resetGlobalCache();
     this.evaluator = new QueryEvaluator(this.data);
     return this;
   }
@@ -455,6 +456,7 @@ export class TONLDocument {
     if (!result.success) {
       throw new Error(result.error || 'Delete operation failed');
     }
+    resetGlobalCache();
     this.evaluator = new QueryEvaluator(this.data);
     return this;
   }
@@ -464,6 +466,7 @@ export class TONLDocument {
    */
   push(arrayPath: string, ...values: any[]): number {
     const length = pushToArray(this.data, arrayPath, ...values);
+    resetGlobalCache();
     this.evaluator = new QueryEvaluator(this.data);
     return length;
   }
@@ -473,6 +476,7 @@ export class TONLDocument {
    */
   pop(arrayPath: string): any {
     const value = popFromArray(this.data, arrayPath);
+    resetGlobalCache();
     this.evaluator = new QueryEvaluator(this.data);
     return value;
   }
@@ -482,6 +486,7 @@ export class TONLDocument {
    */
   merge(pathExpression: string, updates: Record<string, any>): this {
     mergeAtPath(this.data, pathExpression, updates);
+    resetGlobalCache();
     this.evaluator = new QueryEvaluator(this.data);
     return this;
   }

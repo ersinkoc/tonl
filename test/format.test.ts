@@ -9,7 +9,7 @@ import { readFileSync, writeFileSync, unlinkSync, existsSync, mkdirSync } from "
 import { execSync } from "child_process";
 import { join } from "path";
 
-const CLI_PATH = join(process.cwd(), "dist", "src", "cli.js");
+const CLI_PATH = join(process.cwd(), "dist", "cli.js");
 const TEST_DIR = join(process.cwd(), "test", "format-test-files");
 
 // Ensure test directory exists

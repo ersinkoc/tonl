@@ -26,6 +26,9 @@ import {
 } from '../dist/query/index.js';
 
 describe('Query Evaluator - T002', () => {
+  // Reset cache before all tests
+  resetGlobalCache();
+
   // Test data
   const testData = {
     user: {
