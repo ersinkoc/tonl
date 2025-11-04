@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - TONL</title>
+    <meta name="description" content="Complete TONL documentation including API reference, implementation guides, and examples.">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        code, pre { font-family: 'JetBrains Mono', monospace; }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center text-white font-bold text-xl">T</div>
+                        <span class="text-2xl font-bold gradient-text">TONL</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html#features" class="text-gray-700 hover:text-purple-600 font-medium transition">Features</a>
+                    <a href="docs.html" class="text-purple-600 font-semibold">Docs</a>
+                    <a href="examples.html" class="text-gray-700 hover:text-purple-600 font-medium transition">Examples</a>
+                    <a href="https://github.com/ersinkoc/tonl" target="_blank" class="text-gray-700 hover:text-purple-600 font-medium transition">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="{ activeTab: 'getting-started' }">
+        <div class="grid md:grid-cols-4 gap-8">
+
+            <!-- Sidebar -->
+            <div class="md:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24">
+                    <h3 class="font-bold text-lg text-gray-900 mb-4">Documentation</h3>
+
+                    <nav class="space-y-1">
+                        <a @click="activeTab = 'getting-started'" :class="activeTab === 'getting-started' ? 'bg-purple-100 text-purple-700' : 'text-gray-700 hover:bg-gray-100'" class="block px-4 py-2 rounded-lg font-medium cursor-pointer transition">
+                            Getting Started
+                        </a>
+                        <a @click="activeTab = 'api'" :class="activeTab === 'api' ? 'bg-purple-100 text-purple-700' : 'text-gray-700 hover:bg-gray-100'" class="block px-4 py-2 rounded-lg font-medium cursor-pointer transition">
+                            API Reference
+                        </a>
+                        <a @click="activeTab = 'query'" :class="activeTab === 'query' ? 'bg-purple-100 text-purple-700' : 'text-gray-700 hover:bg-gray-100'" class="block px-4 py-2 rounded-lg font-medium cursor-pointer transition">
+                            Query Syntax
+                        </a>
+                        <a @click="activeTab = 'cli'" :class="activeTab === 'cli' ? 'bg-purple-100 text-purple-700' : 'text-gray-700 hover:bg-gray-100'" class="block px-4 py-2 rounded-lg font-medium cursor-pointer transition">
+                            CLI Tools
+                        </a>
+                        <a @click="activeTab = 'implementation'" :class="activeTab === 'implementation' ? 'bg-purple-100 text-purple-700' : 'text-gray-700 hover:bg-gray-100'" class="block px-4 py-2 rounded-lg font-medium cursor-pointer transition">
+                            Implementation Guide
+                        </a>
+                        <a @click="activeTab = 'spec'" :class="activeTab === 'spec' ? 'bg-purple-100 text-purple-700' : 'text-gray-700 hover:bg-gray-100'" class="block px-4 py-2 rounded-lg font-medium cursor-pointer transition">
+                            Specification
+                        </a>
+
+                        <hr class="my-4">
+
+                        <a href="https://github.com/ersinkoc/tonl/tree/main/docs" target="_blank" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium cursor-pointer transition">
+                            View on GitHub →
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="md:col-span-3">
+
+                <!-- Getting Started -->
+                <div x-show="activeTab === 'getting-started'" class="bg-white rounded-xl shadow-lg p-8">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-6">Getting Started</h1>
+
+                    <div class="prose max-w-none">
+                        <h2 class="text-2xl font-bold text-gray-800 mt-8 mb-4">Installation</h2>
+                        <div class="bg-gray-900 rounded-lg p-6 mb-6">
+                            <pre class="text-green-400"><code>npm install tonl</code></pre>
+                        </div>
+
+                        <h2 class="text-2xl font-bold text-gray-800 mt-8 mb-4">Quick Start (30 seconds)</h2>
+                        <div class="bg-gray-900 rounded-lg p-6 mb-6">
+                            <pre class="text-gray-300 text-sm"><code><span class="text-purple-400">import</span> { <span class="text-blue-400">TONLDocument</span> } <span class="text-purple-400">from</span> <span class="text-green-400">'tonl'</span>;
+
+<span class="text-gray-500">// Create or load a document</span>
+<span class="text-purple-400">const</span> doc = <span class="text-blue-400">TONLDocument</span>.<span class="text-yellow-400">fromJSON</span>({
+  users: [
+    { name: <span class="text-green-400">'Alice'</span>, age: <span class="text-orange-400">30</span>, role: <span class="text-green-400">'admin'</span> },
+    { name: <span class="text-green-400">'Bob'</span>, age: <span class="text-orange-400">25</span>, role: <span class="text-green-400">'user'</span> }
+  ]
+});
+
+<span class="text-gray-500">// Query the data</span>
+<span class="text-purple-400">const</span> admins = doc.<span class="text-yellow-400">query</span>(<span class="text-green-400">'users[?(@.role == "admin")]'</span>);
+console.<span class="text-yellow-400">log</span>(admins); <span class="text-gray-500">// [{ name: 'Alice', ... }]</span>
+
+<span class="text-gray-500">// Modify the data</span>
+doc.<span class="text-yellow-400">set</span>(<span class="text-green-400">'users[0].age'</span>, <span class="text-orange-400">31</span>);
+
+<span class="text-gray-500">// Save to file</span>
+<span class="text-purple-400">await</span> doc.<span class="text-yellow-400">save</span>(<span class="text-green-400">'data.tonl'</span>);</code></pre>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-200 rounded-xl p-6 mb-6">
+                            <div class="flex items-start">
+                                <svg class="w-6 h-6 text-green-600 mt-1 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <p class="text-green-800 font-semibold text-lg">That's it! You're using TONL!</p>
+                                    <p class="text-green-700 mt-1">Query, modify, and save your data with a powerful API.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h2 class="text-2xl font-bold text-gray-800 mt-8 mb-4">Core Concepts</h2>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-6">
+                            <div class="border-2 border-gray-200 rounded-lg p-4">
+                                <h4 class="font-bold text-gray-900 mb-2">TONLDocument</h4>
+                                <p class="text-sm text-gray-600">Main class for working with TONL data</p>
+                            </div>
+                            <div class="border-2 border-gray-200 rounded-lg p-4">
+                                <h4 class="font-bold text-gray-900 mb-2">Query API</h4>
+                                <p class="text-sm text-gray-600">JSONPath-like syntax for data access</p>
+                            </div>
+                            <div class="border-2 border-gray-200 rounded-lg p-4">
+                                <h4 class="font-bold text-gray-900 mb-2">Modification</h4>
+                                <p class="text-sm text-gray-600">CRUD operations with change tracking</p>
+                            </div>
+                            <div class="border-2 border-gray-200 rounded-lg p-4">
+                                <h4 class="font-bold text-gray-900 mb-2">Indexing</h4>
+                                <p class="text-sm text-gray-600">Fast lookups with hash and btree indices</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <a href="https://github.com/ersinkoc/tonl/blob/main/docs/GETTING_STARTED.md" target="_blank" class="inline-flex items-center px-6 py-3 gradient-bg text-white rounded-lg font-semibold hover:opacity-90 transition">
+                                Read Full Getting Started Guide
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Reference -->
+                <div x-show="activeTab === 'api'" class="bg-white rounded-xl shadow-lg p-8">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-6">API Reference</h1>
+
+                    <div class="space-y-8">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">TONLDocument Class</h2>
+                            <p class="text-gray-600 mb-4">The primary interface for working with TONL data.</p>
+
+                            <div class="bg-gray-50 rounded-lg p-6 mb-4">
+                                <h3 class="font-bold text-gray-900 mb-3">Factory Methods</h3>
+                                <ul class="space-y-2 text-sm">
+                                    <li><code class="text-purple-600">TONLDocument.parse(tonlText)</code> - Parse TONL string</li>
+                                    <li><code class="text-purple-600">TONLDocument.fromJSON(data)</code> - Create from JavaScript</li>
+                                    <li><code class="text-purple-600">TONLDocument.fromFile(path)</code> - Load from file</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-6 mb-4">
+                                <h3 class="font-bold text-gray-900 mb-3">Query Methods</h3>
+                                <ul class="space-y-2 text-sm">
+                                    <li><code class="text-purple-600">get(path)</code> - Get value at path</li>
+                                    <li><code class="text-purple-600">query(expression)</code> - Advanced queries</li>
+                                    <li><code class="text-purple-600">exists(path)</code> - Check if path exists</li>
+                                    <li><code class="text-purple-600">typeOf(path)</code> - Get value type</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <h3 class="font-bold text-gray-900 mb-3">Modification Methods</h3>
+                                <ul class="space-y-2 text-sm">
+                                    <li><code class="text-purple-600">set(path, value)</code> - Create/update</li>
+                                    <li><code class="text-purple-600">delete(path)</code> - Remove</li>
+                                    <li><code class="text-purple-600">push(path, ...items)</code> - Add to array</li>
+                                    <li><code class="text-purple-600">pop(path)</code> - Remove from array</li>
+                                    <li><code class="text-purple-600">merge(path, object)</code> - Merge objects</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t-2 border-gray-200">
+                            <a href="https://github.com/ersinkoc/tonl/blob/main/docs/API.md" target="_blank" class="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold">
+                                View Complete API Reference on GitHub
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Query Syntax -->
+                <div x-show="activeTab === 'query'" class="bg-white rounded-xl shadow-lg p-8">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-6">Query Syntax</h1>
+
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Path Expressions</h3>
+                            <div class="bg-gray-50 rounded-lg p-6 space-y-3">
+                                <div><code class="text-purple-600">user.name</code> <span class="text-gray-600">- Property access</span></div>
+                                <div><code class="text-purple-600">users[0]</code> <span class="text-gray-600">- Array index</span></div>
+                                <div><code class="text-purple-600">users[-1]</code> <span class="text-gray-600">- Negative index (last)</span></div>
+                                <div><code class="text-purple-600">users[*].name</code> <span class="text-gray-600">- Wildcard</span></div>
+                                <div><code class="text-purple-600">$..email</code> <span class="text-gray-600">- Recursive descent</span></div>
+                                <div><code class="text-purple-600">users[0:5]</code> <span class="text-gray-600">- Array slicing</span></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Filter Expressions</h3>
+                            <div class="bg-gray-50 rounded-lg p-6 space-y-3">
+                                <div><code class="text-purple-600">users[?(@.age > 18)]</code> <span class="text-gray-600">- Comparison</span></div>
+                                <div><code class="text-purple-600">users[?(@.active == true)]</code> <span class="text-gray-600">- Equality</span></div>
+                                <div><code class="text-purple-600">users[?(@.age > 18 && @.verified)]</code> <span class="text-gray-600">- Logical AND</span></div>
+                                <div><code class="text-purple-600">users[?(@.email contains "@company.com")]</code> <span class="text-gray-600">- String operators</span></div>
+                                <div><code class="text-purple-600">files[?(@.name startsWith "test")]</code> <span class="text-gray-600">- String matching</span></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Operators</h3>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="font-semibold text-gray-900 mb-2">Comparison</h4>
+                                    <code class="text-sm text-gray-600">==, !=, &gt;, &lt;, &gt;=, &lt;=</code>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="font-semibold text-gray-900 mb-2">Logical</h4>
+                                    <code class="text-sm text-gray-600">&&, ||, !</code>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="font-semibold text-gray-900 mb-2">String</h4>
+                                    <code class="text-sm text-gray-600">contains, startsWith, endsWith, matches</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t-2 border-gray-200">
+                            <a href="https://github.com/ersinkoc/tonl/blob/main/docs/QUERY_API.md" target="_blank" class="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold">
+                                View Complete Query API Documentation
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLI Tools -->
+                <div x-show="activeTab === 'cli'" class="bg-white rounded-xl shadow-lg p-8">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-6">CLI Tools</h1>
+
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Available Commands</h3>
+
+                            <div class="space-y-4">
+                                <div class="bg-gray-900 rounded-lg p-4">
+                                    <div class="text-gray-500 text-xs mb-2">ENCODE - Convert JSON to TONL</div>
+                                    <pre class="text-gray-300 text-sm"><code>tonl encode data.json --out data.tonl --smart --stats</code></pre>
+                                </div>
+
+                                <div class="bg-gray-900 rounded-lg p-4">
+                                    <div class="text-gray-500 text-xs mb-2">DECODE - Convert TONL to JSON</div>
+                                    <pre class="text-gray-300 text-sm"><code>tonl decode data.tonl --out data.json --strict</code></pre>
+                                </div>
+
+                                <div class="bg-gray-900 rounded-lg p-4">
+                                    <div class="text-gray-500 text-xs mb-2">QUERY - JSONPath queries</div>
+                                    <pre class="text-gray-300 text-sm"><code>tonl query users.tonl 'users[?(@.role == "admin")]'</code></pre>
+                                </div>
+
+                                <div class="bg-gray-900 rounded-lg p-4">
+                                    <div class="text-gray-500 text-xs mb-2">GET - Simple path retrieval</div>
+                                    <pre class="text-gray-300 text-sm"><code>tonl get config.tonl "database.host"</code></pre>
+                                </div>
+
+                                <div class="bg-gray-900 rounded-lg p-4">
+                                    <div class="text-gray-500 text-xs mb-2">STATS - Size and token comparison</div>
+                                    <pre class="text-gray-300 text-sm"><code>tonl stats data.json --tokenizer gpt-5</code></pre>
+                                </div>
+
+                                <div class="bg-gray-900 rounded-lg p-4">
+                                    <div class="text-gray-500 text-xs mb-2">VALIDATE - Schema validation</div>
+                                    <pre class="text-gray-300 text-sm"><code>tonl validate data.tonl --schema data.schema.tonl</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t-2 border-gray-200">
+                            <a href="https://github.com/ersinkoc/tonl/blob/main/docs/CLI.md" target="_blank" class="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold">
+                                View Complete CLI Documentation
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Implementation Guide -->
+                <div x-show="activeTab === 'implementation'" class="bg-white rounded-xl shadow-lg p-8">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-6">Implementation Guide</h1>
+
+                    <div class="bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-200 rounded-xl p-6 mb-8">
+                        <div class="flex items-start">
+                            <svg class="w-6 h-6 text-blue-600 mt-1 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div>
+                                <p class="text-blue-800 font-semibold text-lg">For Language Implementers</p>
+                                <p class="text-blue-700 mt-1">Complete guides for implementing TONL in Python, Go, Rust, Java, and more.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">What's Included</h2>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="border-2 border-purple-200 rounded-lg p-6">
+                            <h3 class="font-bold text-gray-900 mb-3">📘 Implementation Reference</h3>
+                            <p class="text-gray-600 text-sm mb-4">58KB comprehensive guide with:</p>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• JSON ↔ TONL transformation algorithms</li>
+                                <li>• Pseudo-code for all operations</li>
+                                <li>• Type system specification</li>
+                                <li>• Language-specific hints</li>
+                                <li>• 17 compliance test cases</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-2 border-purple-200 rounded-lg p-6">
+                            <h3 class="font-bold text-gray-900 mb-3">📗 Transformation Examples</h3>
+                            <p class="text-gray-600 text-sm mb-4">37KB example guide with:</p>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• 20+ side-by-side examples</li>
+                                <li>• Step-by-step walkthroughs</li>
+                                <li>• Real-world scenarios</li>
+                                <li>• Common pitfalls</li>
+                                <li>• Decision trees</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Supported Languages</h2>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div class="text-center p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg">
+                            <div class="text-3xl mb-2">🐍</div>
+                            <div class="font-bold">Python</div>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+                            <div class="text-3xl mb-2">🔵</div>
+                            <div class="font-bold">Go</div>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg">
+                            <div class="text-3xl mb-2">🦀</div>
+                            <div class="font-bold">Rust</div>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-lg">
+                            <div class="text-3xl mb-2">☕</div>
+                            <div class="font-bold">Java</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <a href="https://github.com/ersinkoc/tonl/blob/main/docs/IMPLEMENTATION_REFERENCE.md" target="_blank" class="flex items-center justify-between p-6 bg-gradient-to-r from-purple-50 to-purple-100 border-2 border-purple-200 rounded-xl hover:shadow-lg transition">
+                            <div>
+                                <div class="font-bold text-gray-900 text-lg">Implementation Reference</div>
+                                <div class="text-gray-600 text-sm mt-1">Complete algorithms and pseudo-code</div>
+                            </div>
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+
+                        <a href="https://github.com/ersinkoc/tonl/blob/main/docs/TRANSFORMATION_EXAMPLES.md" target="_blank" class="flex items-center justify-between p-6 bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-200 rounded-xl hover:shadow-lg transition">
+                            <div>
+                                <div class="font-bold text-gray-900 text-lg">Transformation Examples</div>
+                                <div class="text-gray-600 text-sm mt-1">20+ JSON ↔ TONL transformations</div>
+                            </div>
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Specification -->
+                <div x-show="activeTab === 'spec'" class="bg-white rounded-xl shadow-lg p-8">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-6">Format Specification</h1>
+
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Document Structure</h3>
+                            <div class="bg-gray-900 rounded-lg p-6">
+                                <pre class="text-gray-300 text-sm"><code><span class="text-gray-500"># Headers (optional)</span>
+<span class="text-purple-400">#version</span> <span class="text-green-400">1.0</span>
+<span class="text-purple-400">#delimiter</span> <span class="text-green-400">|</span>
+
+<span class="text-gray-500"># Data</span>
+<span class="text-blue-400">users</span>[<span class="text-orange-400">2</span>]{<span class="text-yellow-400">id,name,role</span>}:
+  <span class="text-orange-400">1</span> | Alice | admin
+  <span class="text-orange-400">2</span> | Bob | user</code></pre>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Supported Types</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="font-semibold text-gray-900 mb-2">Primitives</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• <code class="text-purple-600">null</code> - Null value</li>
+                                        <li>• <code class="text-purple-600">bool</code> - Boolean</li>
+                                        <li>• <code class="text-purple-600">u32</code> - Unsigned 32-bit int</li>
+                                        <li>• <code class="text-purple-600">i32</code> - Signed 32-bit int</li>
+                                        <li>• <code class="text-purple-600">f64</code> - 64-bit float</li>
+                                        <li>• <code class="text-purple-600">str</code> - String</li>
+                                    </ul>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="font-semibold text-gray-900 mb-2">Complex</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• <code class="text-purple-600">obj</code> - Object/dictionary</li>
+                                        <li>• <code class="text-purple-600">list</code> - Array/list</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Delimiters</h3>
+                            <div class="grid grid-cols-4 gap-4">
+                                <div class="bg-gray-50 rounded-lg p-4 text-center">
+                                    <code class="text-2xl text-purple-600">,</code>
+                                    <div class="text-sm text-gray-600 mt-2">Comma</div>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4 text-center">
+                                    <code class="text-2xl text-purple-600">|</code>
+                                    <div class="text-sm text-gray-600 mt-2">Pipe</div>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4 text-center">
+                                    <code class="text-2xl text-purple-600">\t</code>
+                                    <div class="text-sm text-gray-600 mt-2">Tab</div>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4 text-center">
+                                    <code class="text-2xl text-purple-600">;</code>
+                                    <div class="text-sm text-gray-600 mt-2">Semicolon</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t-2 border-gray-200">
+                            <a href="https://github.com/ersinkoc/tonl/blob/main/docs/SPECIFICATION.md" target="_blank" class="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold">
+                                View Complete Format Specification
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer (Same as index) -->
+    <footer class="bg-gray-900 text-gray-400 py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm">© 2025 TONL. Created by <a href="https://github.com/ersinkoc" class="text-purple-400 hover:text-purple-300">Ersin KOÇ</a>. MIT License.</p>
+                <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                    <span class="text-sm">v1.0.1</span>
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span class="text-sm text-green-400">Production Ready</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="90" fill="url(#grad)"/>
+
+  <!-- Letter T -->
+  <text x="100" y="140" font-family="Arial, sans-serif" font-size="120" font-weight="bold" fill="white" text-anchor="middle">T</text>
+
+  <!-- Subtle Data Grid Pattern -->
+  <g opacity="0.2" stroke="white" stroke-width="2" fill="none">
+    <line x1="30" y1="50" x2="170" y2="50"/>
+    <line x1="30" y1="80" x2="170" y2="80"/>
+    <line x1="30" y1="110" x2="170" y2="110"/>
+
+    <circle cx="50" cy="50" r="3" fill="white"/>
+    <circle cx="100" cy="50" r="3" fill="white"/>
+    <circle cx="150" cy="50" r="3" fill="white"/>
+    <circle cx="50" cy="80" r="3" fill="white"/>
+    <circle cx="100" cy="80" r="3" fill="white"/>
+    <circle cx="150" cy="80" r="3" fill="white"/>
+  </g>
+</svg>
