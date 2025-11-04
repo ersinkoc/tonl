@@ -14,11 +14,14 @@ npm install -g tonl
 
 ## Overview
 
-The CLI provides three main commands:
+The CLI provides six main commands:
 
 - `tonl encode` - Convert JSON to TONL
 - `tonl decode` - Convert TONL to JSON
 - `tonl stats` - Analyze and compare data formats
+- `tonl format` - Format and prettify TONL files
+- `tonl validate` - Validate TONL data against schema
+- `tonl generate-types` - Generate TypeScript types from schema
 
 ## Global Options
 

@@ -6,19 +6,19 @@ This document outlines the future development plans for TONL (Token-Optimized No
 
 ---
 
-## Current Status (v0.5.0) - ✅ Released
+## Current Status (v0.5.1) - ✅ Released
 
-**November 3, 2025**
+**November 4, 2025** - **Critical Bug Fix Release**
 
 ### ✅ Completed Features
 - [x] Core encode/decode functionality with 100% test coverage
 - [x] CLI with encode/decode/stats/format/validate commands
 - [x] Smart encoding with delimiter optimization
 - [x] Type inference and schema hints
-- [x] Complete test suite (100/100 tests passing)
+- [x] Complete test suite (115/115 tests passing)
 - [x] Performance benchmarks (32-45% compression)
 - [x] Full documentation (README, API, SPECIFICATION, CLI, SCHEMA)
-- [x] Round-trip JSON compatibility
+- [x] Round-trip JSON compatibility **with critical bug fixes**
 - [x] Multiple delimiter support (`,` `|` `\t` `;`)
 - [x] Nested object/array handling
 - [x] 16 LLM tokenizer models supported (GPT-5, Claude 3.5, Gemini 2.0, etc.)
@@ -33,15 +33,19 @@ This document outlines the future development plans for TONL (Token-Optimized No
 - [x] Browser support with multiple bundle formats
 - [x] Async iterators for modern JavaScript
 - [x] Robust null value handling in typed fields
+- [x] **NEW:** Production-grade round-trip safety (10 critical bugs fixed)
+- [x] **NEW:** Circular reference detection
+- [x] **NEW:** Complete edge case test coverage
 
 ### 📊 Current Metrics
-- **Test Coverage**: 100% (100/100 tests passing)
-- **Test Suites**: 30 comprehensive test suites
+- **Test Coverage**: 100% (115/115 tests passing) ⬆️ +15 tests
+- **Test Suites**: 35 comprehensive test suites ⬆️ +5 suites
 - **Runtime Dependencies**: 0 (pure TypeScript)
 - **Code Quality**: Modular architecture, strict TypeScript
 - **Performance**: 32-45% byte reduction, 39-45% token reduction vs JSON
 - **Bundle Size**: <7KB gzipped (browser bundles)
 - **Platform Support**: Node.js, Browser, Windows, macOS, Linux
+- **Round-Trip Safety**: ✅ Production-ready (10 critical bugs fixed)
 
 ---
 
@@ -347,7 +351,8 @@ This document outlines the future development plans for TONL (Token-Optimized No
 | v0.3.3 | Nov 3, 2025 | ✅ Released | Format & Cross-Platform | Format command, CLI fixes |
 | v0.3.5 | Nov 3, 2025 | ✅ Released | Production Ready | Stability improvements |
 | **v0.4.0** | **Nov 3, 2025** | **✅ Released** | **Foundation Hardening** | **Schema validation, type safety** |
-| **v0.5.0** | **Nov 3, 2025** | **✅ Released (Current)** | **Platform Expansion** | **Streaming API, browser support, Windows CLI fix, null handling** |
+| **v0.5.0** | **Nov 3, 2025** | **✅ Released** | **Platform Expansion** | **Streaming API, browser support** |
+| **v0.5.1** | **Nov 4, 2025** | **✅ Released (Current)** | **Bug Fixes** | **10 critical bugs fixed, production-ready round-trip** |
 | **v0.6.0** | **Jul 31, 2026** | 🎯 Planned | **Ecosystem Growth** | **Python, VS Code, dev tools** |
 | **v0.7.0** | **Jan 31, 2027** | 🎯 Planned | **Advanced Features** | **Binary format, Go/Rust** |
 | **v1.0.0** | **Q2 2027** | 🎯 Planned | **Production Ready** | **Stable API, enterprise features** |

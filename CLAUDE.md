@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 # Build and test
 npm run build              # TypeScript compilation
-npm test                   # Build and run test suite (40 tests)
+npm test                   # Build and run test suite (100 tests)
 npm run dev                # Watch mode development
 npm run clean              # Clean build artifacts
 
@@ -28,7 +28,7 @@ npm run link               # Install tonl command locally for testing
 
 - **Framework**: Node.js built-in test runner (`node:test`)
 - **Test file**: `test/encode_decode_roundtrip.test.ts`
-- **Coverage**: 100% test coverage (40/40 tests passing)
+- **Coverage**: 100% test coverage (100/100 tests passing)
 - **Test command**: `npm test` (automatically builds before testing)
 
 Run single test: `node --test test/encode_decode_roundtrip.test.ts`
@@ -40,10 +40,19 @@ Run single test: `node --test test/encode_decode_roundtrip.test.ts`
 - **`types.ts`** - Core type definitions and interfaces for the TONL format
 - **`index.ts`** - Main entry point exporting public API (`encodeTONL`, `decodeTONL`, `encodeSmart`)
 - **`encode.ts`** - JSON to TONL conversion with nested structure support
-- **`decode.ts`** - TONL to JSON conversion with robust parsing and error handling
+- **`decode.ts`** - TONL to JSON conversion (orchestrates modular parser)
 - **`parser.ts`** - Low-level parsing utilities for TONL lines, headers, and delimiter detection
 - **`infer.ts`** - Type inference and coercion utilities
-- **`cli.ts`** - Command-line interface with `encode`, `decode`, `stats`, `format` commands
+- **`cli.ts`** - Command-line interface with `encode`, `decode`, `stats`, `format`, `validate`, `generate-types` commands
+
+### Parser Modules (`src/parser/`)
+
+- **`content-parser.ts`** - Document-level parsing orchestration
+- **`block-parser.ts`** - Multi-line block and array parsing
+- **`value-parser.ts`** - Single-line object and inline value parsing
+- **`line-parser.ts`** - Primitive value parsing
+- **`utils.ts`** - Parser helper functions
+- **`index.ts`** - Public parser exports
 
 ### Utility Modules (`src/utils/`)
 

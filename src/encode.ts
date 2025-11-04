@@ -28,7 +28,8 @@ export function encodeTONL(input: any, opts: {
     version,
     indent,
     singleLinePrimitiveLists,
-    currentIndent: 0
+    currentIndent: 0,
+    seen: new WeakSet()
   };
 
   const lines: string[] = [];
@@ -68,6 +69,16 @@ function encodeValue(value: TONLValue, key: string, context: TONLEncodeContext):
   }
 
   // Primitive value
+  // Special handling for boolean, null, and special numbers to avoid quoting
+  if (value === true || value === false || value === null) {
+    return `${key}: ${String(value)}`;
+  }
+
+  // Special handling for Infinity and NaN
+  if (typeof value === 'number' && !isFinite(value)) {
+    return `${key}: ${String(value)}`;
+  }
+
   const quoted = tripleQuoteIfNeeded(String(value), context.delimiter);
   return `${key}: ${quoted}`;
 }
@@ -76,6 +87,12 @@ function encodeValue(value: TONLValue, key: string, context: TONLEncodeContext):
  * Encode an object
  */
 function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext): string {
+  // Check for circular references
+  if (context.seen?.has(obj)) {
+    throw new Error(`Circular reference detected at key: ${key}`);
+  }
+  context.seen?.add(obj);
+
   const keys = Object.keys(obj).filter(k => obj[k] !== undefined).sort();
   const columns: string[] = [];
   const hasNestedObjects = Object.values(obj).some(v =>
@@ -114,6 +131,10 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
       } else {
         if (value === null) {
           lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `${k}: null`);
+        } else if (value === true || value === false) {
+          lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `${k}: ${String(value)}`);
+        } else if (typeof value === 'number' && !isFinite(value)) {
+          lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `${k}: ${String(value)}`);
         } else if (value !== undefined) {
           const quoted = tripleQuoteIfNeeded(String(value), context.delimiter);
           lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `${k}: ${quoted}`);
@@ -130,6 +151,10 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
       const value = obj[k];
       if (value === null) {
         parts.push(`${k}: null`);
+      } else if (value === true || value === false) {
+        parts.push(`${k}: ${String(value)}`);
+      } else if (typeof value === 'number' && !isFinite(value)) {
+        parts.push(`${k}: ${String(value)}`);
       } else if (value !== undefined) {
         const quoted = tripleQuoteIfNeeded(String(value), context.delimiter);
         parts.push(`${k}: ${quoted}`);
@@ -144,6 +169,12 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
  * Encode an array
  */
 function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): string {
+  // Check for circular references
+  if (context.seen?.has(arr)) {
+    throw new Error(`Circular reference detected at key: ${key}`);
+  }
+  context.seen?.add(arr);
+
   if (arr.length === 0) {
     return `${key}[0]:`;
   }
@@ -188,11 +219,17 @@ function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): s
           const value = (item as TONLObject)[col];
           if (value === null) {
             rowValues.push("null");
-          } else if (value !== undefined) {
+          } else if (value === undefined) {
+            rowValues.push("null");
+          } else if (value === true || value === false) {
+            // Don't quote booleans
+            rowValues.push(String(value));
+          } else if (typeof value === 'number' && !isFinite(value)) {
+            // Don't quote Infinity/NaN
+            rowValues.push(String(value));
+          } else {
             const quoted = tripleQuoteIfNeeded(String(value), context.delimiter);
             rowValues.push(quoted);
-          } else {
-            rowValues.push("null");
           }
         }
         lines.push(makeIndent(childContext.currentIndent, childContext.indent) + rowValues.join(` ${context.delimiter} `));
@@ -212,6 +249,10 @@ function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): s
         } else {
           if (value === null) {
             lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `[${i}]: null`);
+          } else if (value === true || value === false) {
+            lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `[${i}]: ${String(value)}`);
+          } else if (typeof value === 'number' && !isFinite(value)) {
+            lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `[${i}]: ${String(value)}`);
           } else if (value !== undefined) {
             const quoted = tripleQuoteIfNeeded(String(value), context.delimiter);
             lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `[${i}]: ${quoted}`);
@@ -229,6 +270,12 @@ function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): s
       } else if (item === undefined) {
         // For primitive arrays, undefined becomes null to maintain array structure
         return "null";
+      } else if (item === true || item === false) {
+        // Don't quote booleans
+        return String(item);
+      } else if (typeof item === 'number' && !isFinite(item)) {
+        // Don't quote Infinity/NaN
+        return String(item);
       } else {
         return tripleQuoteIfNeeded(String(item), context.delimiter);
       }

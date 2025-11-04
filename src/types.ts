@@ -55,6 +55,7 @@ export interface TONLEncodeContext {
   indent: number;
   singleLinePrimitiveLists: boolean;
   currentIndent: number;
+  seen?: WeakSet<object>;  // Track circular references
 }
 
 /** Parser state for line-by-line processing */

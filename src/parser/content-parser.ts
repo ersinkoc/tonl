@@ -3,7 +3,7 @@
  */
 
 import type { TONLParseContext, TONLObject, TONLObjectHeader, TONLColumnDef } from '../types.js';
-import { parseObjectHeader } from '../parser.js';
+import { parseObjectHeader, parseTONLLine } from '../parser.js';
 import { parsePrimitiveValue } from './line-parser.js';
 import { parseSingleLineObject } from './value-parser.js';
 import { parseBlock } from './block-parser.js';
@@ -71,6 +71,24 @@ export function parseContent(content: string, context: TONLParseContext): TONLOb
       result[header.key] = value;
       i = findNextHeader(lines, i, context);
     } else {
+      // Check for primitive array format: key[N]: val1, val2, val3
+      const arrayMatch = trimmed.match(/^(.+)\[(\d+)\]:\s*(.+)$/);
+      if (arrayMatch) {
+        const key = arrayMatch[1].trim();
+        const arrayLength = parseInt(arrayMatch[2], 10);
+        const valuePart = arrayMatch[3].trim();
+
+        // Parse as primitive array
+        const fields = parseTONLLine(valuePart, context.delimiter);
+        const resultArray: any[] = [];
+        for (const field of fields) {
+          resultArray.push(parsePrimitiveValue(field, context));
+        }
+        result[key] = resultArray;
+        i++;
+        continue;
+      }
+
       // Simple key-value pair
       const kvMatch = trimmed.match(/^([^:]+):\s*(.+)$/);
       if (kvMatch) {

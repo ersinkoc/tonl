@@ -175,25 +175,39 @@ export function parseObjectBlock(
       // Multiline triple-quoted string
       if (rawValue.startsWith('"""')) {
         if (rawValue.endsWith('"""')) {
-          result[key] = rawValue.slice(3, -3).replace(/\\\\/g, '\\');
+          result[key] = rawValue.slice(3, -3)
+            .replace(/\\"""/g, '"""')
+            .replace(/\\\\/g, '\\');
         } else {
           const multilineContent: string[] = [rawValue.slice(3)];
           lineIndex++;
 
           while (lineIndex < lines.length) {
             const currentLine = lines[lineIndex];
-            const trimmedCurrent = currentLine.trim();
+            const trimmedForCheck = currentLine.trim();
 
-            if (trimmedCurrent.endsWith('"""')) {
-              multilineContent.push(trimmedCurrent.slice(0, -3));
+            if (trimmedForCheck.endsWith('"""')) {
+              // For the last line, find the closing quotes in the actual line (not trimmed)
+              const closeIndex = currentLine.lastIndexOf('"""');
+              if (closeIndex >= 0) {
+                // Get indent (only spaces/tabs, not other whitespace like \r)
+                const indent = currentLine.match(/^([ \t]*)/)?.[1]?.length || 0;
+                const content = currentLine.slice(indent, closeIndex);
+                multilineContent.push(content);
+              }
               lineIndex++;
               break;
             } else {
-              multilineContent.push(trimmedCurrent);
+              // Preserve line content with proper indentation handling
+              const indent = currentLine.match(/^([ \t]*)/)?.[1]?.length || 0;
+              const content = currentLine.slice(indent);
+              multilineContent.push(content);
               lineIndex++;
             }
           }
-          result[key] = multilineContent.join('\n').replace(/\\\\/g, '\\');
+          result[key] = multilineContent.join('\n')
+            .replace(/\\"""/g, '"""')
+            .replace(/\\\\/g, '\\');
           continue;
         }
       } else {

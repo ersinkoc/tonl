@@ -17,7 +17,8 @@ export function decodeTONL(text: string, opts: {
   strict?: boolean;
 } = {}): any {
   const strict = opts.strict ?? false;
-  const lines = text.split('\n').map(line => line.trimEnd()).filter(line => line.length > 0);
+  // Split lines and only remove \r (Windows line endings), don't trim other whitespace
+  const lines = text.split('\n').map(line => line.replace(/\r$/, '')).filter(line => line.length > 0);
 
   if (lines.length === 0) {
     return {};

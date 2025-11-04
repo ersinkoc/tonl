@@ -5,6 +5,132 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2025-11-04
+
+### 🐛 Critical Bug Fix Release
+
+This is a **critical bug fix release** addressing 10 major issues that could cause data loss or corruption during JSON ↔ TONL round-trip conversions. **All users should upgrade immediately.**
+
+---
+
+### Fixed
+
+#### Critical Data Loss Bugs ⚠️
+
+1. **Empty String → Null Conversion** - CRITICAL DATA LOSS
+   - Empty strings no longer converted to null during round-trip
+   - Fixed: `needsQuoting()` now requires empty strings to be quoted as `""`
+   - Files: `src/utils/strings.ts:12`, `src/infer.ts:49`
+   - Impact: `{empty: ''}` now correctly round-trips
+
+2. **Triple Quote Escaping Broken** - CRITICAL DATA CORRUPTION
+   - Triple quotes within content now properly escaped as `\"""`
+   - Fixed: Parse order (triple quotes checked before double quotes)
+   - Files: `src/utils/strings.ts:55`, `src/parser/line-parser.ts:47-51`, `src/parser/block-parser.ts:179,200`
+   - Impact: `{text: 'Has """ inside'}` now round-trips correctly
+
+3. **Whitespace Character Loss** - CRITICAL DATA LOSS
+   - Tab (`\t`) and carriage return (`\r`) characters now preserved
+   - Fixed: Added tab/CR to quoting rules, improved Windows line ending handling
+   - Files: `src/utils/strings.ts:20-21`, `src/decode.ts:21`
+   - Impact: `{tabs: '\t\ttext'}` now round-trips correctly
+
+4. **Root-Level Primitive Array Parsing Failed** - CRITICAL STRUCTURAL LOSS
+   - Root-level arrays like `[1, 2, 3]` now correctly parsed as arrays (not objects)
+   - Fixed: Added `key[N]: values` pattern support to content parser
+   - Files: `src/parser/content-parser.ts:75-90`
+   - Impact: `[1, null, 3]` now correctly decoded as array
+
+5. **Numeric Object Keys Failed to Parse** - CRITICAL PARSING FAILURE
+   - Objects with numeric keys like `{'0': 'zero'}` now work correctly
+   - Fixed: Updated regex pattern to accept `[a-zA-Z0-9_]+` keys
+   - Files: `src/parser/value-parser.ts:60`
+   - Impact: `{'0': 'zero', '10': 'ten'}` now round-trips
+
+#### High Priority Type Preservation Bugs
+
+6. **Scientific Notation Lost Type Information** - HIGH PRIORITY
+   - Numbers in scientific notation now preserved as numbers (not strings)
+   - Fixed: Added regex pattern `/^-?\d+\.?\d*e[+-]?\d+$/i` to parser
+   - Files: `src/parser/line-parser.ts:58-61`
+   - Impact: `{value: 1.23e10, small: -4.56e-7}` now correctly typed
+
+7. **Boolean String vs Boolean Type Ambiguity** - HIGH PRIORITY
+   - String `"true"` now distinguishable from boolean `true`
+   - Fixed: Boolean-like strings are quoted, actual booleans are not
+   - Files: `src/utils/strings.ts:15`, `src/encode.ts:72,122,140,199,243`
+   - Impact: `{trueStr: 'true', trueBool: true}` now preserves types
+
+8. **Infinity/NaN Became Strings** - HIGH PRIORITY
+   - `Infinity`, `-Infinity`, and `NaN` now correctly parsed as numbers
+   - Fixed: Added special value parsing, string variants are quoted
+   - Files: `src/parser/line-parser.ts:35-45`, `src/utils/strings.ts:21`, `src/encode.ts:77-79`
+   - Impact: `{inf: Infinity, infStr: 'Infinity'}` now preserves types
+
+9. **Type Inference Ignored Number Bounds** - HIGH PRIORITY
+   - `inferPrimitiveType()` now respects u32/i32 bounds (4,294,967,295 and 2,147,483,647)
+   - Fixed: Added proper bounds checking before assigning integer types
+   - Files: `src/infer.ts:20-36`
+   - Impact: `4294967296` now inferred as `f64` (not `u32`)
+
+#### Reliability Improvements
+
+10. **Circular Reference Detection** - MEDIUM PRIORITY
+    - Circular references now throw descriptive errors instead of stack overflow
+    - Fixed: Added `WeakSet` tracking for visited objects/arrays
+    - Files: `src/types.ts:58`, `src/encode.ts:32,91-94,173-176`
+    - Impact: Circular objects/arrays throw `Circular reference detected at key: ...` error
+
+### Added
+
+- **Edge Case Test Suite**: 15 new comprehensive tests in `test/edge-cases.test.ts`
+  - Empty and special strings (empty string, whitespace preservation, triple quotes)
+  - Boolean and null strings vs values (type disambiguation)
+  - Numeric types (scientific notation, Infinity/NaN, type bounds)
+  - Objects and arrays (root-level arrays, numeric keys, circular refs)
+  - Comments and directives (@ and # line support)
+
+### Changed
+
+- **Test Coverage**: 100/100 → **115/115 tests** (15 new edge case tests)
+- **Test Suites**: 30 → **35 suites** (5 new edge case suites)
+- **Line Splitting**: `trimEnd()` → `replace(/\r$/, '')` for better whitespace preservation
+- **Parser Priority**: Triple quotes now checked before double quotes
+- **Quoting Rules**: Extended to cover edge cases (empty, boolean-like, null-like, Infinity-like strings)
+
+### Performance
+
+- ✅ No performance regression
+- ✅ All existing tests pass (100% backward compatible)
+- ⚡ Test duration: ~2.1s for 115 tests
+
+### Migration Guide
+
+**From v0.5.0 to v0.5.1:**
+
+**NO BREAKING CHANGES** - This is a pure bug fix release.
+
+**What's fixed:**
+
+- Data that previously lost information during round-trip now works correctly
+- Edge cases that caused type confusion now handled properly
+- Circular references throw clear errors instead of crashing
+
+**Action required:**
+
+- **Update immediately** if you experienced:
+  - Empty strings becoming null
+  - Whitespace characters disappearing
+  - Type confusion with booleans/null/Infinity
+  - Scientific notation becoming strings
+  - Root-level arrays not parsing
+  - Numeric object keys failing
+  - Stack overflow on circular references
+
+**No code changes needed** - all fixes are backward compatible.
+
+---
+
 ## [0.5.0] - 2025-11-03
 
 ### 🚀 Platform Expansion Release

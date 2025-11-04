@@ -17,8 +17,21 @@ export function inferPrimitiveType(value: unknown): TONLTypeHint {
   }
 
   if (typeof value === "number") {
+    // Handle special values
+    if (!isFinite(value)) {
+      return "f64";
+    }
+
     if (Number.isInteger(value)) {
-      return value >= 0 ? "u32" : "i32";
+      // Check bounds for integer types
+      if (value >= 0 && value <= 0xFFFFFFFF) {
+        return "u32";
+      } else if (value >= -0x80000000 && value <= 0x7FFFFFFF) {
+        return "i32";
+      } else {
+        // Integer outside i32/u32 range, use f64
+        return "f64";
+      }
     }
     return "f64";
   }
@@ -46,7 +59,7 @@ export function coerceValue(value: string, type: TONLTypeHint): any {
   const unquoted = value.startsWith('"') ? value.slice(1, -1).replace(/""/g, '"') : value;
 
   // Handle null values for all types
-  if (unquoted === "null" || unquoted.trim() === "") {
+  if (unquoted === "null") {
     return null;
   }
 

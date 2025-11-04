@@ -384,3 +384,219 @@ const { encodeTONL, decodeTONL } = require('tonl');
   const tonl = encodeTONL(data);
 </script>
 ```
+## Streaming API (v0.5.0+)
+
+For handling large datasets efficiently, TONL provides streaming APIs.
+
+### `createEncodeStream(options?)`
+
+Creates a transform stream for encoding NDJSON to TONL.
+
+#### Parameters
+
+- **`options?: EncodeOptions`** - Same options as `encodeTONL`
+
+#### Returns
+
+- **`Transform`** - Node.js Transform stream
+
+#### Example
+
+```typescript
+import { createEncodeStream } from 'tonl/stream';
+import { createReadStream, createWriteStream } from 'fs';
+
+// Stream large files
+createReadStream('huge.json')
+  .pipe(createEncodeStream({ smart: true }))
+  .pipe(createWriteStream('huge.tonl'));
+```
+
+---
+
+### `createDecodeStream(options?)`
+
+Creates a transform stream for decoding TONL to JSON objects.
+
+#### Parameters
+
+- **`options?: DecodeOptions`** - Same options as `decodeTONL`
+
+#### Returns
+
+- **`Transform`** - Node.js Transform stream
+
+#### Example
+
+```typescript
+import { createDecodeStream } from 'tonl/stream';
+import { createReadStream } from 'fs';
+
+createReadStream('data.tonl')
+  .pipe(createDecodeStream())
+  .on('data', (obj) => console.log(obj));
+```
+
+---
+
+### `encodeIterator(iterable, options?)`
+
+Async generator for encoding data streams.
+
+#### Parameters
+
+- **`iterable: AsyncIterable<any>`** - Async iterable data source
+- **`options?: EncodeOptions`** - Encoding options
+
+#### Returns
+
+- **`AsyncGenerator<string>`** - Async generator yielding TONL lines
+
+#### Example
+
+```typescript
+import { encodeIterator } from 'tonl/stream';
+
+async function* dataSource() {
+  yield { id: 1, name: 'Alice' };
+  yield { id: 2, name: 'Bob' };
+}
+
+for await (const tonlLine of encodeIterator(dataSource())) {
+  console.log(tonlLine);
+}
+```
+
+---
+
+### `decodeIterator(iterable, options?)`
+
+Async generator for decoding TONL streams.
+
+#### Parameters
+
+- **`iterable: AsyncIterable<string>`** - Async iterable TONL lines
+- **`options?: DecodeOptions`** - Decoding options
+
+#### Returns
+
+- **`AsyncGenerator<any>`** - Async generator yielding decoded objects
+
+#### Example
+
+```typescript
+import { decodeIterator } from 'tonl/stream';
+
+async function* tonlSource() {
+  yield '#version 1.0\n';
+  yield 'users[2]{id:u32,name:str}:\n';
+  yield '1,Alice\n';
+  yield '2,Bob\n';
+}
+
+for await (const obj of decodeIterator(tonlSource())) {
+  console.log(obj);
+}
+```
+
+## Schema API (v0.4.0+)
+
+For data validation and type generation.
+
+### `parseSchema(schemaText)`
+
+Parses TONL schema language (TSL) into schema object.
+
+#### Parameters
+
+- **`schemaText: string`** - Schema definition in TSL format
+
+#### Returns
+
+- **`TONLSchema`** - Parsed schema object
+
+#### Example
+
+```typescript
+import { parseSchema } from 'tonl/schema';
+
+const schemaText = `
+@schema v1
+User: obj
+  id: u32 required
+  name: str required min:2 max:100
+  email: str required pattern:email
+`;
+
+const schema = parseSchema(schemaText);
+```
+
+---
+
+### `validateTONL(data, schema, options?)`
+
+Validates data against a schema.
+
+#### Parameters
+
+- **`data: any`** - Data to validate
+- **`schema: TONLSchema`** - Schema object
+- **`options?: { strict?: boolean }`** - Validation options
+
+#### Returns
+
+- **`ValidationResult`** - Validation result with errors
+
+#### Example
+
+```typescript
+import { parseSchema, validateTONL } from 'tonl/schema';
+
+const schema = parseSchema(schemaText);
+const data = { id: 123, name: 'Alice', email: 'alice@example.com' };
+
+const result = validateTONL(data, schema);
+if (!result.valid) {
+  result.errors.forEach(err => console.error(err.message));
+}
+```
+
+---
+
+### `generateTypeScript(schema, options?)`
+
+Generates TypeScript type definitions from schema.
+
+#### Parameters
+
+- **`schema: TONLSchema`** - Schema object
+- **`options?: { exportAll?: boolean }`** - Generation options
+
+#### Returns
+
+- **`string`** - TypeScript type definitions
+
+#### Example
+
+```typescript
+import { parseSchema, generateTypeScript } from 'tonl/schema';
+
+const schema = parseSchema(schemaText);
+const tsCode = generateTypeScript(schema);
+
+// Output TypeScript interfaces
+console.log(tsCode);
+```
+
+---
+
+## Version
+
+Current version: **0.5.0**
+
+- Full streaming API support
+- Browser compatibility
+- Schema validation system
+- TypeScript strict mode
+- Robust null handling
+- Comment and directive support

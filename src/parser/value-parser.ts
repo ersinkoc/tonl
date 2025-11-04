@@ -56,7 +56,8 @@ export function parseSingleLineObject(header: TONLObjectHeader | null, valuePart
 
       // Find the value - it goes until we see the next "key:" pattern or end of string
       let valueEnd = valueLength;
-      const nextKeyMatch = valuePart.substring(currentPos).match(/\s+[a-zA-Z_][a-zA-Z0-9_]*\s*:/);
+      // Match alphanumeric keys (including numeric keys like "0", "1", "10")
+      const nextKeyMatch = valuePart.substring(currentPos).match(/\s+[a-zA-Z0-9_]+\s*:/);
       if (nextKeyMatch && nextKeyMatch.index !== undefined) {
         valueEnd = currentPos + nextKeyMatch.index;
       }

@@ -8,12 +8,26 @@ import type { TONLDelimiter, TONLTypeHint } from "../types.js";
  * Check if a value needs quoting based on TONL quoting rules
  */
 export function needsQuoting(value: string, delimiter: TONLDelimiter): boolean {
+  // Empty strings must be quoted to distinguish from missing values
+  if (value === '') return true;
+
+  // Quote boolean-like strings to distinguish from actual booleans
+  if (value === 'true' || value === 'false') return true;
+
+  // Quote null-like strings to distinguish from actual null
+  if (value === 'null' || value === 'undefined') return true;
+
+  // Quote special numeric strings to distinguish from actual Infinity/NaN
+  if (value === 'Infinity' || value === '-Infinity' || value === 'NaN') return true;
+
   return value.includes(delimiter) ||
          value.includes(':') ||
          value.includes('{') ||
          value.includes('}') ||
          value.includes('#') ||
          value.includes('\n') ||
+         value.includes('\t') ||      // Tab characters need quoting
+         value.includes('\r') ||      // Carriage return needs quoting
          value.startsWith(' ') ||
          value.endsWith(' ');
 }
@@ -46,8 +60,10 @@ export function unquote(value: string): string {
 export function tripleQuoteIfNeeded(value: string, delimiter: TONLDelimiter): string {
   if (value.includes('\n') || value.includes('"""')) {
     // For multi-line content, always use triple quotes
-    // Escape backslashes but not triple quotes inside
-    const escaped = value.replace(/\\/g, '\\\\');
+    // Escape backslashes and triple quotes inside
+    const escaped = value
+      .replace(/\\/g, '\\\\')      // Escape backslashes first
+      .replace(/"""/g, '\\"""');    // Escape triple quotes
     return `"""${escaped}"""`;
   }
   return quoteIfNeeded(value, delimiter);

@@ -31,14 +31,29 @@ export function parsePrimitiveValue(value: string, context: TONLParseContext): T
     return false;
   }
 
+  // Handle special numeric values
+  if (trimmed === "Infinity") {
+    return Infinity;
+  }
+
+  if (trimmed === "-Infinity") {
+    return -Infinity;
+  }
+
+  if (trimmed === "NaN") {
+    return NaN;
+  }
+
+  // Handle triple-quoted strings FIRST (before single quotes)
+  if (trimmed.startsWith('"""') && trimmed.endsWith('"""')) {
+    return trimmed.slice(3, -3)
+      .replace(/\\"""/g, '"""')   // Unescape triple quotes first
+      .replace(/\\\\/g, '\\');     // Then unescape backslashes
+  }
+
   // Handle quoted strings
   if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
     return unquote(trimmed);
-  }
-
-  // Handle triple-quoted strings
-  if (trimmed.startsWith('"""') && trimmed.endsWith('"""')) {
-    return trimmed.slice(3, -3).replace(/\\\\/g, '\\');
   }
 
   // Try to parse as number
@@ -48,6 +63,12 @@ export function parsePrimitiveValue(value: string, context: TONLParseContext): T
   }
 
   if (/^-?\d*\.\d+$/.test(trimmed)) {
+    const num = parseFloat(trimmed);
+    return num;
+  }
+
+  // Try to parse as scientific notation (e.g., 1.23e10, -4.56e-7)
+  if (/^-?\d+\.?\d*e[+-]?\d+$/i.test(trimmed)) {
     const num = parseFloat(trimmed);
     return num;
   }

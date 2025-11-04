@@ -95,7 +95,25 @@ data[3]{id:u32,name:str}:
 
 ### Comments
 
-TONL does not support inline comments. Headers use `#` prefix but are directives, not comments.
+TONL supports two types of comments:
+
+- **Header Directives**: Lines starting with `#` for metadata (e.g., `#version 1.0`, `#delimiter ","`)
+- **Schema Directives**: Lines starting with `@` for schema annotations (e.g., `@tonl v1`, `@schema v1`)
+- **Comment Lines**: Both `#` and `@` prefixed lines are skipped during parsing if not recognized as directives
+
+```tonl
+@tonl v1
+
+# This is a comment line
+order{orderId,status}:
+  orderId: ORD-001
+  status: processing
+
+# Comments can be placed between blocks
+customer{id:u32,name:str}:
+  id: 123
+  name: "John Doe"
+```
 
 ### Identifiers
 
