@@ -17,6 +17,7 @@ import type {
 import type { TONLValue } from '../types.js';
 import { createContext, createChildContext, isMaxDepthReached, type EvaluationContext } from './context.js';
 import { QueryCache, getGlobalCache } from './cache.js';
+import { evaluateFilterExpression } from './filter-evaluator.js';
 
 /**
  * Query Evaluator - evaluates path expressions against documents
@@ -359,9 +360,6 @@ export class QueryEvaluator {
 
   /**
    * Evaluate filter expression (e.g., users[?(@.age > 18)])
-   *
-   * NOTE: Full filter implementation will be in T003 (Filter Expression Engine)
-   * This is a placeholder that will be extended.
    */
   private evaluateFilter(
     current: any,
@@ -372,10 +370,22 @@ export class QueryEvaluator {
       return [];
     }
 
-    // Placeholder: Filter implementation will be completed in T003
-    // For now, just return all items as a stub
-    console.warn('Filter evaluation not yet fully implemented (T003 pending)');
-    return current;
+    // Filter the array using the filter expression
+    const filtered: any[] = [];
+
+    for (const item of current) {
+      try {
+        const matches = evaluateFilterExpression(node.expression, item);
+        if (matches) {
+          filtered.push(item);
+        }
+      } catch (error) {
+        // Skip items that cause evaluation errors
+        continue;
+      }
+    }
+
+    return filtered;
   }
 
   /**

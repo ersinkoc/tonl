@@ -46,3 +46,6 @@ export {
   resetGlobalCache,
   type CacheStats
 } from './cache.js';
+
+// Export filter evaluator
+export { evaluateFilterExpression } from './filter-evaluator.js';
