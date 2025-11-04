@@ -55,4 +55,4 @@ console.log('Has admin?', doc.some((v) => v.role === 'admin'));
 
 const stats = doc.stats();
 console.log('\nDocument Stats:', stats);
-```
+

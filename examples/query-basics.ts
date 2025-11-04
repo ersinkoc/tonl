@@ -65,4 +65,4 @@ console.log('User exists:', doc.exists('user'));                    // true
 console.log('Admin exists:', doc.exists('admin'));                  // false
 console.log('Name type:', doc.typeOf('user.name'));                 // 'string'
 console.log('Users type:', doc.typeOf('users'));                    // 'array'
-```
+
