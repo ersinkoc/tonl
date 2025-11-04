@@ -8,7 +8,7 @@ import { resolve } from 'path';
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/browser-simple.ts'),
+      entry: resolve(__dirname, 'src/browser-core.ts'),
       name: 'TONL',
       formats: ['es', 'umd', 'iife'],
       fileName: (format) => {
