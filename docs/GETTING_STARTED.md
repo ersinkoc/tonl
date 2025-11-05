@@ -1,4 +1,4 @@
-# Getting Started with TONL v1.0.0
+# Getting Started with TONL v1.0.2
 
 Welcome to TONL! This guide will help you get started with all the powerful features of TONL.
 
@@ -291,7 +291,7 @@ A: TONL is more compact (32-45% smaller) and provides a rich query/modification 
 A: Yes! `TONLDocument.fromJSON(yourData)` - works with any JSON.
 
 ### Q: Is it production-ready?
-A: Yes! v1.0.0 is stable with 100% test pass rate.
+A: Yes! v1.0.2 is stable with 100% test pass rate.
 
 ### Q: How fast is it?
 A: Very fast! Simple queries: 0.005ms, Filters: 0.03ms, 10-1600x faster than targets.
