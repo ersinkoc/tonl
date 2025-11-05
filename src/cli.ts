@@ -413,7 +413,16 @@ async function main() {
         }
 
         // Execute query
-        const { TONLDocument } = await import('./document.js');
+        // SECURITY FIX (BF007): Wrap async import in try-catch
+        let TONLDocument;
+        try {
+          const module = await import('./document.js');
+          TONLDocument = module.TONLDocument;
+        } catch (error) {
+          console.error('❌ Failed to load document module:', error);
+          process.exit(1);
+        }
+
         const doc = TONLDocument.fromJSON(data);
         const result = command === 'get' ? doc.get(queryExpr) : doc.query(queryExpr);
 
@@ -479,6 +488,18 @@ Examples:
 `);
   process.exit(0);
 }
+
+// SECURITY FIX (BF007): Global error handlers for unhandled rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Promise Rejection:', reason);
+  console.error('Promise:', promise);
+  process.exit(1);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  process.exit(1);
+});
 
 // Run CLI
 main().catch(err => {
