@@ -144,5 +144,6 @@ it('should validate string patterns', () => {
 
 ---
 
-**STATUS: ⏳ DEFERRED - Non-Critical**
-**PLANNED FOR: v0.9.0 or v1.1.0 (future maintenance)**
+
+**STATUS: 🟢 COMPLETED (2025-11-05)**
+**COMMIT: 189c336 - Range checks added for u32/i32/f64**

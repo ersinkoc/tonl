@@ -200,5 +200,6 @@ it('should support disabling cache', () => {
 
 ---
 
-**STATUS: ⏳ DEFERRED - Non-Critical**
-**PLANNED FOR: v0.9.0 or v1.1.0 (future maintenance)**
+
+**STATUS: 🟢 COMPLETED (2025-11-05)**
+**COMMIT: 189c336 - Document ID tracking with WeakMap**
