@@ -122,7 +122,5 @@ function displayResults(results, tokenizer) {
     console.log(`• TONL cost: $${tonlCost.toFixed(4)} (save $${(jsonCost - tonlCost).toFixed(4)})`);
     console.log(`• TONL Smart cost: $${tonlSmartCost.toFixed(4)} (save $${(jsonCost - tonlSmartCost).toFixed(4)})`);
 }
-if (require.main === module) {
-    main();
-}
+main();
 //# sourceMappingURL=bench-tokens.js.map

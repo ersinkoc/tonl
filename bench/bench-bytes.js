@@ -97,7 +97,5 @@ function displayResults(results) {
     console.log(`• Average TONL Smart compression: ${(totalJsonBytes / totalTonlSmartBytes).toFixed(2)}x`);
     console.log(`• Best overall savings: ${Math.max(...results.map(r => Math.max(r.tonlCompression, r.tonlSmartCompression))).toFixed(2)}x`);
 }
-if (require.main === module) {
-    main();
-}
+main();
 //# sourceMappingURL=bench-bytes.js.map

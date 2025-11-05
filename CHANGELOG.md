@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2025-11-05
+
+### Fixed
+- **ES Module Compatibility**: Fixed benchmark scripts (`bench-bytes.js`, `bench-tokens.js`) to use ES module syntax instead of CommonJS
+  - Replaced `require.main === module` pattern with direct `main()` call
+  - Resolves `ReferenceError: require is not defined in ES module scope` error
+  - All benchmark commands now work correctly: `npm run bench`, `npm run bench-tokens`
+
+### Documentation
+- **VERSION.md**: Added comprehensive version tracking document listing all files that reference version numbers
+  - Includes update process checklist
+  - Provides quick search commands
+  - Documents which files need updates vs. auto-generated files
+
 ## [1.0.3] - 2025-11-05 - SECURITY RELEASE 🔒 (Additional Fixes)
 
 ### 🔒 ADDITIONAL SECURITY FIXES (6 more vulnerabilities - 15/15 total = 100%)

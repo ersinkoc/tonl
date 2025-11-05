@@ -8,9 +8,9 @@
 
 **TONL** is a production-ready data platform that combines compact serialization with powerful query, modification, indexing, and streaming capabilities. Designed for LLM token efficiency while providing a rich API for data access and manipulation.
 
-**🎉 Now v1.0.3 - Stable & Fully Security Hardened!**
+**🎉 Now v1.0.4 - Stable & Fully Security Hardened!**
 
-**🔒 SECURITY RELEASE (v1.0.3 - 2025-11-05)**: Complete security hardening with **all 15 vulnerabilities fixed** (100% resolution). Includes ReDoS protection, path traversal prevention, prototype pollution defense, buffer overflow protection, command injection prevention, input validation limits, file locking, query iteration limits, schema range validation, error sanitization, and cache isolation. **All users should upgrade immediately.** See [SECURITY.md](SECURITY.md), [SECURITY-AUDIT-SUMMARY.md](SECURITY-AUDIT-SUMMARY.md), [SECURITY-FIXES-SUMMARY.md](SECURITY-FIXES-SUMMARY.md), and [FINAL-SUMMARY.md](FINAL-SUMMARY.md) for complete details.
+**🔧 BUG FIX RELEASE (v1.0.4 - 2025-11-05)**: Fixed ES module compatibility issues in benchmark scripts. Previous security hardening from v1.0.3 includes **all 15 vulnerabilities fixed** (100% resolution). See [SECURITY.md](SECURITY.md), [SECURITY-AUDIT-SUMMARY.md](SECURITY-AUDIT-SUMMARY.md), and [CHANGELOG.md](CHANGELOG.md) for complete details.
 
 ## ✨ Complete Feature Set (v1.0.0)
 
