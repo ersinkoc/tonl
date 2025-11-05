@@ -22,7 +22,10 @@ export function parseSingleLineObject(header: TONLObjectHeader | null, valuePart
   if (header.isArray) {
     // Parse single-line array format: arr[3]{col1,col2}: val1, val2, val3, val4, val5, val6
     const fields = parseTONLLine(valuePart, context.delimiter);
-    const numItems = header.arrayLength || Math.floor(fields.length / header.columns.length);
+    // BUGFIX: Use !== undefined to avoid treating 0 as falsy
+    const numItems = header.arrayLength !== undefined
+      ? header.arrayLength
+      : Math.floor(fields.length / header.columns.length);
     const result: TONLObject[] = [];
 
     for (let i = 0; i < numItems; i++) {

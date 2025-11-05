@@ -137,8 +137,17 @@ function validateNode(node: PathNode): string[] {
           errors.push('Slice step cannot be zero');
         }
       }
+      // BUGFIX: Only validate start > end when both are non-negative and step is positive/undefined
+      // Negative indices need runtime conversion, and negative step allows reverse iteration
       if (node.start !== undefined && node.end !== undefined && node.start > node.end) {
-        errors.push(`Slice start (${node.start}) is greater than end (${node.end})`);
+        // Allow if we have a negative step (reverse iteration)
+        const hasNegativeStep = node.step !== undefined && node.step < 0;
+        // Allow if we have negative indices (need runtime conversion)
+        const hasNegativeIndices = node.start < 0 || node.end < 0;
+
+        if (!hasNegativeStep && !hasNegativeIndices) {
+          errors.push(`Slice start (${node.start}) is greater than end (${node.end})`);
+        }
       }
       break;
 

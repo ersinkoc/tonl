@@ -159,7 +159,25 @@ export function inferTypeFromString(value: string): TONLTypeHint {
   // Handle numeric values
   if (/^-?\d+$/.test(trimmed)) {
     const num = parseInt(trimmed, 10);
-    return num >= 0 ? "u32" : "i32";
+
+    // BUGFIX: Check bounds like inferPrimitiveType does
+    // Large integers beyond safe integer range should be f64
+    if (!Number.isSafeInteger(num)) {
+      return "f64";
+    }
+
+    // Check u32 bounds (0 to 4294967295)
+    if (num >= 0 && num <= 0xFFFFFFFF) {
+      return "u32";
+    }
+
+    // Check i32 bounds (-2147483648 to 2147483647)
+    if (num >= -0x80000000 && num <= 0x7FFFFFFF) {
+      return "i32";
+    }
+
+    // Outside both ranges, use f64
+    return "f64";
   }
 
   if (/^-?\d*\.\d+$/.test(trimmed)) {
