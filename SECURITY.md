@@ -225,6 +225,23 @@ tonl encode \\server\share\file
 - **CWE**: CWE-1321 (Improperly Controlled Modification of Object Prototype Attributes)
 - **Credit**: Internal security audit
 
+**[HIGH] BF005: Command Injection Risk Fixed**
+- **Issue**: CLI query command accepted unsanitized query expressions
+- **Impact**: Potential code injection via malicious query strings, log injection, DoS
+- **Fix**: Added `QuerySanitizer` with comprehensive validation
+- **Files Changed**:
+  - `src/cli/query-sanitizer.ts` (new)
+  - `src/cli.ts` (sanitize queries before execution)
+- **Protections**:
+  - Block dangerous patterns: `require()`, `eval()`, `exec()`, `import()`, `Function()`, `process.env`, `child_process`, `fs.`
+  - Strip ANSI escape codes (log injection prevention)
+  - Enforce length limits (default: 1000 chars)
+  - Enforce nesting depth limits (default: 100 levels)
+  - Reject null bytes
+  - Sanitize queries in error messages/logs
+- **CWE**: CWE-78 (OS Command Injection)
+- **Credit**: Internal security audit
+
 **Upgrade Recommendation**: All users should upgrade immediately. These are critical security fixes.
 
 ---

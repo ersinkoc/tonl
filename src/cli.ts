@@ -8,6 +8,7 @@ import { encodeTONL, decodeTONL, encodeSmart } from "./index.js";
 import { estimateTokens } from "./utils/metrics.js";
 import { parseSchema, validateTONL, generateTypeScript } from "./schema/index.js";
 import { PathValidator } from "./cli/path-validator.js";
+import { QuerySanitizer } from "./cli/query-sanitizer.js";
 import { SecurityError } from "./errors/index.js";
 
 /**
@@ -382,17 +383,33 @@ async function main() {
 
         // Collect all remaining non-option args and join them
         // This handles cases where the expression contains spaces
-        const queryExpr = args
+        const rawQuery = args
           .slice(queryStartIndex)
           .filter(a => !a.startsWith('-'))
           .join(' ')
           .trim();
 
-        if (!queryExpr) {
+        if (!rawQuery) {
           console.error("❌ Error: Query expression required");
           console.error("Usage: tonl query <file> <expression>");
           console.error('Example: tonl query data.tonl "users[?(@.age > 25)]"');
           process.exit(1);
+        }
+
+        // SECURITY FIX (BF005): Sanitize query expression
+        let queryExpr: string;
+        try {
+          queryExpr = QuerySanitizer.sanitize(rawQuery, {
+            maxLength: 1000,
+            maxDepth: 100,
+          });
+        } catch (error) {
+          if (error instanceof SecurityError) {
+            console.error(`❌ Security Error: ${error.message}`);
+            console.error(`❌ Query blocked: ${QuerySanitizer.sanitizeForLogging(rawQuery)}`);
+            process.exit(1);
+          }
+          throw error;
         }
 
         // Execute query
