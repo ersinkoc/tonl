@@ -192,54 +192,61 @@
         <div class="floating-orb orb-3"></div>
 
         <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="max-w-4xl">
-                <div class="inline-flex items-center px-4 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-sm font-medium text-emerald-700 mb-8 animate-fade-in-up">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse-slow"></span>
-                    v1.0.7 - Enhanced Token Optimization
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-12">
+                <!-- Left Content -->
+                <div class="flex-1 max-w-3xl">
+                    <div class="inline-flex items-center px-4 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-sm font-medium text-emerald-700 mb-8 animate-fade-in-up">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse-slow"></span>
+                        v1.0.7 - Enhanced Token Optimization
+                    </div>
+
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
+                        <span class="text-slate-900">Token-Optimized</span><br>
+                        <span class="gradient-text">Notation Language</span>
+                    </h1>
+
+                    <p class="text-xl md:text-2xl text-slate-600 mb-12 leading-relaxed">
+                        A text-first, LLM-friendly serialization format.<br>
+                        <span class="font-semibold gradient-text">Up to 50% fewer tokens</span> than JSON. <span class="font-semibold text-slate-900">Zero dependencies</span>. Built for the AI era.
+                    </p>
+
+                    <div class="flex flex-wrap items-center gap-4">
+                        <a href="#comparison" class="bg-slate-900 text-white px-8 py-4 rounded-lg font-semibold hover:bg-slate-800 transition shadow-sm">
+                            See the Difference
+                        </a>
+                        <a href="docs.html" class="border-2 border-slate-300 bg-white px-8 py-4 rounded-lg font-semibold hover:border-slate-400 hover:bg-slate-50 transition shadow-sm">
+                            Documentation
+                        </a>
+                        <a href="examples.html" class="text-slate-600 hover:text-slate-900 font-semibold transition flex items-center gap-2">
+                            Try Playground
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
 
-                <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
-                    <span class="text-slate-900">Token-Optimized</span><br>
-                    <span class="gradient-text">Notation Language</span>
-                </h1>
-
-                <p class="text-xl md:text-2xl text-slate-600 mb-12 leading-relaxed">
-                    A text-first, LLM-friendly serialization format.<br>
-                    <span class="font-semibold gradient-text">Up to 50% fewer tokens</span> than JSON. <span class="font-semibold text-slate-900">Zero dependencies</span>. Built for the AI era.
-                </p>
-
-                <div class="flex flex-wrap items-center gap-4 mb-12">
-                    <a href="#comparison" class="bg-slate-900 text-white px-8 py-4 rounded-lg font-semibold hover:bg-slate-800 transition shadow-sm">
-                        See the Difference
-                    </a>
-                    <a href="docs.html" class="border-2 border-slate-300 bg-white px-8 py-4 rounded-lg font-semibold hover:border-slate-400 hover:bg-slate-50 transition shadow-sm">
-                        Documentation
-                    </a>
-                    <a href="examples.html" class="text-slate-600 hover:text-slate-900 font-semibold transition flex items-center gap-2">
-                        Try Playground
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                        </svg>
-                    </a>
-                </div>
-
-                <!-- Stats Grid with Counter Animation -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal">
-                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm hover:shadow-md transition">
-                        <div class="text-2xl font-bold text-emerald-600 mb-1">32-50%</div>
-                        <div class="text-sm text-slate-600">Token Savings</div>
+                <!-- Right Stats Grid -->
+                <div class="grid grid-cols-2 gap-4 lg:w-96 reveal animate-fade-in-up">
+                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition">
+                        <div class="text-sm font-medium opacity-90">Token Savings</div>
+                        <div class="text-4xl font-bold mt-2">Up to 60%</div>
+                        <div class="text-xs opacity-80 mt-1">vs JSON</div>
                     </div>
-                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm hover:shadow-md transition">
-                        <div class="text-2xl font-bold text-emerald-600 mb-1" data-count="496">0</div>
-                        <div class="text-sm text-slate-600">Tests Passing</div>
+                    <div class="bg-white border-2 border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition">
+                        <div class="text-sm text-slate-500">Tests Passing</div>
+                        <div class="text-4xl font-bold text-slate-900 mt-2" data-count="496">496</div>
+                        <div class="text-xs text-emerald-600 mt-1">✓ 100%</div>
                     </div>
-                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm hover:shadow-md transition">
-                        <div class="text-2xl font-bold text-emerald-600 mb-1">0</div>
-                        <div class="text-sm text-slate-600">Dependencies</div>
+                    <div class="bg-white border-2 border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition">
+                        <div class="text-sm text-slate-500">Dependencies</div>
+                        <div class="text-4xl font-bold text-slate-900 mt-2">0</div>
+                        <div class="text-xs text-slate-500 mt-1">Pure TS</div>
                     </div>
-                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm hover:shadow-md transition">
-                        <div class="text-2xl font-bold text-emerald-600 mb-1">8.84KB</div>
-                        <div class="text-sm text-slate-600">Gzipped Size</div>
+                    <div class="bg-white border-2 border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition">
+                        <div class="text-sm text-slate-500">Gzipped Size</div>
+                        <div class="text-4xl font-bold text-slate-900 mt-2">8.84</div>
+                        <div class="text-xs text-slate-500 mt-1">KB</div>
                     </div>
                 </div>
             </div>

@@ -105,22 +105,29 @@
 
         <!-- Header with Live Stats -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-slate-900 mb-2">Live Playground</h1>
-            <p class="text-slate-600 mb-6">Convert JSON to TONL and see real token savings</p>
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
+                <div class="flex-1">
+                    <h1 class="text-3xl font-bold text-slate-900 mb-2">Live Playground</h1>
+                    <p class="text-slate-600">Convert JSON to TONL and see real token savings</p>
+                </div>
 
-            <!-- Compact Stats -->
-            <div class="grid grid-cols-3 gap-3">
-                <div class="bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
-                    <div class="text-xs text-slate-500">JSON Tokens</div>
-                    <div class="text-2xl font-bold text-slate-900" x-text="jsonTokens.toLocaleString()"></div>
-                </div>
-                <div class="bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
-                    <div class="text-xs text-slate-500">TONL Tokens</div>
-                    <div class="text-2xl font-bold text-emerald-600" x-text="tonlTokens.toLocaleString()"></div>
-                </div>
-                <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 shadow-sm">
-                    <div class="text-xs text-emerald-700 font-semibold">Savings</div>
-                    <div class="text-2xl font-bold text-emerald-600" x-text="savings.tokens + '%'"></div>
+                <!-- Stats Grid - Right Side -->
+                <div class="grid grid-cols-3 gap-3 lg:w-auto">
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                        <div class="text-xs text-slate-500">Tests Passing</div>
+                        <div class="text-3xl font-bold text-slate-900 mt-1">496</div>
+                        <div class="text-xs text-emerald-600 mt-1">✓ 100%</div>
+                    </div>
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                        <div class="text-xs text-slate-500">Dependencies</div>
+                        <div class="text-3xl font-bold text-slate-900 mt-1">0</div>
+                        <div class="text-xs text-slate-500 mt-1">Pure TS</div>
+                    </div>
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                        <div class="text-xs text-slate-500">Gzipped Size</div>
+                        <div class="text-3xl font-bold text-slate-900 mt-1">8.84</div>
+                        <div class="text-xs text-slate-500 mt-1">KB</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -293,7 +300,7 @@
                         </div>
 
                         <!-- Before/After Comparison -->
-                        <div class="space-y-2">
+                        <div class="grid grid-cols-2 gap-3">
                             <div :class="!includeTypes ? 'bg-blue-50 border-blue-300' : 'bg-slate-50 border-slate-200'"
                                  class="p-3 rounded-md border transition-all">
                                 <div class="flex items-center gap-2 mb-1">
@@ -320,48 +327,6 @@
                         </div>
                     </div>
 
-                    <!-- Record Count Slider -->
-                    <div class="mt-4 p-4 bg-white rounded-lg border border-slate-200 shadow-sm">
-                        <div class="flex items-center justify-between mb-3">
-                            <div>
-                                <label class="text-sm font-semibold text-slate-700">Record Count</label>
-                                <p class="text-xs text-slate-500">Adjust array size (1-<span x-text="maxRecordCount"></span> for this dataset)</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <div class="text-xl font-bold text-blue-600" x-text="recordCount"></div>
-                                <span class="text-xs text-slate-400">/</span>
-                                <div class="text-sm font-medium text-slate-500" x-text="maxRecordCount"></div>
-                            </div>
-                        </div>
-
-                        <div class="space-y-3">
-                            <input type="range"
-                                   x-model="recordCount"
-                                   @input="updateRecordCount()"
-                                   min="1"
-                                   :max="maxRecordCount"
-                                   step="1"
-                                   class="w-full h-2 bg-gradient-to-r from-blue-200 to-blue-400 rounded-lg appearance-none cursor-pointer slider-thumb">
-
-                            <div class="flex justify-between text-xs text-slate-400">
-                                <span>1</span>
-                                <span x-text="Math.floor(maxRecordCount * 0.25)"></span>
-                                <span x-text="Math.floor(maxRecordCount * 0.5)"></span>
-                                <span x-text="Math.floor(maxRecordCount * 0.75)"></span>
-                                <span x-text="maxRecordCount"></span>
-                            </div>
-
-                            <div class="p-3 bg-blue-50 border border-blue-200 rounded-md">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-lg">🔄</span>
-                                    <span class="text-xs font-semibold text-blue-700">
-                                        Live Encoding
-                                    </span>
-                                </div>
-                                <p class="text-xs text-slate-600">Watch token count change as you adjust record count!</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -434,6 +399,94 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- Record Count Slider - Compact -->
+        <div class="mt-4 bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                    <span class="text-lg">🔄</span>
+                    <div>
+                        <label class="text-sm font-semibold text-slate-700">Adjust Dataset Size</label>
+                        <p class="text-xs text-slate-500">See how savings scale with data volume</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-lg">
+                    <div class="text-2xl font-bold text-blue-600" x-text="recordCount"></div>
+                    <span class="text-xs text-slate-400">/</span>
+                    <div class="text-sm font-medium text-slate-500" x-text="maxRecordCount"></div>
+                </div>
+            </div>
+
+            <input type="range"
+                   x-model="recordCount"
+                   @input="updateRecordCount()"
+                   min="1"
+                   :max="maxRecordCount"
+                   step="1"
+                   class="w-full h-2 bg-gradient-to-r from-blue-200 to-blue-400 rounded-lg appearance-none cursor-pointer slider-thumb">
+
+            <div class="flex justify-between text-xs text-slate-400 mt-2">
+                <span>1</span>
+                <span x-text="Math.floor(maxRecordCount * 0.5)"></span>
+                <span x-text="maxRecordCount"></span>
+            </div>
+        </div>
+
+        <!-- Live Token Comparison Stats -->
+        <div class="mt-6 bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-xl p-6 shadow-lg">
+            <div class="text-center mb-6">
+                <h3 class="text-lg font-bold text-slate-900 mb-1">Live Token Comparison</h3>
+                <p class="text-sm text-slate-600">Real-time savings as you convert</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <!-- JSON Stats -->
+                <div class="bg-white rounded-lg p-5 shadow-md border border-slate-200">
+                    <div class="text-xs font-medium text-slate-500 mb-2">JSON Format</div>
+                    <div class="flex items-baseline gap-2 mb-1">
+                        <div class="text-3xl font-bold text-slate-900" x-text="jsonTokens.toLocaleString()"></div>
+                        <div class="text-sm text-slate-500">tokens</div>
+                    </div>
+                    <div class="text-xs text-slate-400" x-text="jsonBytes.toLocaleString() + ' bytes'"></div>
+                    <div class="mt-3 w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-slate-400 h-2 rounded-full" style="width: 100%"></div>
+                    </div>
+                    <div class="text-xs text-slate-500 mt-1">100% baseline</div>
+                </div>
+
+                <!-- TONL Stats -->
+                <div class="bg-white rounded-lg p-5 shadow-md border-2 border-emerald-400">
+                    <div class="text-xs font-medium text-emerald-700 mb-2">TONL Format</div>
+                    <div class="flex items-baseline gap-2 mb-1">
+                        <div class="text-3xl font-bold text-emerald-600" x-text="tonlTokens.toLocaleString()"></div>
+                        <div class="text-sm text-emerald-600">tokens</div>
+                    </div>
+                    <div class="text-xs text-emerald-500" x-text="tonlBytes.toLocaleString() + ' bytes'"></div>
+                    <div class="mt-3 w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-emerald-500 h-2 rounded-full transition-all duration-500"
+                             :style="'width: ' + (tonlTokens > 0 ? Math.round((tonlTokens / Math.max(jsonTokens, 1)) * 100) : 0) + '%'"></div>
+                    </div>
+                    <div class="text-xs text-emerald-600 font-medium mt-1"
+                         x-text="(tonlTokens > 0 ? Math.round((tonlTokens / Math.max(jsonTokens, 1)) * 100) : 0) + '% of JSON'"></div>
+                </div>
+
+                <!-- Savings -->
+                <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg p-5 shadow-xl text-white">
+                    <div class="text-xs font-medium opacity-90 mb-2">Token Savings</div>
+                    <div class="flex items-baseline gap-2 mb-1">
+                        <div class="text-5xl font-bold" x-text="savings.tokens + '%'"></div>
+                    </div>
+                    <div class="text-xs opacity-80 mb-3">vs JSON format</div>
+                    <div class="mt-3 pt-3 border-t border-white/20">
+                        <div class="text-xs opacity-90">Saved Tokens</div>
+                        <div class="text-xl font-bold" x-text="(jsonTokens - tonlTokens).toLocaleString()"></div>
+                    </div>
+                    <div class="mt-2 text-xs opacity-75 bg-white/10 rounded px-2 py-1 inline-block">
+                        Up to 60% possible
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Error Display -->
