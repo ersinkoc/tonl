@@ -218,11 +218,17 @@ function setIndex(
 
   // Check bounds
   if (actualIndex < 0 || actualIndex >= current.length) {
+    // BUGFIX: Always throw error for negative normalized indices
+    if (actualIndex < 0) {
+      throw new Error(`Array index ${arrayIndex} out of bounds (length: ${current.length})`);
+    }
+
     if (!createPath || !isLast) {
       throw new Error(`Array index ${arrayIndex} out of bounds (length: ${current.length})`);
     }
 
     // Extend array if createPath is enabled and this is the last node
+    // Note: actualIndex >= 0 at this point due to check above
     if (isLast && createPath && actualIndex >= current.length) {
       // Fill with undefined up to the index
       while (current.length <= actualIndex) {
