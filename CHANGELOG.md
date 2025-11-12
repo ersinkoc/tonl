@@ -5,6 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2025-11-12
+
+### 🐛 Critical Bug Fixes
+
+This release fixes 2 CRITICAL bugs discovered through comprehensive repository analysis.
+
+**BUG-001: MISSING_FIELD_MARKER Data Corruption (CRITICAL)**
+- **Fixed**: Changed MISSING_FIELD_MARKER from "-" to "" (empty string)
+- **Impact**: User data containing "-" was silently dropped during encode/decode
+- **File**: `src/types.ts:18`
+- **Severity**: CRITICAL - Data loss during round-trip encoding
+- **Introduced**: v1.0.7 (semi-uniform array encoding feature)
+- **Tests**: 5 new tests in `test/bug-missing-field-marker-collision.test.ts`
+
+**BUG-002: Compound Index Evaluation Bug (CRITICAL)**
+- **Fixed**: Compound indices now extract values from current object, not root document
+- **Impact**: Compound indices were completely non-functional (all entries identical)
+- **File**: `src/indexing/index-manager.ts:67-116`
+- **Severity**: CRITICAL - Feature broken since introduction
+- **Introduced**: v0.7.0 (indexing system feature)
+- **Tests**: 4 new tests in `test/bug-compound-index-evaluation.test.ts`
+
+### Fixed
+- Semi-uniform arrays with "-" values now preserve data correctly
+- Compound indices now work as designed with unique keys per object
+- Empty field marker changed to avoid collision with user data
+
+### Tests
+- **Added**: 9 new bug fix tests
+- **Status**: 505/505 tests passing (100%)
+- **Regressions**: 0 (zero breaking changes)
+
+### Security
+- ✅ All v1.0.2-v1.0.3 security fixes verified intact
+- ✅ ReDoS, path traversal, prototype pollution protections active
+- ✅ Zero new vulnerabilities introduced
+
+### Documentation
+- **Added**: `BUG_FIX_REPORT_V1.0.9.md` - Comprehensive bug audit report
+- **Documented**: 6 remaining bugs (2 HIGH, 3 MEDIUM, 1 LOW) for v1.0.10
+
+### Migration
+- ✅ **NO BREAKING CHANGES** - Safe to upgrade
+- ✅ **IMMEDIATE UPDATE RECOMMENDED** for semi-uniform array users
+- ✅ **IMMEDIATE UPDATE RECOMMENDED** for compound index users
+
+---
+
 ## [1.0.8] - 2025-11-08
 
 ### Added

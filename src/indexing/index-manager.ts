@@ -64,33 +64,51 @@ export class IndexManager {
           extractValues(item, `${path}[${idx}]`);
         });
       } else if (typeof obj === 'object') {
+        // BUG-002 FIX: For compound indices, check if current object has all required fields
+        // before iterating through its properties
+        if (fields.length > 1) {
+          // Extract compound index values from current object
+          const values = fields.map(field => {
+            try {
+              if (typeof obj === 'object' && obj !== null) {
+                // Check if field exists directly on current object
+                if (field in obj) {
+                  return obj[field];
+                }
+                // Check if it's a nested path (e.g., "profile.firstName")
+                const parts = field.split('.');
+                let current: any = obj;
+                for (const part of parts) {
+                  if (current && typeof current === 'object' && part in current) {
+                    current = current[part];
+                  } else {
+                    return undefined;
+                  }
+                }
+                return current;
+              }
+              return undefined;
+            } catch (e) {
+              return undefined;
+            }
+          });
+
+          // If all field values exist, insert compound key
+          if (values.every(v => v !== undefined)) {
+            index.insert(values, path || 'root');
+          }
+        }
+
+        // Continue walking the object tree
         for (const key in obj) {
           if (Object.prototype.hasOwnProperty.call(obj, key)) {
             const newPath = path ? `${path}.${key}` : key;
             extractValues(obj[key], newPath);
 
-            // Check if this path matches any indexed field
+            // Check if this path matches any indexed field (single field index only)
             if (fields.length === 1) {
-              // Single field index
               if (newPath === fields[0] || newPath.endsWith(`.${fields[0]}`)) {
                 index.insert(obj[key], newPath);
-              }
-            } else {
-              // Compound index: extract all field values
-              const values = fields.map(field => {
-                try {
-                  const parseResult = parsePath(field);
-                  if (parseResult.success) {
-                    return evaluate(this.document, parseResult.ast);
-                  }
-                } catch (e) {
-                  return undefined;
-                }
-                return undefined;
-              });
-
-              if (values.every(v => v !== undefined)) {
-                index.insert(values, newPath);
               }
             }
           }

@@ -14,8 +14,11 @@ export type TONLDelimiter = "," | "|" | "\t" | ";";
  * Sentinel value to represent missing/undefined fields in tabular format
  * Distinguishes between explicit null (field exists with null value)
  * and missing field (field doesn't exist in original data)
+ *
+ * BUG-001 FIX: Changed from "-" to "" (empty string) to avoid collision
+ * with legitimate user data containing "-"
  */
-export const MISSING_FIELD_MARKER = "-";
+export const MISSING_FIELD_MARKER = "";
 
 export interface EncodeOptions {
   delimiter?: TONLDelimiter;
