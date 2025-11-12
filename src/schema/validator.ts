@@ -18,6 +18,24 @@ import type { TONLValue, TONLObject, TONLArray } from '../types.js';
 export function validateTONL(data: TONLValue, schema: TONLSchema): ValidationResult {
   const errors: ValidationError[] = [];
 
+  // BUGFIX (BUG-001): Validate that root data matches schema expectations
+  // If schema defines root fields, data MUST be an object
+  if (schema.rootFields.length > 0) {
+    if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+      errors.push({
+        field: 'root',
+        message: `Schema expects object at root but got ${Array.isArray(data) ? 'array' : typeof data}`,
+        expected: 'object',
+        actual: Array.isArray(data) ? 'array' : typeof data
+      });
+      // Return early - no point validating fields if root type is wrong
+      return {
+        valid: false,
+        errors
+      };
+    }
+  }
+
   // Validate root fields
   if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
     for (const field of schema.rootFields) {
@@ -34,13 +52,15 @@ export function validateTONL(data: TONLValue, schema: TONLSchema): ValidationRes
 
 /**
  * Validate a single field
+ * BUGFIX (BUG-002): Added visitedTypes parameter for circular reference detection
  */
 function validateField(
   field: SchemaField,
   value: TONLValue | undefined,
   path: string,
   errors: ValidationError[],
-  schema: TONLSchema
+  schema: TONLSchema,
+  visitedTypes: Set<string> = new Set()
 ): void {
   // Check required constraint
   const isRequired = field.constraints.some(c => c.type === 'required');
@@ -58,7 +78,7 @@ function validateField(
   }
 
   // Type validation
-  validateType(field.type, value, path, errors, schema);
+  validateType(field.type, value, path, errors, schema, visitedTypes);
 
   // Constraint validation
   for (const constraint of field.constraints) {
@@ -68,13 +88,15 @@ function validateField(
 
 /**
  * Validate type match
+ * BUGFIX (BUG-002): Added visitedTypes parameter to prevent infinite recursion
  */
 function validateType(
   schemaType: SchemaType,
   value: TONLValue,
   path: string,
   errors: ValidationError[],
-  schema: TONLSchema
+  schema: TONLSchema,
+  visitedTypes: Set<string> = new Set()
 ): void {
   if (schemaType.kind === 'primitive') {
     validatePrimitiveType(schemaType, value, path, errors);
@@ -90,7 +112,7 @@ function validateType(
       } else if (schemaType.elementType) {
         // Validate each element
         (value as TONLArray).forEach((item, idx) => {
-          validateType(schemaType.elementType!, item, `${path}[${idx}]`, errors, schema);
+          validateType(schemaType.elementType!, item, `${path}[${idx}]`, errors, schema, visitedTypes);
         });
       }
     } else if (schemaType.baseType === 'obj') {
@@ -105,11 +127,25 @@ function validateType(
         // Validate object fields
         for (const field of schemaType.fields) {
           const fieldValue = (value as TONLObject)[field.name];
-          validateField(field, fieldValue, `${path}.${field.name}`, errors, schema);
+          validateField(field, fieldValue, `${path}.${field.name}`, errors, schema, visitedTypes);
         }
       }
     }
   } else if (schemaType.kind === 'custom') {
+    // BUGFIX (BUG-002): Check for circular type references
+    if (visitedTypes.has(schemaType.typeName)) {
+      errors.push({
+        field: path,
+        message: `Circular type reference detected: ${schemaType.typeName}`,
+        expected: 'non-circular type definition',
+        actual: `circular reference to ${schemaType.typeName}`
+      });
+      return;
+    }
+
+    // Add to visited set
+    visitedTypes.add(schemaType.typeName);
+
     // Resolve custom type
     const customType = schema.customTypes.get(schemaType.typeName);
     if (customType && customType.fields) {
@@ -118,8 +154,11 @@ function validateType(
         baseType: 'obj',
         fields: customType.fields
       };
-      validateType(objType, value, path, errors, schema);
+      validateType(objType, value, path, errors, schema, visitedTypes);
     }
+
+    // Remove from visited set after validation
+    visitedTypes.delete(schemaType.typeName);
   }
 }
 
@@ -402,6 +441,7 @@ function validateConstraint(
 
 /**
  * Get built-in regex patterns
+ * BUGFIX (BUG-003): Added validation to prevent ReDoS attacks
  */
 function getBuiltinPattern(name: string): RegExp | null {
   switch (name) {
@@ -412,6 +452,23 @@ function getBuiltinPattern(name: string): RegExp | null {
     case 'date':
       return /^\d{4}-\d{2}-\d{2}/;
     default:
+      // BUGFIX (BUG-003): Validate regex pattern to prevent ReDoS
+      // Reject patterns that are too long (potential DoS)
+      if (name.length > 200) {
+        return null;
+      }
+
+      // Reject patterns with dangerous constructs
+      // Look for nested quantifiers: (a+)+ or (a*)* or (a+)* etc.
+      if (/(\([^)]*[+*]\)[+*?{])|(\[[^\]]*[+*]\][+*?{])/.test(name)) {
+        return null;
+      }
+
+      // Reject excessive backtracking patterns
+      if (/(\.\*){2,}|(\.\+){2,}/.test(name)) {
+        return null;
+      }
+
       try {
         return new RegExp(name);
       } catch {

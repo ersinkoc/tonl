@@ -75,9 +75,12 @@ export class QueryEvaluator {
     }
 
     // Check cache if enabled
+    // BUGFIX (BUG-004): Pass document to cache operations to prevent cache poisoning
     if (this.context.enableCache) {
       const cacheKey = this.generateCacheKey(ast);
-      const cached = this.cache.get(cacheKey);
+      // Only use document for caching if it's an object (not null or primitive)
+      const doc = (typeof this.context.root === 'object' && this.context.root !== null) ? this.context.root : undefined;
+      const cached = this.cache.get(cacheKey, doc);
       if (cached !== undefined) {
         return cached;
       }
@@ -93,9 +96,12 @@ export class QueryEvaluator {
     const result = this.evaluatePath(this.context.root, ast, startIndex, this.context);
 
     // Cache result if enabled
+    // BUGFIX (BUG-004): Pass document to cache operations to prevent cache poisoning
     if (this.context.enableCache) {
       const cacheKey = this.generateCacheKey(ast);
-      this.cache.set(cacheKey, result);
+      // Only use document for caching if it's an object (not null or primitive)
+      const doc = (typeof this.context.root === 'object' && this.context.root !== null) ? this.context.root : undefined;
+      this.cache.set(cacheKey, result, doc);
     }
 
     return result;

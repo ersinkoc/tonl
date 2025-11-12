@@ -92,18 +92,22 @@ export class QueryCache {
 
   /**
    * Check if a key exists in cache
+   * BUGFIX (BUG-004): Added document parameter for consistent cache key generation
    */
-  has(key: string): boolean {
-    return this.cache.has(key);
+  has(key: string, document?: object): boolean {
+    const cacheKey = document ? this.generateKey(key, document) : key;
+    return this.cache.has(cacheKey);
   }
 
   /**
    * Remove a specific entry
+   * BUGFIX (BUG-004): Added document parameter for consistent cache key generation
    */
-  delete(key: string): boolean {
-    const removed = this.cache.delete(key);
+  delete(key: string, document?: object): boolean {
+    const cacheKey = document ? this.generateKey(key, document) : key;
+    const removed = this.cache.delete(cacheKey);
     if (removed) {
-      this.accessOrder = this.accessOrder.filter(k => k !== key);
+      this.accessOrder = this.accessOrder.filter(k => k !== cacheKey);
     }
     return removed;
   }
