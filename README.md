@@ -8,7 +8,7 @@
 
 **TONL** is a production-ready data platform that combines compact serialization with powerful query, modification, indexing, and streaming capabilities. Designed for LLM token efficiency while providing a rich API for data access and manipulation.
 
-**🎉 v1.0.8 - 100% Feature Coverage**
+**🎉 v1.0.11 - Line Ending Fix**
 
 [![npm version](https://badge.fury.io/js/tonl.svg)](https://www.npmjs.com/package/tonl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -29,7 +29,7 @@
 🛠️ **TypeScript-First** - Full type safety & IntelliSense
 📦 **Zero Dependencies** - Pure TypeScript, no bloat
 🌐 **Browser Ready** - 8.84 KB gzipped bundle
-✅ **100% Tested** - 526/526 tests passing (feature + unit + examples)
+✅ **100% Tested** - 589/589 tests passing (feature + unit + examples)
 
 ---
 

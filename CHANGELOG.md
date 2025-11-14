@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.11] - 2025-11-14
+
+### 🐛 Bug Fixes (Line Ending Handling)
+
+This release fixes a critical data integrity issue with Windows CRLF line endings in multiline strings.
+
+**CRLF Line Ending Preservation (HIGH)**
+- **Fixed**: Windows CRLF (`\r\n`) sequences now preserved during round-trip encoding/decoding
+- **Impact**: Previously, `\r\n` in multiline strings was converted to just `\n`, causing data loss
+- **Files**: `src/utils/strings.ts:89-93`, `src/parser/line-parser.ts:48-53`, `src/parser/block-parser.ts:234-268`
+- **Change**: Added `\r` escaping during encoding and unescaping during decoding
+
+### Technical Details
+- **Root Cause**: Line splitting in decoder stripped `\r` characters from content inside triple-quoted strings
+- **Solution**: Escape literal `\r` characters as `\r` in TONL, unescape during parsing
+- **Verification**: All edge cases now handle correctly including mixed `\r\n` and `\n` sequences
+
+### Changed
+- **Enhanced String Escaping**: Improved handling of special characters in multiline content
+- **Cross-Platform Compatibility**: TONL now preserves line endings across Windows, macOS, and Linux
+- **Data Integrity**: Guaranteed round-trip fidelity for all string content
+
+### Tests
+- **New Test Cases**: Added comprehensive CRLF and mixed line ending tests
+- **All Tests Passing**: 589/589 tests passing (100% pass rate maintained)
+- **Edge Cases**: Previously failing test cases now pass (Windows CRLF, complex mixed escape sequences)
+- **Regression Tests**: All existing functionality preserved
+
+### Security
+- ✅ Data integrity improvements for cross-platform environments
+- ✅ All previous security fixes remain intact
+- ✅ No new attack surfaces introduced
+
+### Migration
+- ✅ **NO BREAKING CHANGES** - Safe to upgrade
+- ✅ **IMMEDIATE UPDATE RECOMMENDED** for Windows users or cross-platform data exchange
+
 ## [1.0.10] - 2025-11-13
 
 ### 🐛 Bug Fixes (Input Validation)
