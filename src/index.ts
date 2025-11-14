@@ -13,7 +13,7 @@ import { decodeTONL as _decodeTONL } from "./decode.js";
 import { parseTONLLine, parseHeaderLine, parseObjectHeader, detectDelimiter } from "./parser.js";
 import { inferPrimitiveType, coerceValue, isUniformObjectArray } from "./infer.js";
 
-export { _decodeTONL as decodeTONL, parseTONLLine, parseHeaderLine, parseObjectHeader, detectDelimiter, inferPrimitiveType, coerceValue, isUniformObjectArray };
+export { _encodeTONL as encodeTONL, _decodeTONL as decodeTONL, parseTONLLine, parseHeaderLine, parseObjectHeader, detectDelimiter, inferPrimitiveType, coerceValue, isUniformObjectArray };
 
 /** Analyze a JSON value and choose the most compact text layout automatically. */
 export function encodeSmart(input: any, opts?: {
@@ -60,8 +60,6 @@ export function encodeSmart(input: any, opts?: {
 
   return _encodeTONL(input, smartOpts);
 }
-
-export const encodeTONL = _encodeTONL;
 
 // Export TONLDocument class (NEW in v0.6.0!)
 export { TONLDocument, type DocumentStats } from './document.js';
