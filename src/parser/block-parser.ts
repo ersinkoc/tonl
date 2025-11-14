@@ -233,7 +233,8 @@ export function parseObjectBlock(
         if (rawValue.endsWith('"""')) {
           result[key] = rawValue.slice(3, -3)
             .replace(/\\"""/g, '"""')
-            .replace(/\\\\/g, '\\');
+            .replace(/\\\\/g, '\\')
+            .replace(/\\r/g, '\r');
         } else {
           const multilineContent: string[] = [rawValue.slice(3)];
           lineIndex++;
@@ -263,7 +264,8 @@ export function parseObjectBlock(
           }
           result[key] = multilineContent.join('\n')
             .replace(/\\"""/g, '"""')
-            .replace(/\\\\/g, '\\');
+            .replace(/\\\\/g, '\\')
+            .replace(/\\r/g, '\r');
           continue;
         }
       } else {

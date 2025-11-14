@@ -48,7 +48,8 @@ export function parsePrimitiveValue(value: string, context: TONLParseContext): T
   if (trimmed.startsWith('"""') && trimmed.endsWith('"""')) {
     return trimmed.slice(3, -3)
       .replace(/\\"""/g, '"""')   // Unescape triple quotes first
-      .replace(/\\\\/g, '\\');     // Then unescape backslashes
+      .replace(/\\\\/g, '\\')      // Then unescape backslashes
+      .replace(/\\r/g, '\r');      // Finally unescape carriage returns
   }
 
   // Handle quoted strings

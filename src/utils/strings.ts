@@ -85,9 +85,10 @@ export function unquote(value: string): string {
 export function tripleQuoteIfNeeded(value: string, delimiter: TONLDelimiter): string {
   if (value.includes('\n') || value.includes('"""')) {
     // For multi-line content, always use triple quotes
-    // Escape backslashes and triple quotes inside
+    // Escape backslashes, carriage returns, and triple quotes inside
     const escaped = value
       .replace(/\\/g, '\\\\')      // Escape backslashes first
+      .replace(/\r/g, '\\r')       // Escape carriage returns to preserve them
       .replace(/"""/g, '\\"""');    // Escape triple quotes
     return `"""${escaped}"""`;
   }
