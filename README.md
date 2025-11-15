@@ -8,7 +8,13 @@
 
 **TONL** is a production-ready data platform that combines compact serialization with powerful query, modification, indexing, and streaming capabilities. Designed for LLM token efficiency while providing a rich API for data access and manipulation.
 
-**🎉 v2.0.0 - Advanced Optimization Module Release**
+**🎉 v2.0.1 - Advanced Optimization Module (Security Hardened)**
+
+**✨ What's New in v2.0.1:**
+- 🔒 Complete security hardening with 96 additional security tests
+- 🏗️ Advanced optimization system with up to 60% additional compression
+- 🚀 Enhanced browser bundles with full optimization support
+- 📈 Comprehensive test suite: 748 tests passing (100% coverage)
 
 [![npm version](https://badge.fury.io/js/tonl.svg)](https://www.npmjs.com/package/tonl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -25,11 +31,11 @@
 🗜️ **Up to 60% Smaller** - Reduce JSON size and LLM token costs
 👁️ **Human-Readable** - Clear text format, not binary
 🚀 **Blazingly Fast** - 10-1600x faster than targets
-🔒 **Production Secure** - 100% security hardened
+🔒 **Production Secure** - 100% security hardened (v2.0.1)
 🛠️ **TypeScript-First** - Full type safety & IntelliSense
 📦 **Zero Dependencies** - Pure TypeScript, no bloat
-🌐 **Browser Ready** - 8.84 KB gzipped bundle
-✅ **100% Tested** - 589/589 tests passing (feature + unit + examples)
+🌐 **Browser Ready** - 10.5 KB gzipped bundle (IIFE/UMD)
+✅ **100% Tested** - 748/748 tests passing (feature + unit + examples + security)
 
 ---
 
@@ -83,8 +89,8 @@ const data = { users: [{ id: 1, name: "Alice" }] };
 const tonlText = encodeTONL(data);
 const restored = decodeTONL(tonlText);
 
-// Advanced Optimization
-import { AdaptiveOptimizer, BitPacker, DeltaEncoder } from 'tonl';
+// Advanced Optimization (v2.0.1+)
+import { AdaptiveOptimizer, BitPacker, DeltaEncoder } from 'tonl/optimization';
 
 // Automatic optimization
 const optimizer = new AdaptiveOptimizer();
@@ -254,12 +260,12 @@ user{id:u32,name:str,contact:obj,roles:list}:
 ## 🔒 Security & Quality
 
 ```
-✅ Tests:          496/496 passing (100% coverage)
+✅ Tests:          748/748 passing (100% coverage)
 ✅ Security:       15/15 vulnerabilities fixed (100%)
 ✅ Security Tests: 96 exploit + regression tests
 ✅ Code Quality:   TypeScript strict mode
 ✅ Dependencies:   0 runtime dependencies
-✅ Bundle Size:    8.84 KB gzipped (browser)
+✅ Bundle Size:    10.5 KB gzipped (browser)
 ✅ Performance:    10-1600x faster than targets
 ✅ Production:     Ready & Fully Secure
 ```
@@ -336,7 +342,7 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 ### ESM (Modern Browsers)
 ```html
 <script type="module">
-  import { encodeTONL, decodeTONL } from 'https://cdn.jsdelivr.net/npm/tonl@1.0.12/+esm';
+  import { encodeTONL, decodeTONL } from 'https://cdn.jsdelivr.net/npm/tonl@2.0.1/+esm';
 
   const data = { users: [{ id: 1, name: "Alice" }] };
   const tonl = encodeTONL(data);
@@ -346,7 +352,7 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 
 ### UMD (Universal)
 ```html
-<script src="https://unpkg.com/tonl@1.0.12/dist/browser/tonl.umd.js"></script>
+<script src="https://unpkg.com/tonl@2.0.1/dist/browser/tonl.umd.js"></script>
 <script>
   const tonl = TONL.encodeTONL({ hello: "world" });
   console.log(tonl);
@@ -354,9 +360,9 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 ```
 
 **Bundle Sizes:**
-- ESM: 12.56 KB gzipped
-- UMD: 8.91 KB gzipped
-- IIFE: 8.84 KB gzipped
+- ESM: 15.5 KB gzipped
+- UMD: 10.7 KB gzipped
+- IIFE: 10.6 KB gzipped
 
 ---
 
