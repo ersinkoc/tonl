@@ -79,4 +79,5 @@ export interface ParserState {
   fields: string[];
   i: number;
   line: string;
+  currentFieldWasQuoted: boolean;
 }

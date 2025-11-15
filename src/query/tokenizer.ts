@@ -420,6 +420,26 @@ export function tokenize(input: string): Token[] {
         consume();
         break;
 
+      case '{':
+        tokens.push({
+          type: TokenType.LBRACE,
+          value: '{',
+          position: start,
+          length: 1
+        });
+        consume();
+        break;
+
+      case '}':
+        tokens.push({
+          type: TokenType.RBRACE,
+          value: '}',
+          position: start,
+          length: 1
+        });
+        consume();
+        break;
+
       case '"':
       case "'":
         tokens.push(readString());

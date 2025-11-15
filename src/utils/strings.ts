@@ -43,9 +43,8 @@ export function needsQuoting(value: string, delimiter: TONLDelimiter): boolean {
  */
 export function quoteIfNeeded(value: string, delimiter: TONLDelimiter): string {
   if (needsQuoting(value, delimiter)) {
-    // Escape backslashes first, then escape quotes with backslash
-    // This avoids ambiguity with triple-quoted strings
-    return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+    // Escape backslashes first, then special characters, then quotes
+    return `"${value.replace(/\\/g, '\\\\').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/"/g, '\\"')}"`;
   }
   return value;
 }
@@ -62,8 +61,17 @@ export function unquote(value: string): string {
     while (i < inner.length) {
       if (inner[i] === '\\' && i + 1 < inner.length) {
         const nextChar = inner[i + 1];
-        if (nextChar === '\\' || nextChar === '"') {
-          result += nextChar;
+        if (nextChar === '\\' || nextChar === '"' || nextChar === 'r' || nextChar === 'n' || nextChar === 't') {
+          // Handle escaped backslashes, quotes, and special characters
+          if (nextChar === 'r') {
+            result += '\r';
+          } else if (nextChar === 'n') {
+            result += '\n';
+          } else if (nextChar === 't') {
+            result += '\t';
+          } else {
+            result += nextChar;
+          }
           i += 2;
         } else {
           result += inner[i];
@@ -85,10 +93,12 @@ export function unquote(value: string): string {
 export function tripleQuoteIfNeeded(value: string, delimiter: TONLDelimiter): string {
   if (value.includes('\n') || value.includes('"""')) {
     // For multi-line content, always use triple quotes
-    // Escape backslashes, carriage returns, and triple quotes inside
+    // Escape backslashes, special characters, and triple quotes inside
     const escaped = value
       .replace(/\\/g, '\\\\')      // Escape backslashes first
       .replace(/\r/g, '\\r')       // Escape carriage returns to preserve them
+      .replace(/\n/g, '\\n')       // Escape newlines to preserve them
+      .replace(/\t/g, '\\t')       // Escape tabs to preserve them
       .replace(/"""/g, '\\"""');    // Escape triple quotes
     return `"""${escaped}"""`;
   }

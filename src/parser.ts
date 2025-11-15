@@ -36,7 +36,8 @@ export function parseTONLLine(line: string, delimiter: TONLDelimiter = ","): str
     currentField: "",
     fields: [],
     i: 0,
-    line
+    line,
+    currentFieldWasQuoted: false
   };
 
   while (state.i < line.length) {
@@ -49,18 +50,32 @@ export function parseTONLLine(line: string, delimiter: TONLDelimiter = ","): str
           // Check for triple quote
           if (nextChar === '"' && line[state.i + 2] === '"') {
             state.mode = "inTripleQuote";
+            state.currentFieldWasQuoted = true;
+            state.currentField = '"""'; // Start with triple quotes
             state.i += 2; // Skip the next two quotes
           } else {
             state.mode = "inQuote";
+            state.currentFieldWasQuoted = true;
           }
         } else if (char === '\\' && nextChar !== undefined && nextChar === delimiter) {
           // Escaped delimiter
           state.currentField += delimiter;
           state.i++; // Skip the backslash
         } else if (char === delimiter) {
-          // Field separator
-          state.fields.push(state.currentField.trim());
+          // Field separator - only add field if we're not inside a quote
+          if (state.currentFieldWasQuoted) {
+            state.fields.push(state.currentField);
+          } else {
+            state.fields.push(state.currentField.trim());
+          }
           state.currentField = "";
+          state.currentFieldWasQuoted = false;
+        } else if ((char === ' ' || char === '\t') && state.currentField.length === 0 && nextChar === '"') {
+          // Skip formatting whitespace before quoted fields (space after comma)
+          // This handles cases like "2, \"Bob, Jr.\""
+        } else if ((char === ' ' || char === '\t') && state.currentField.length === 0) {
+          // For other leading whitespace, preserve it (might be content)
+          state.currentField += char;
         } else {
           state.currentField += char;
         }
@@ -68,11 +83,24 @@ export function parseTONLLine(line: string, delimiter: TONLDelimiter = ","): str
 
       case "inQuote":
         if (char === '\\' && nextChar !== undefined) {
-          // Backslash escape - check for escaped quote or backslash
-          if (nextChar === '"' || nextChar === '\\') {
-            state.currentField += nextChar;
+          // Backslash escape - handle all escape sequences
+          if (nextChar === '"') {
+            state.currentField += '"';
+            state.i++; // Skip the escaped character
+          } else if (nextChar === '\\') {
+            state.currentField += '\\';
+            state.i++; // Skip the escaped character
+          } else if (nextChar === 'r') {
+            state.currentField += '\r';
+            state.i++; // Skip the escaped character
+          } else if (nextChar === 'n') {
+            state.currentField += '\n';
+            state.i++; // Skip the escaped character
+          } else if (nextChar === 't') {
+            state.currentField += '\t';
             state.i++; // Skip the escaped character
           } else {
+            // Unknown escape sequence, preserve as-is
             state.currentField += char;
           }
         } else if (char === '"') {
@@ -92,6 +120,7 @@ export function parseTONLLine(line: string, delimiter: TONLDelimiter = ","): str
       case "inTripleQuote":
         // Look for closing triple quote
         if (char === '"' && nextChar === '"' && line[state.i + 2] === '"') {
+          state.currentField += '"""'; // Add closing triple quotes
           state.mode = "plain";
           state.i += 2; // Skip the next two quotes
         } else {
@@ -103,8 +132,12 @@ export function parseTONLLine(line: string, delimiter: TONLDelimiter = ","): str
     state.i++;
   }
 
-  // Add the last field
-  state.fields.push(state.currentField.trim());
+  // Add the last field - trim unquoted fields, preserve quoted fields
+  if (state.currentFieldWasQuoted) {
+    state.fields.push(state.currentField);
+  } else {
+    state.fields.push(state.currentField.trim());
+  }
 
   // SECURITY FIX (BF006): Validate field count
   if (state.fields.length > MAX_FIELDS_PER_LINE) {

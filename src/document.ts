@@ -182,7 +182,19 @@ export class TONLDocument {
    * @returns Query result (may be array for wildcards/filters)
    */
   query(pathExpression: string): any {
-    return this.get(pathExpression);
+    try {
+      const result = this.get(pathExpression);
+      return result;
+    } catch (error) {
+      // For parsing errors, return empty array instead of throwing
+      if (error instanceof Error && (
+          error.message.includes('Expected property name') ||
+          error.message.includes('Unexpected character') ||
+          error.message.includes('ParseError'))) {
+        return [];
+      }
+      throw error;
+    }
   }
 
   /**

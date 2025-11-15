@@ -250,6 +250,13 @@ class PathParser {
       };
     }
 
+    // Check for wildcard (..*)
+    if (this.match(TokenType.WILDCARD)) {
+      this.consume();
+      // For wildcard recursive, we return recursive with no name
+      // and let the evaluator handle the wildcard matching
+    }
+
     return {
       type: 'recursive'
     };

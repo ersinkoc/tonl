@@ -79,8 +79,12 @@ function encodeValue(value: TONLValue, key: string, context: TONLEncodeContext):
     return `${key}: ${String(value)}`;
   }
 
-  // All numbers (including Infinity, NaN, scientific notation) should not be quoted
+  // Handle special numeric edge cases that should be converted to null
   if (typeof value === 'number') {
+    if (!Number.isFinite(value)) {
+      // Infinity, -Infinity, NaN should be encoded as null
+      return `${key}: null`;
+    }
     return `${key}: ${String(value)}`;
   }
 
@@ -112,10 +116,13 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
   // Build column definitions
   for (const k of keys) {
     const value = obj[k];
-    // Quote column name if it contains special characters (colon, comma, braces, quotes)
+    // Quote column name if it contains special characters or is whitespace-only
     let col = k;
-    if (k.includes(':') || k.includes(',') || k.includes('{') || k.includes('}') || k.includes('"')) {
-      col = `"${k.replace(/"/g, '\\"')}"`;
+    const needsQuoting = k.includes(':') || k.includes(',') || k.includes('{') || k.includes('}') || k.includes('"') ||
+                        k.trim() === '' || k.startsWith(' ') || k.endsWith(' ') ||
+                        k.includes('\t') || k.includes('\n') || k.includes('\r');
+    if (needsQuoting) {
+      col = `"${k.replace(/\\/g, '\\\\').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/"/g, '\\"')}"`;
     }
     if (context.includeTypes) {
       const type = inferPrimitiveType(value);
@@ -142,16 +149,17 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
   // Always use multi-line format for single-property objects to avoid parsing confusion
   const isSinglePropertyObject = keys.length === 1;
 
-  if (hasNestedObjects || Object.values(obj).some(v => Array.isArray(v)) || hasMultilineStrings || hasSpecialKeys || isSinglePropertyObject) {
+  if (hasNestedObjects || Object.values(obj).some(v => Array.isArray(v)) || hasMultilineStrings || hasSpecialKeys || isSinglePropertyObject || keys.length > 1) {
     const lines: string[] = [header];
     const childContext = { ...context, currentIndent: context.currentIndent + 1 };
 
     for (const k of keys) {
       const value = obj[k];
-      // Quote key name if it contains special characters (colon, comma, braces, quotes)
-      const keyName = (k.includes(':') || k.includes(',') || k.includes('{') || k.includes('}') || k.includes('"'))
-        ? `"${k.replace(/"/g, '\\"')}"`
-        : k;
+      // Quote key name if it contains special characters or is whitespace-only
+      const needsQuoting = k.includes(':') || k.includes(',') || k.includes('{') || k.includes('}') || k.includes('"') ||
+                          k.trim() === '' || k.startsWith(' ') || k.endsWith(' ') ||
+                          k.includes('\t') || k.includes('\n') || k.includes('\r');
+      const keyName = needsQuoting ? `"${k.replace(/\\/g, '\\\\').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/"/g, '\\"')}"` : k;
 
       if (Array.isArray(value) || (typeof value === "object" && value !== null)) {
         const childLine = encodeValue(value, k, childContext);
@@ -177,15 +185,21 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
     const parts: string[] = [header];
     for (const k of keys) {
       const value = obj[k];
+      // Quote key name if it contains special characters or is whitespace-only
+      const needsQuoting = k.includes(':') || k.includes(',') || k.includes('{') || k.includes('}') || k.includes('"') ||
+                          k.trim() === '' || k.startsWith(' ') || k.endsWith(' ') ||
+                          k.includes('\t') || k.includes('\n') || k.includes('\r');
+      const keyName = needsQuoting ? `"${k.replace(/\\/g, '\\\\').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/"/g, '\\"')}"` : k;
+
       if (value === null) {
-        parts.push(`${k}: null`);
+        parts.push(`${keyName}: null`);
       } else if (value === true || value === false) {
-        parts.push(`${k}: ${String(value)}`);
+        parts.push(`${keyName}: ${String(value)}`);
       } else if (typeof value === 'number') {
-        parts.push(`${k}: ${String(value)}`);
+        parts.push(`${keyName}: ${String(value)}`);
       } else if (value !== undefined) {
         const quoted = tripleQuoteIfNeeded(String(value), context.delimiter);
-        parts.push(`${k}: ${quoted}`);
+        parts.push(`${keyName}: ${quoted}`);
       }
       // undefined values are already filtered out from keys
     }
@@ -321,7 +335,10 @@ function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): s
         // Don't quote booleans
         return String(item);
       } else if (typeof item === 'number') {
-        // Don't quote any numbers
+        // Don't quote regular numbers, but convert special numeric values to null
+        if (!Number.isFinite(item)) {
+          return "null"; // Infinity, -Infinity, NaN should be null
+        }
         return String(item);
       } else {
         return tripleQuoteIfNeeded(String(item), context.delimiter);
@@ -340,15 +357,55 @@ function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): s
 
     for (let i = 0; i < arr.length; i++) {
       const value = arr[i];
-      if (typeof value === "object" && value !== null) {
+      if (Array.isArray(value)) {
+        // Check if the nested array contains only primitives or has nested objects/arrays
+        const hasOnlyPrimitives = value.every(item =>
+          item === null || item === undefined ||
+          (typeof item !== "object" && typeof item !== "function")
+        );
+
+        if (hasOnlyPrimitives) {
+          // Special handling for nested arrays with only primitives in mixed arrays
+          // Encode as single line with proper array notation
+          const nestedValues = value.map(item => {
+            if (item === null) {
+              return "null";
+            } else if (item === undefined) {
+              return "null"; // Convert undefined to null to maintain array structure
+            } else if (item === true || item === false) {
+              return String(item);
+            } else if (typeof item === 'number') {
+              if (!Number.isFinite(item)) {
+                return "null"; // Infinity, -Infinity, NaN should be null
+              }
+              return String(item);
+            } else {
+              return tripleQuoteIfNeeded(String(item), context.delimiter);
+            }
+          });
+          const separator = context.prettyDelimiters ? ` ${context.delimiter} ` : context.delimiter;
+          lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `[${i}]: ${nestedValues.join(separator)}`);
+        } else {
+          // Nested array contains objects or other arrays - use mixed array format
+          const nestedBlock = encodeValue(value, `[${i}]`, childContext);
+          lines.push(makeIndent(childContext.currentIndent, childContext.indent) + nestedBlock);
+        }
+      } else if (typeof value === "object" && value !== null) {
         const nestedBlock = encodeValue(value, `[${i}]`, childContext);
         lines.push(makeIndent(childContext.currentIndent, childContext.indent) + nestedBlock);
       } else {
         if (value === null) {
           lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `[${i}]: null`);
         } else if (value !== undefined) {
-          const quoted = tripleQuoteIfNeeded(String(value), context.delimiter);
-          lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `[${i}]: ${quoted}`);
+          let valueStr: string;
+          if (typeof value === 'number' || typeof value === 'boolean') {
+            // Don't quote numbers and booleans
+            valueStr = String(value);
+          } else {
+            // Quote strings and other types
+            valueStr = tripleQuoteIfNeeded(String(value), context.delimiter);
+          }
+          lines.push(makeIndent(childContext.currentIndent, childContext.indent) + `[${i}]: ${valueStr}`);
         }
         // undefined values in mixed arrays are skipped entirely
       }

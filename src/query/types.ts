@@ -223,6 +223,8 @@ export enum TokenType {
   // Operators
   LPAREN = 'LPAREN',          // (
   RPAREN = 'RPAREN',          // )
+  LBRACE = 'LBRACE',          // {
+  RBRACE = 'RBRACE',          // }
   EQ = 'EQ',                  // ==
   NEQ = 'NEQ',                // !=
   GT = 'GT',                  // >

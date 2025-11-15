@@ -13,7 +13,9 @@ import { unquote } from '../utils/strings.js';
  * @returns Parsed primitive value
  */
 export function parsePrimitiveValue(value: string, context: TONLParseContext): TONLValue {
-  const trimmed = value.trim();
+  // Don't trim strings that are just whitespace - they might be intentional content
+  const isAllWhitespace = /^\s*$/.test(value);
+  const trimmed = isAllWhitespace ? value : value.trim();
 
   if (trimmed === "null") {
     return null;
@@ -49,7 +51,9 @@ export function parsePrimitiveValue(value: string, context: TONLParseContext): T
     return trimmed.slice(3, -3)
       .replace(/\\"""/g, '"""')   // Unescape triple quotes first
       .replace(/\\\\/g, '\\')      // Then unescape backslashes
-      .replace(/\\r/g, '\r');      // Finally unescape carriage returns
+      .replace(/\\r/g, '\r')      // Unescape carriage returns
+      .replace(/\\n/g, '\n')      // Unescape newlines
+      .replace(/\\t/g, '\t');      // Unescape tabs
   }
 
   // Handle quoted strings
