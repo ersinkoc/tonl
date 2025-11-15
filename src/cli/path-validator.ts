@@ -118,8 +118,13 @@ export class PathValidator {
     const normalizedAllowed = normalize(resolve(opts.allowedDirectory));
     const relativePath = relative(normalizedAllowed, absolutePath);
 
-    // If relative path starts with .. or is absolute, it's outside allowed directory
-    if (relativePath.startsWith('..') || isAbsolute(relativePath)) {
+    // BUGFIX BF001: Enhanced path traversal detection
+    // Check multiple escape patterns and edge cases
+    if (relativePath.startsWith('..') ||
+        isAbsolute(relativePath) ||
+        relativePath.includes('../') ||
+        relativePath.includes('..\\') ||
+        relativePath.split(/[\\\/]/).some(segment => segment === '..')) {
       throw new SecurityError(
         'Path traversal detected: path escapes allowed directory',
         {
@@ -129,6 +134,38 @@ export class PathValidator {
           relativePath,
         }
       );
+    }
+
+    // Additional verification: ensure the resolved path actually starts with allowed directory
+    // This catches edge cases where relative() might not detect traversal
+    // But only apply this strict check when we're not allowing creation of new files
+    if (opts.requireExists && !absolutePath.startsWith(normalizedAllowed + sep) &&
+        absolutePath !== normalizedAllowed) {
+      throw new SecurityError(
+        'Path traversal detected: resolved path outside allowed directory',
+        {
+          userPath,
+          resolvedPath: absolutePath,
+          allowedDirectory: normalizedAllowed,
+        }
+      );
+    }
+
+    // For write operations (requireExists: false), be less strict about path boundaries
+    // as long as we don't have obvious traversal patterns
+    if (!opts.requireExists) {
+      const parentDir = normalize(resolve(absolutePath, '..'));
+      if (!parentDir.startsWith(normalizedAllowed + sep) && parentDir !== normalizedAllowed) {
+        throw new SecurityError(
+          'Parent directory traversal detected',
+          {
+            userPath,
+            resolvedPath: absolutePath,
+            parentDir,
+            allowedDirectory: normalizedAllowed,
+          }
+        );
+      }
     }
 
     // 8. If path exists, check for symlinks

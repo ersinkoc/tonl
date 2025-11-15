@@ -96,11 +96,33 @@ function encodeValue(value: TONLValue, key: string, context: TONLEncodeContext):
  * Encode an object
  */
 function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext): string {
-  // Check for circular references
-  if (context.seen?.has(obj)) {
-    throw new Error(`Circular reference detected at key: ${key}`);
+  // BUGFIX BF005: Enhanced circular reference detection
+  // Initialize seen set if not present
+  if (!context.seen) {
+    context.seen = new WeakSet();
   }
-  context.seen?.add(obj);
+
+  // Check for circular references using multiple methods
+  if (context.seen.has(obj)) {
+    throw new Error(`Circular reference detected at key: ${key} (object already processed)`);
+  }
+
+  // Additional checks for edge cases
+  try {
+    // Check if object has a reference to itself in its properties
+    for (const [prop, value] of Object.entries(obj)) {
+      if (value === obj) {
+        throw new Error(`Self-reference detected at key: ${key}.${prop}`);
+      }
+    }
+  } catch (error) {
+    // Handle cases where Object.entries might fail
+    if (!(error instanceof TypeError)) {
+      throw error;
+    }
+  }
+
+  context.seen.add(obj);
 
   const keys = Object.keys(obj).filter(k => obj[k] !== undefined).sort();
   const columns: string[] = [];
@@ -211,11 +233,23 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
  * Encode an array
  */
 function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): string {
-  // Check for circular references
-  if (context.seen?.has(arr)) {
-    throw new Error(`Circular reference detected at key: ${key}`);
+  // BUGFIX BF005: Enhanced circular reference detection for arrays
+  // Initialize seen set if not present
+  if (!context.seen) {
+    context.seen = new WeakSet();
   }
-  context.seen?.add(arr);
+
+  // Check for circular references using multiple methods
+  if (context.seen.has(arr)) {
+    throw new Error(`Circular reference detected at key: ${key} (array already processed)`);
+  }
+
+  // Additional check: array contains reference to itself
+  if (arr.includes(arr)) {
+    throw new Error(`Self-reference detected at key: ${key} (array contains itself)`);
+  }
+
+  context.seen.add(arr);
 
   if (arr.length === 0) {
     return `${key}[0]:`;

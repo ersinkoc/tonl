@@ -1936,58 +1936,75 @@
     </script>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-white mt-16 py-12">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="grid md:grid-cols-4 gap-8 mb-8">
-                <!-- About -->
-                <div>
-                    <h4 class="text-sm font-bold mb-3">TONL</h4>
-                    <p class="text-slate-400 text-xs leading-relaxed">
-                        Token-Optimized Notation Language
+    <footer class="border-t border-slate-200 bg-slate-50">
+        <div class="max-w-6xl mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Brand -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+                            <span class="text-lg font-bold text-white">T</span>
+                        </div>
+                        <span class="text-xl font-bold text-slate-900">TONL</span>
+                    </div>
+                    <p class="text-slate-600 mb-4 max-w-md">
+                        Token-Optimized Notation Language.<br>
+                        Reduce your LLM token costs by 32-45% while maintaining human readability.
                     </p>
+                    <div class="flex items-center gap-4 text-sm text-slate-500">
+                        <span>Zero dependencies</span>
+                        <span>•</span>
+                        <span>100% test coverage</span>
+                        <span>•</span>
+                        <span>TypeScript native</span>
+                    </div>
+                    <div class="flex items-center gap-4 mt-4">
+                        <a href="https://github.com/tonl-dev/tonl" target="_blank" class="text-slate-400 hover:text-slate-600">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                        <a href="https://www.npmjs.com/package/tonl" target="_blank" class="text-slate-400 hover:text-slate-600">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm1.335 17.517h-2.67v-1.5h2.67v1.5zm0-2.5h-2.67V9.633h2.67v5.384zm0-6.384h-2.67v-1.5h2.67v1.5z"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Quick Links -->
+                <!-- Links -->
                 <div>
-                    <h4 class="text-sm font-bold mb-3">Quick Links</h4>
-                    <ul class="space-y-1 text-xs">
-                        <li><a href="index.html" class="text-slate-400 hover:text-white transition">Home</a></li>
-                        <li><a href="index.html#features" class="text-slate-400 hover:text-white transition">Features</a></li>
-                        <li><a href="docs.html" class="text-slate-400 hover:text-white transition">Documentation</a></li>
-                        <li><a href="examples.html" class="text-emerald-400 hover:text-emerald-300 transition font-semibold">Playground</a></li>
+                    <h3 class="font-semibold text-slate-900 mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="docs.html" class="text-slate-600 hover:text-slate-900 transition">Documentation</a></li>
+                        <li><a href="examples.html" class="text-slate-600 hover:text-slate-900 transition">Playground</a></li>
+                        <li><a href="https://github.com/tonl-dev/tonl" target="_blank" class="text-slate-600 hover:text-slate-900 transition">GitHub</a></li>
+                        <li><a href="https://www.npmjs.com/package/tonl" target="_blank" class="text-slate-600 hover:text-slate-900 transition">npm Package</a></li>
                     </ul>
                 </div>
 
-                <!-- Resources -->
+                <!-- GitHub Star Button -->
                 <div>
-                    <h4 class="text-sm font-bold mb-3">Resources</h4>
-                    <ul class="space-y-1 text-xs">
-                        <li><a href="https://github.com/tonl-dev/tonl" target="_blank" class="text-slate-400 hover:text-white transition">GitHub</a></li>
-                        <li><a href="https://www.npmjs.com/package/tonl" target="_blank" class="text-slate-400 hover:text-white transition">npm Package</a></li>
-                        <li><a href="https://github.com/tonl-dev/tonl/issues" target="_blank" class="text-slate-400 hover:text-white transition">Report Issues</a></li>
-                        <li><a href="https://github.com/tonl-dev/tonl/discussions" target="_blank" class="text-slate-400 hover:text-white transition">Discussions</a></li>
-                    </ul>
-                </div>
-
-                <!-- Community -->
-                <div>
-                    <h4 class="text-sm font-bold mb-3">Community</h4>
-                    <ul class="space-y-1 text-xs">
-                        <li><a href="https://twitter.com/ersinkoc" target="_blank" class="text-slate-400 hover:text-white transition">Twitter</a></li>
-                        <li><a href="https://github.com/ersinkoc" target="_blank" class="text-slate-400 hover:text-white transition">GitHub Profile</a></li>
-                        <li><span class="text-slate-400">MIT License</span></li>
-                    </ul>
+                    <h3 class="font-semibold text-slate-900 mb-4">Support</h3>
+                    <a href="https://github.com/tonl-dev/tonl" target="_blank" class="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
+                        </svg>
+                        Star on GitHub
+                    </a>
+                    <div class="mt-4">
+                        <a href="https://www.npmjs.com/package/tonl" target="_blank" class="text-xs text-slate-500 hover:text-slate-700 transition">
+                            <span class="font-semibold">npm:</span> tonl
+                        </a>
+                    </div>
+                    <div class="text-xs text-slate-500 mt-2">
+                        <span class="font-semibold">Version:</span> 2.0.0
+                    </div>
                 </div>
             </div>
 
-            <!-- Bottom Bar -->
-            <div class="border-t border-slate-800 pt-6 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400">
-                <p>© 2025 TONL · MIT License</p>
-                <div class="flex items-center gap-3 mt-3 md:mt-0">
-                    <span>v1.0.12</span>
-                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                    <span class="text-emerald-400">100% Feature Coverage</span>
-                </div>
+            <div class="border-t border-slate-200 mt-8 pt-8 text-center text-sm text-slate-500">
+                <p>&copy; 2025 TONL. All rights reserved. Licensed under MIT.</p>
             </div>
         </div>
     </footer>

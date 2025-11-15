@@ -278,7 +278,22 @@ export class QueryEvaluator {
 
     // SECURITY FIX (BF008): Validate index is safe integer
     if (!Number.isSafeInteger(index)) {
-      throw new Error(`Array index out of safe integer range: ${index}`);
+      throw new Error(`Array index out of safe integer range: ${index} (type: ${typeof index}, value: ${index})`);
+    }
+
+    // BUGFIX BF004: Additional bounds and type validation
+    if (typeof index !== 'number' || !isFinite(index)) {
+      throw new Error(`Invalid array index: ${index} (must be a finite number)`);
+    }
+
+    // Check for NaN and special cases
+    if (Number.isNaN(index)) {
+      throw new Error(`Array index cannot be NaN`);
+    }
+
+    // Additional safety: reject extremely large indices even if "safe"
+    if (Math.abs(index) > Number.MAX_SAFE_INTEGER / 2) {
+      throw new Error(`Array index too large: ${index} (maximum allowed: ${Number.MAX_SAFE_INTEGER / 2})`);
     }
 
     // Handle negative indices (from end)

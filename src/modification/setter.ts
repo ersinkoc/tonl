@@ -167,14 +167,21 @@ function setProperty(
   const oldValue = current[propertyName];
 
   if (isLast) {
-    // Set the value using safe property assignment
-    // Use Object.defineProperty for additional safety
-    Object.defineProperty(current, propertyName, {
-      value,
-      writable: true,
-      enumerable: true,
-      configurable: true,
-    });
+    // BUGFIX BF002: Enhanced prototype pollution protection
+    // Use direct assignment for normal objects instead of Object.defineProperty
+    // This prevents potential bypass of prototype pollution checks
+    if (Object.prototype.hasOwnProperty.call(current, propertyName) ||
+        !isDangerousProperty(propertyName)) {
+      current[propertyName] = value;
+    } else {
+      throw new SecurityError(
+        `Cannot set '${propertyName}': prototype pollution protection`,
+        {
+          property: propertyName,
+          reason: 'Property assignment blocked for security',
+        }
+      );
+    }
     return oldValue;
   }
 

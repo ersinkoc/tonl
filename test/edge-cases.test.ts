@@ -152,20 +152,20 @@ describe("Edge Cases - Objects and Arrays", () => {
   test("should detect circular references in objects", () => {
     const circular: any = { a: 1 };
     circular.self = circular;
-    
+
     assert.throws(
       () => encodeTONL(circular),
-      /Circular reference detected/
+      /Self-reference detected|Circular reference detected/
     );
   });
 
   test("should detect circular references in arrays", () => {
     const arr: any[] = [1, 2];
     arr.push(arr);
-    
+
     assert.throws(
       () => encodeTONL(arr),
-      /Circular reference detected/
+      /Self-reference detected|Circular reference detected/
     );
   });
 });

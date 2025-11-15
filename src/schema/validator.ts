@@ -199,10 +199,27 @@ function validatePrimitiveType(
           expected: 'integer',
           actual: 'float'
         });
+      } else if (!Number.isSafeInteger(value)) {
+        errors.push({
+          field: path,
+          message: `u32 not safe integer: ${value} (exceeds safe integer range)`,
+          expected: '0-4294967295 (safe integer)',
+          actual: String(value)
+        });
       } else if (value < 0 || value > 0xFFFFFFFF) {
         errors.push({
           field: path,
           message: `u32 out of range: ${value} (expected 0-4294967295)`,
+          expected: '0-4294967295',
+          actual: String(value)
+        });
+      }
+      // BUGFIX BF006: Additional validation for edge cases
+      else if (Object.is(value, -0)) {
+        // Handle negative zero case explicitly
+        errors.push({
+          field: path,
+          message: `u32 cannot be negative zero: ${value}`,
           expected: '0-4294967295',
           actual: String(value)
         });
@@ -466,6 +483,38 @@ function getBuiltinPattern(name: string): RegExp | null {
 
       // Reject excessive backtracking patterns
       if (/(\.\*){2,}|(\.\+){2,}/.test(name)) {
+        return null;
+      }
+
+      // BUGFIX BF003: Additional ReDoS pattern detection
+      // Reject patterns with catastrophic backtracking potential
+      const dangerousPatterns = [
+        // Nested quantifiers
+        /\(\.\*\*\)/,
+        /\(\.\+\+\)/,
+        /\(\[\^\\n\]\*\*\)/,
+        // Alternation with overlapping patterns
+        /(\.\*\|.*\.\*)/,
+        /(\.\+\|.*\.\+)/,
+        // Excessive repetition
+        /\{1000,\}/,
+        // Complex lookahead/behind combinations
+        /\(\?=[^\)]*\)\(\?\!/,
+        // Multiple consecutive wildcards
+        /\.\*\.\*\.\*/,
+        // Unicode property abuse
+        /\\p\{\w+\}\*\{10,\}/,
+      ];
+
+      for (const pattern of dangerousPatterns) {
+        if (pattern.test(name)) {
+          return null;
+        }
+      }
+
+      // Check pattern complexity (count of special regex characters)
+      const specialChars = (name.match(/[.*+?^${}()|[\]\\]/g) || []).length;
+      if (specialChars > 50) { // Arbitrary limit to prevent extremely complex patterns
         return null;
       }
 
