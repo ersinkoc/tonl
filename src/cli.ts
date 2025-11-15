@@ -17,7 +17,7 @@ import { SecurityError } from "./errors/index";
  * Safe file read with path validation
  * BUG-008 FIX: Enhanced error handling and resource cleanup
  */
-function safeReadFile(userPath: string): string {
+function safeReadFile(userPath: string, preprocess: boolean = false): string {
   try {
     const safePath = PathValidator.validateRead(userPath);
 
@@ -30,8 +30,8 @@ function safeReadFile(userPath: string): string {
     // but we add explicit error context for better debugging
     let content = readFileSync(safePath, 'utf8');
 
-    // BUG-FIX-XXX: Preprocess JSON to handle special characters in keys
-    if (userPath.endsWith('.json')) {
+    // Only preprocess if explicitly requested
+    if (preprocess && userPath.endsWith('.json')) {
       content = preprocessJsonKeys(content);
     }
 
@@ -177,6 +177,7 @@ interface CLIOptions {
   optimize?: boolean;
   verbose?: boolean;
   tokenizer?: "gpt-5" | "gpt-4.5" | "gpt-4o" | "claude-3.5" | "gemini-2.0" | "llama-4" | "o200k" | "cl100k";
+  preprocess?: boolean;
 }
 
 /**
@@ -257,6 +258,9 @@ function parseArgs(args: string[]): { command: string; file: string; options: CL
         options.schema = nextArg;
         i++;
         break;
+      case "--preprocess":
+        options.preprocess = true;
+        break;
       default:
         if (!arg.startsWith("-") && !command) {
           command = arg;
@@ -319,7 +323,7 @@ async function main() {
 
     // Special case for --version command (no file required)
     if (args.length === 1 && (args[0] === '--version' || args[0] === '-v')) {
-      const packageVersion = '2.0.3'; // Hard-coded version to avoid ES module issues
+      const packageVersion = '2.0.4'; // Hard-coded version to avoid ES module issues
       console.log(`📦 TONL Version: ${packageVersion}`);
       console.log(`🏠 Token-Optimized Notation Language`);
       console.log(`📋 Built: 2025-11-15`);
@@ -330,7 +334,7 @@ async function main() {
     const { command, file, options } = parseArgs(args);
 
     // Safely read input file (with path validation)
-    const input = safeReadFile(file);
+    const input = safeReadFile(file, options.preprocess || false);
 
     switch (command) {
       case "encode": {
@@ -677,6 +681,7 @@ Options:
   --pretty              Format with proper indentation (for format command)
   --schema <file>       Schema file for validation (.schema.tonl)
   --tokenizer <type>    Token estimation (gpt-5, gpt-4.5, gpt-4o, claude-3.5, gemini-2.0, llama-4, o200k, cl100k)
+  --preprocess         Transform problematic keys (#, @, "") to safe alternatives
 
 Examples:
   tonl encode data.json --out data.tonl --smart --stats

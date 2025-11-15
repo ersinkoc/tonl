@@ -6,7 +6,7 @@
     <title>Playground - TONL Live Converter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="js/tonl.iife.js"></script>
+    <script src="js/tonl.iife.js?v=2.0.3"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 
     <style>
@@ -696,8 +696,10 @@
                     try {
                         this.error = '';
                         const data = JSON.parse(this.jsonInput);
+
                         if (typeof TONL !== 'undefined' && TONL.encodeTONL) {
                             // IMPORTANT: Pass includeTypes option!
+                            // Note: Browser uses quoting by default (no preprocessing)
                             this.tonlOutput = TONL.encodeTONL(data, {
                                 includeTypes: this.includeTypes
                             });

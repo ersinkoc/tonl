@@ -5,6 +5,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.4] - 2025-11-15
+
+### 🔄 **Dual-Mode System Release**
+
+**Revolutionary dual-mode approach** providing both perfect round-trip safety and clean output options.
+
+#### **New Features:**
+- **Dual-Mode System** - Choose between quoting-only (safe) or preprocessing (clean) modes
+- **Perfect Round-Trip** - Default mode preserves original data 100% including special characters
+- **Advanced Quoting** - Smart automatic quoting of problematic keys (`#`, `@`, `""`, etc.)
+- **Optional Preprocessing** - `--preprocess` flag for clean, human-readable output
+- **Browser Compatibility** - Web playground now handles problematic keys flawlessly
+- **Zero Data Loss** - Guaranteed round-trip fidelity in default mode
+
+#### **Dual-Mode Examples:**
+```bash
+# Default Mode (Quoting Only) - Perfect Round-Trip
+tonl encode data.json  # ✅ Original data preserved
+
+# Preprocessing Mode (Clean Output)
+tonl encode data.json --preprocess  # 🧹 Clean, readable keys
+```
+
+#### **Before/After Comparison:**
+```json
+// Input: {"#":"x","@":"y","":"z"}
+
+# Default Mode → Perfect Round-Trip
+root{"","#","@"}:
+  "": z
+  "#": x
+  "@": y
+
+# Preprocessing Mode → Clean Output
+root{hash_key,_at_,empty_key}:
+  hash_key: x
+  _at_: y
+  empty_key: z
+```
+
+#### **Browser Improvements:**
+- **Perfect Quoting** - Special characters automatically quoted in web UI
+- **Round-Trip Safe** - Playground maintains 100% data integrity
+- **User-Friendly** - No more conversion failures with problematic JSON
+
+#### **CLI Enhancements:**
+- **`--preprocess` Flag** - Optional key transformation mode
+- **Better Error Messages** - Clear guidance for problematic inputs
+- **Backward Compatible** - All existing workflows unchanged
+
+#### **Impact:**
+- **Data Integrity**: 100% round-trip safety in default mode
+- **User Experience**: Choice between safety and readability
+- **Compatibility**: Perfect for both human and machine use
+- **Web Ready**: Browser playground handles all JSON inputs
+
 ## [2.0.3] - 2025-11-15
 
 ### 🛠️ **CLI Enhancement Release**

@@ -139,7 +139,8 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
 
   // Check if any keys contain special characters that require quoting
   const hasSpecialKeys = keys.some(k =>
-    k.includes(':') || k.includes(',') || k.includes('{') || k.includes('}') || k.includes('"')
+    k.includes(':') || k.includes(',') || k.includes('{') || k.includes('}') || k.includes('"') ||
+    k.includes('#') || k.includes('@') || k === ''
   );
 
   // Build column definitions
@@ -148,7 +149,7 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
     // Quote column name if it contains special characters or is whitespace-only
     let col = k;
     const needsQuoting = k.includes(':') || k.includes(',') || k.includes('{') || k.includes('}') || k.includes('"') ||
-                        k.trim() === '' || k.startsWith(' ') || k.endsWith(' ') ||
+                        k.includes('#') || k.includes('@') || k.trim() === '' || k.startsWith(' ') || k.endsWith(' ') ||
                         k.includes('\t') || k.includes('\n') || k.includes('\r');
     if (needsQuoting) {
       col = `"${k.replace(/\\/g, '\\\\').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/"/g, '\\"')}"`;
@@ -186,7 +187,7 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
       const value = obj[k];
       // Quote key name if it contains special characters or is whitespace-only
       const needsQuoting = k.includes(':') || k.includes(',') || k.includes('{') || k.includes('}') || k.includes('"') ||
-                          k.trim() === '' || k.startsWith(' ') || k.endsWith(' ') ||
+                          k.includes('#') || k.includes('@') || k.trim() === '' || k.startsWith(' ') || k.endsWith(' ') ||
                           k.includes('\t') || k.includes('\n') || k.includes('\r');
       const keyName = needsQuoting ? `"${k.replace(/\\/g, '\\\\').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/"/g, '\\"')}"` : k;
 
@@ -216,7 +217,7 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
       const value = obj[k];
       // Quote key name if it contains special characters or is whitespace-only
       const needsQuoting = k.includes(':') || k.includes(',') || k.includes('{') || k.includes('}') || k.includes('"') ||
-                          k.trim() === '' || k.startsWith(' ') || k.endsWith(' ') ||
+                          k.includes('#') || k.includes('@') || k.trim() === '' || k.startsWith(' ') || k.endsWith(' ') ||
                           k.includes('\t') || k.includes('\n') || k.includes('\r');
       const keyName = needsQuoting ? `"${k.replace(/\\/g, '\\\\').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/"/g, '\\"')}"` : k;
 

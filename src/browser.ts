@@ -15,6 +15,56 @@ import { inferPrimitiveType, coerceValue, isUniformObjectArray } from "./infer.j
 
 export { _decodeTONL as decodeTONL, parseTONLLine, parseHeaderLine, parseObjectHeader, detectDelimiter, inferPrimitiveType, coerceValue, isUniformObjectArray };
 
+/**
+ * Transform object keys to safe alternatives for TONL compatibility
+ */
+function transformObjectKeys(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(transformObjectKeys);
+  }
+
+  if (obj !== null && typeof obj === 'object') {
+    const transformed: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+      let safeKey = key;
+
+      // Transform problematic keys
+      if (key === '#') {
+        safeKey = 'hash_key';
+      } else if (key === '') {
+        safeKey = 'empty_key';
+      } else if (key.includes('@')) {
+        safeKey = key.replace(/@/g, '_at_');
+      } else if (key.includes(':')) {
+        safeKey = key.replace(/:/g, '_colon_');
+      } else if (key.includes('.')) {
+        safeKey = key.replace(/\./g, '_dot_');
+      } else if (key.includes(' ')) {
+        safeKey = key.replace(/ /g, '_space_');
+      } else if (key.includes('$')) {
+        safeKey = key.replace(/\$/g, '_dollar_');
+      }
+
+      transformed[safeKey] = transformObjectKeys(value);
+    }
+    return transformed;
+  }
+
+  return obj;
+}
+
+/**
+ * Preprocess JSON string to handle problematic characters in keys
+ */
+export function preprocessJSON(jsonString: string): any {
+  try {
+    const data = JSON.parse(jsonString);
+    return transformObjectKeys(data);
+  } catch (error) {
+    throw new Error(`Invalid JSON: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
 /** Analyze a JSON value and choose the most compact text layout automatically. */
 export function encodeSmart(input: any, opts?: {
   delimiter?: "," | "|" | "\t" | ";";
