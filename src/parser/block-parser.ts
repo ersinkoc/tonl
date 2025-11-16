@@ -30,7 +30,7 @@ export function parseBlock(
 
   // SECURITY FIX (SEC-002): Check and enforce recursion depth limit
   const currentDepth = context.currentDepth || 0;
-  const maxDepth = context.maxDepth || 100;
+  const maxDepth = context.maxDepth || 500;
 
   if (currentDepth >= maxDepth) {
     throw new TONLParseError(
