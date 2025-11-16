@@ -1,6 +1,6 @@
 # TONL Schema Language (TSL) Specification
 
-**Version:** 2.0.5
+**Version:** 2.0.6
 **Status:** Stable & Production Ready
 **Last Updated:** November 16, 2025
 

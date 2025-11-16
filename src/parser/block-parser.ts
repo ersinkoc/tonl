@@ -479,9 +479,73 @@ export function parseArrayBlock(
             const nestedArrayLength = indexedMatch[2] ? parseInt(indexedMatch[2], 10) : undefined;
             const valuePart = indexedMatch[3].trim();
 
-            if (valuePart) {
-              // If nested array length is specified, always parse as an array
-              if (nestedArrayLength !== undefined) {
+            // If nested array length is specified, always parse as an array
+            if (nestedArrayLength !== undefined) {
+              if (valuePart) {
+                // Parse as an array with values
+                const arrayValues = parseTONLLine(valuePart, context.delimiter);
+                const parsedArray: TONLValue[] = [];
+                for (const arrayValue of arrayValues) {
+                  parsedArray.push(parsePrimitiveValue(arrayValue, context));
+                }
+                result[index] = parsedArray;
+              } else {
+                // Check if there are nested content lines for this array
+                const nestedContentLines = extractNestedBlockLines(lines, lineIndex);
+                if (nestedContentLines.length > 0) {
+                  // Parse nested content as elements of this array
+                  const nestedArray: TONLValue[] = [];
+
+                  for (let nestedLineIndex = 0; nestedLineIndex < nestedContentLines.length; nestedLineIndex++) {
+                    const nestedLine = nestedContentLines[nestedLineIndex];
+                    const nestedTrimmed = nestedLine.trim();
+
+                    // Skip empty lines and comments
+                    if (!nestedTrimmed || nestedTrimmed.startsWith('#')) continue;
+
+                    // Check for indexed headers in nested content
+                    const nestedIndexedMatch = nestedTrimmed.match(/^\[(\d+)\](?:\[(\d+)\])?:\s*(.*)$/);
+                    if (nestedIndexedMatch) {
+                      const nestedIndex = parseInt(nestedIndexedMatch[1], 10);
+                      const nestedArrayLength = nestedIndexedMatch[2] ? parseInt(nestedIndexedMatch[2], 10) : undefined;
+                      const nestedValuePart = nestedIndexedMatch[3].trim();
+
+                      if (nestedArrayLength !== undefined) {
+                        if (nestedValuePart) {
+                          // Parse as array with values
+                          const arrayValues = parseTONLLine(nestedValuePart, context.delimiter);
+                          const parsedArray: TONLValue[] = [];
+                          for (const arrayValue of arrayValues) {
+                            parsedArray.push(parsePrimitiveValue(arrayValue, context));
+                          }
+                          nestedArray[nestedIndex] = parsedArray;
+                        } else {
+                          nestedArray[nestedIndex] = [];
+                        }
+                      } else if (nestedValuePart) {
+                        // Parse as primitive
+                        nestedArray[nestedIndex] = parsePrimitiveValue(nestedValuePart, context);
+                      } else {
+                        nestedArray[nestedIndex] = [];
+                      }
+                    }
+                  }
+
+                  result[index] = nestedArray;
+                  lineIndex += nestedContentLines.length;
+                } else {
+                  // Empty array with specified length
+                  result[index] = [];
+                }
+              }
+            } else if (valuePart) {
+              // Check if this looks like an array (contains delimiters but not quoted or triple quotes)
+              const isQuoted = valuePart.startsWith('"') && valuePart.endsWith('"');
+              if (valuePart.includes(context.delimiter) &&
+                  !isQuoted &&
+                  !valuePart.startsWith('"""') &&
+                  !valuePart.includes('"""') &&
+                  !valuePart.includes(':')) {  // Not an object and not quoted
                 // Parse as an array
                 const arrayValues = parseTONLLine(valuePart, context.delimiter);
                 const parsedArray: TONLValue[] = [];
@@ -490,39 +554,197 @@ export function parseArrayBlock(
                 }
                 result[index] = parsedArray;
               } else {
-                // Check if this looks like an array (contains delimiters but not quoted or triple quotes)
-                const isQuoted = valuePart.startsWith('"') && valuePart.endsWith('"');
-                if (valuePart.includes(context.delimiter) &&
-                    !isQuoted &&
-                    !valuePart.startsWith('"""') &&
-                    !valuePart.includes('"""') &&
-                    !valuePart.includes(':')) {  // Not an object and not quoted
-                  // Parse as an array
-                  const arrayValues = parseTONLLine(valuePart, context.delimiter);
-                  const parsedArray: TONLValue[] = [];
-                  for (const arrayValue of arrayValues) {
-                    parsedArray.push(parsePrimitiveValue(arrayValue, context));
-                  }
-                  result[index] = parsedArray;
-                } else {
-                  // Parse as a primitive value
-                  result[index] = parsePrimitiveValue(valuePart, context);
-                }
+                // Parse as a primitive value
+                result[index] = parsePrimitiveValue(valuePart, context);
               }
             } else {
               // Check if next lines are indented content for this index
               const nestedContentLines = extractNestedBlockLines(lines, lineIndex);
               if (nestedContentLines.length > 0) {
-                // Create a temporary header for parsing the nested content
-                const tempHeader: TONLObjectHeader = {
-                  key: `[${index}]`,
-                  isArray: false,
-                  columns: []
-                };
-                const nestedBlockLines = nestedContentLines;
-                const nestedValue = parseObjectBlock(tempHeader, nestedBlockLines, context);
-                result[index] = nestedValue;
-                lineIndex += nestedContentLines.length;
+                // If nested array length was specified, this should be an array
+                if (nestedArrayLength !== undefined) {
+                  // Check if the first nested line is an indexed header
+                  const firstNestedLine = nestedContentLines[0].trim();
+                  const firstNestedIndexedMatch = firstNestedLine.match(/^\[(\d+)\](?:\[(\d+)\])?:\s*(.*)$/);
+
+                  if (firstNestedIndexedMatch) {
+                    // This is a nested array - create an array and parse nested content
+                    const nestedArray: TONLValue[] = [];
+
+                    // Parse the nested content lines using the same logic as the parent array
+                    for (let nestedLineIndex = 0; nestedLineIndex < nestedContentLines.length; nestedLineIndex++) {
+                      const nestedLine = nestedContentLines[nestedLineIndex];
+                      const nestedTrimmed = nestedLine.trim();
+
+                      // Skip empty lines and comments
+                      if (!nestedTrimmed || nestedTrimmed.startsWith('#')) continue;
+
+                      // Check for indexed headers in nested content
+                      const nestedIndexedMatch = nestedTrimmed.match(/^\[(\d+)\](?:\[(\d+)\])?:\s*(.*)$/);
+                      if (nestedIndexedMatch) {
+                        const nestedIndex = parseInt(nestedIndexedMatch[1], 10);
+                        const nestedArrayLength = nestedIndexedMatch[2] ? parseInt(nestedIndexedMatch[2], 10) : undefined;
+                        const nestedValuePart = nestedIndexedMatch[3].trim();
+
+                        if (nestedArrayLength !== undefined) {
+                          if (nestedValuePart) {
+                            // Parse as an array with values
+                            const arrayValues = parseTONLLine(nestedValuePart, context.delimiter);
+                            const parsedArray: TONLValue[] = [];
+                            for (const arrayValue of arrayValues) {
+                              parsedArray.push(parsePrimitiveValue(arrayValue, context));
+                            }
+                            nestedArray[nestedIndex] = parsedArray;
+                          } else {
+                            // Check if there are further nested lines for this nested array
+                            const furtherNestedLines = [];
+                            let nextLineIndex = nestedLineIndex + 1;
+
+                            // Collect indented lines that belong to this nested array
+                            while (nextLineIndex < nestedContentLines.length) {
+                              const nextLine = nestedContentLines[nextLineIndex];
+                              if (nextLine.length > 0 && nextLine[0] === ' ') {
+                                // This line is indented, so it belongs to the nested array
+                                furtherNestedLines.push(nextLine);
+                                nextLineIndex++;
+                              } else {
+                                // Not indented, so it doesn't belong to this nested array
+                                break;
+                              }
+                            }
+
+                            if (furtherNestedLines.length > 0) {
+                              // Recursively parse the further nested content
+                              const tempHeader: TONLObjectHeader = {
+                                key: `[${nestedIndex}]`,
+                                isArray: true,
+                                columns: []
+                              };
+                              const furtherNestedArray: TONLValue[] = [];
+
+                              // Parse the further nested lines
+                              for (let furtherLineIndex = 0; furtherLineIndex < furtherNestedLines.length; furtherLineIndex++) {
+                                const furtherLine = furtherNestedLines[furtherLineIndex];
+                                const furtherTrimmed = furtherLine.trim();
+
+                                if (!furtherTrimmed || furtherTrimmed.startsWith('#')) continue;
+
+                                const furtherIndexedMatch = furtherTrimmed.match(/^\[(\d+)\](?:\[(\d+)\])?:\s*(.*)$/);
+                                if (furtherIndexedMatch) {
+                                  const furtherIndex = parseInt(furtherIndexedMatch[1], 10);
+                                  const furtherArrayLength = furtherIndexedMatch[2] ? parseInt(furtherIndexedMatch[2], 10) : undefined;
+                                  const furtherValuePart = furtherIndexedMatch[3].trim();
+
+                                  if (furtherArrayLength !== undefined) {
+                                    if (furtherValuePart) {
+                                      const arrayValues = parseTONLLine(furtherValuePart, context.delimiter);
+                                      const parsedArray: TONLValue[] = [];
+                                      for (const arrayValue of arrayValues) {
+                                        parsedArray.push(parsePrimitiveValue(arrayValue, context));
+                                      }
+                                      furtherNestedArray[furtherIndex] = parsedArray;
+                                    } else {
+                                      furtherNestedArray[furtherIndex] = [];
+                                    }
+                                  } else if (furtherValuePart) {
+                                    furtherNestedArray[furtherIndex] = parsePrimitiveValue(furtherValuePart, context);
+                                  } else {
+                                    furtherNestedArray[furtherIndex] = [];
+                                  }
+                                }
+                              }
+
+                              nestedArray[nestedIndex] = furtherNestedArray;
+                              nestedLineIndex = nextLineIndex - 1; // Adjust for the loop increment
+                            } else {
+                              // Empty array
+                              nestedArray[nestedIndex] = [];
+                            }
+                          }
+                        } else if (nestedValuePart) {
+                          // Parse as primitive
+                          nestedArray[nestedIndex] = parsePrimitiveValue(nestedValuePart, context);
+                        } else {
+                          nestedArray[nestedIndex] = [];
+                        }
+                      }
+                    }
+
+                    result[index] = nestedArray;
+                    lineIndex += nestedContentLines.length;
+                  } else {
+                    // Parse as an object block
+                    const tempHeader: TONLObjectHeader = {
+                      key: `[${index}]`,
+                      isArray: false,
+                      columns: []
+                    };
+                    const nestedBlockLines = nestedContentLines;
+                    const nestedValue = parseObjectBlock(tempHeader, nestedBlockLines, context);
+                    result[index] = nestedValue;
+                    lineIndex += nestedContentLines.length;
+                  }
+                } else {
+                  // No nested array length specified - check if nested content has indexed headers with array lengths
+                  const firstNestedLine = nestedContentLines[0].trim();
+                  const firstNestedIndexedMatch = firstNestedLine.match(/^\[(\d+)\](?:\[(\d+)\])?:\s*(.*)$/);
+
+                  if (firstNestedIndexedMatch && firstNestedIndexedMatch[2]) {
+                    // Nested content has indexed headers with array lengths - parse as array
+                    const nestedArray: TONLValue[] = [];
+
+                    // Parse the nested content lines
+                    for (let nestedLineIndex = 0; nestedLineIndex < nestedContentLines.length; nestedLineIndex++) {
+                      const nestedLine = nestedContentLines[nestedLineIndex];
+                      const nestedTrimmed = nestedLine.trim();
+
+                      // Skip empty lines and comments
+                      if (!nestedTrimmed || nestedTrimmed.startsWith('#')) continue;
+
+                      // Check for indexed headers in nested content
+                      const nestedIndexedMatch = nestedTrimmed.match(/^\[(\d+)\](?:\[(\d+)\])?:\s*(.*)$/);
+                      if (nestedIndexedMatch) {
+                        const nestedIndex = parseInt(nestedIndexedMatch[1], 10);
+                        const nestedArrayLength = nestedIndexedMatch[2] ? parseInt(nestedIndexedMatch[2], 10) : undefined;
+                        const nestedValuePart = nestedIndexedMatch[3].trim();
+
+                        if (nestedArrayLength !== undefined) {
+                          if (nestedValuePart) {
+                            // Parse as array with values
+                            const arrayValues = parseTONLLine(nestedValuePart, context.delimiter);
+                            const parsedArray: TONLValue[] = [];
+                            for (const arrayValue of arrayValues) {
+                              parsedArray.push(parsePrimitiveValue(arrayValue, context));
+                            }
+                            nestedArray[nestedIndex] = parsedArray;
+                          } else {
+                            // Empty array
+                            nestedArray[nestedIndex] = [];
+                          }
+                        } else if (nestedValuePart) {
+                          // Parse as primitive
+                          nestedArray[nestedIndex] = parsePrimitiveValue(nestedValuePart, context);
+                        } else {
+                          nestedArray[nestedIndex] = [];
+                        }
+                      }
+                    }
+
+                    result[index] = nestedArray;
+                    lineIndex += nestedContentLines.length;
+                  } else {
+                    // Parse as object block
+                    const tempHeader: TONLObjectHeader = {
+                      key: `[${index}]`,
+                      isArray: false,
+                      columns: []
+                    };
+                    const nestedBlockLines = nestedContentLines;
+                    const nestedValue = parseObjectBlock(tempHeader, nestedBlockLines, context);
+                    result[index] = nestedValue;
+                    lineIndex += nestedContentLines.length;
+                  }
+                }
               } else {
                 // Empty value - for arrays, this should be an empty array, not null
                 result[index] = [];

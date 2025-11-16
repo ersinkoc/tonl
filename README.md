@@ -8,9 +8,10 @@
 
 **TONL** is a production-ready data platform that combines compact serialization with powerful query, modification, indexing, and streaming capabilities. Designed for LLM token efficiency while providing a rich API for data access and manipulation.
 
-## 🎉 Latest Release: v2.0.5 - Enhanced Stability
+## 🎉 Latest Release: v2.0.6 - Nested Array Length Fix
 
-### ✨ Key Features in v2.0.5:
+### ✨ Key Features in v2.0.6:
+- 🐛 **Fixed nested array length preservation** - Perfect round-trip for `[[]]`, `[[[]]]`, etc.
 - 🔄 **Revolutionary dual-mode system** (quoting + preprocessing)
 - ✅ **Perfect round-trip safety** - 100% data preservation in default mode
 - 🛠️ **Advanced quoting** for special characters (`#`, `@`, `""`, etc.)
@@ -366,7 +367,7 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 ### ESM (Modern Browsers)
 ```html
 <script type="module">
-  import { encodeTONL, decodeTONL } from 'https://cdn.jsdelivr.net/npm/tonl@2.0.5/+esm';
+  import { encodeTONL, decodeTONL } from 'https://cdn.jsdelivr.net/npm/tonl@2.0.6/+esm';
 
   const data = { users: [{ id: 1, name: "Alice" }] };
   const tonl = encodeTONL(data);
@@ -376,7 +377,7 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 
 ### UMD (Universal)
 ```html
-<script src="https://unpkg.com/tonl@2.0.5/dist/browser/tonl.umd.js"></script>
+<script src="https://unpkg.com/tonl@2.0.6/dist/browser/tonl.umd.js"></script>
 <script>
   const tonl = TONL.encodeTONL({ hello: "world" });
   console.log(tonl);

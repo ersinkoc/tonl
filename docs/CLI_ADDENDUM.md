@@ -1,4 +1,4 @@
-# CLI Additional Commands (v2.0.5)
+# CLI Additional Commands (v2.0.6)
 
 ## Query Command
 
@@ -172,7 +172,7 @@ tonl [repl] [file]
 ```bash
 # Start REPL
 $ tonl
-TONL REPL v2.0.5
+TONL REPL v2.0.6
 Type .help for commands
 
 tonl> .load users.tonl

@@ -1,6 +1,6 @@
 # TONL Query API Reference
 
-**Version:** 2.0.5
+**Version:** 2.0.6
 **Status:** Stable & Production Ready
 **Last Updated:** 2025-11-16
 
