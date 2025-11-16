@@ -12,6 +12,12 @@ import { safeJsonParse } from '../utils/strings.js';
 import { decodeTONL } from '../decode.js';
 import type { TONLValue } from '../types.js';
 
+/**
+ * Maximum buffer size for TONL accumulation (10MB)
+ * BUG-FIX-003: Added buffer limit to prevent memory exhaustion
+ */
+const MAX_BUFFER_SIZE = 10 * 1024 * 1024; // 10MB
+
 export interface StreamQueryOptions {
   /**
    * Batch size for processing
@@ -109,6 +115,13 @@ export async function* streamQuery(
         }
       } catch (e) {
         // Not JSON, accumulate for TONL parsing
+        // BUG-FIX-003: Check buffer size before accumulating
+        if (buffer.length + line.length + 1 > MAX_BUFFER_SIZE) {
+          throw new Error(
+            `Buffer overflow prevented: TONL accumulation would exceed ${MAX_BUFFER_SIZE} bytes. ` +
+            `This may indicate a malformed file or excessive data.`
+          );
+        }
         buffer += line + '\n';
       }
     }
@@ -120,7 +133,10 @@ export async function* streamQuery(
         const result = evaluate(data, parseResult.ast);
 
         if (result !== undefined) {
-          if (skippedCount >= skip) {
+          // BUG-FIX-003: Fixed skip logic - should check skip, not >=
+          if (skippedCount < skip) {
+            skippedCount++;
+          } else {
             const output = map ? map(result) : result;
             if (!filter || filter(output)) {
               yield output;
@@ -132,7 +148,11 @@ export async function* streamQuery(
       }
     }
   } finally {
-    fileStream.close();
+    // BUG-FIX-003: Use destroy() instead of close() for proper async cleanup
+    fileStream.destroy();
+    rl.close();
+    // Clear buffer to prevent memory leak
+    buffer = '';
   }
 }
 

@@ -26,9 +26,10 @@ const DEFAULT_LIMITS: ComplexityLimits = {
 
 /**
  * Safely parse JSON with protection against ReDoS attacks and memory exhaustion
- * @param jsonString - JSON string to parse
+ * BUG-FIX-004: Now accepts valid JSON primitives (null, true, false, numbers, strings)
+ * @param jsonString - JSON string to parse (objects, arrays, or primitives)
  * @param limits - Optional complexity limits
- * @returns Parsed JSON object
+ * @returns Parsed JSON value
  * @throws Error if JSON is invalid or exceeds limits
  */
 export function safeJsonParse(jsonString: string, limits: Partial<ComplexityLimits> = {}): unknown {
@@ -45,65 +46,75 @@ export function safeJsonParse(jsonString: string, limits: Partial<ComplexityLimi
     throw new Error('JSON input cannot be empty');
   }
 
-  // Check for basic JSON structure
-  if (!(trimmed.startsWith('{') || trimmed.startsWith('['))) {
-    throw new Error('Invalid JSON format: must start with { or [');
+  // BUG-FIX-004: Accept all valid JSON types, not just objects and arrays
+  // Valid JSON can be: objects {}, arrays [], strings "", numbers, true, false, null
+  const firstChar = trimmed[0];
+  const isObject = firstChar === '{';
+  const isArray = firstChar === '[';
+  const isString = firstChar === '"';
+  const isPrimitive = /^(null|true|false|-?\d)/.test(trimmed);
+
+  if (!(isObject || isArray || isString || isPrimitive)) {
+    throw new Error(`Invalid JSON format: must be valid JSON (object, array, string, number, boolean, or null)`);
   }
 
-  let nesting = 0;
-  let inString = false;
-  let escapeNext = false;
-  let objectCount = 0;
-  let arrayCount = 0;
+  // BUG-FIX-004: Only validate complexity for objects and arrays, not primitives
+  if (isObject || isArray) {
+    let nesting = 0;
+    let inString = false;
+    let escapeNext = false;
+    let objectCount = 0;
+    let arrayCount = 0;
 
-  // Pre-validate complexity
-  for (let i = 0; i < trimmed.length; i++) {
-    const char = trimmed[i];
+    // Pre-validate complexity
+    for (let i = 0; i < trimmed.length; i++) {
+      const char = trimmed[i];
 
-    if (escapeNext) {
-      escapeNext = false;
-      continue;
-    }
+      if (escapeNext) {
+        escapeNext = false;
+        continue;
+      }
 
-    if (char === '\\' && inString) {
-      escapeNext = true;
-      continue;
-    }
+      if (char === '\\' && inString) {
+        escapeNext = true;
+        continue;
+      }
 
-    if (char === '"' && !escapeNext) {
-      inString = !inString;
-      continue;
-    }
+      if (char === '"' && !escapeNext) {
+        inString = !inString;
+        continue;
+      }
 
-    if (!inString) {
-      switch (char) {
-        case '{':
-          nesting++;
-          objectCount++;
-          if (nesting > finalLimits.maxNesting) {
-            throw new Error(`JSON nesting too deep: ${nesting} (max: ${finalLimits.maxNesting})`);
-          }
-          if (objectCount > finalLimits.maxProperties) {
-            throw new Error(`Too many objects: ${objectCount} (max: ${finalLimits.maxProperties})`);
-          }
-          break;
-        case '[':
-          nesting++;
-          arrayCount++;
-          if (nesting > finalLimits.maxNesting) {
-            throw new Error(`JSON nesting too deep: ${nesting} (max: ${finalLimits.maxNesting})`);
-          }
-          break;
-        case '}':
-        case ']':
-          nesting--;
-          break;
+      if (!inString) {
+        switch (char) {
+          case '{':
+            nesting++;
+            objectCount++;
+            if (nesting > finalLimits.maxNesting) {
+              throw new Error(`JSON nesting too deep: ${nesting} (max: ${finalLimits.maxNesting})`);
+            }
+            if (objectCount > finalLimits.maxProperties) {
+              throw new Error(`Too many objects: ${objectCount} (max: ${finalLimits.maxProperties})`);
+            }
+            break;
+          case '[':
+            nesting++;
+            arrayCount++;
+            if (nesting > finalLimits.maxNesting) {
+              throw new Error(`JSON nesting too deep: ${nesting} (max: ${finalLimits.maxNesting})`);
+            }
+            break;
+          case '}':
+          case ']':
+            nesting--;
+            break;
+        }
       }
     }
-  }
 
-  if (nesting !== 0) {
-    throw new Error('Invalid JSON: unbalanced brackets');
+    if (nesting !== 0) {
+      throw new Error('Invalid JSON: unbalanced brackets');
+    }
   }
 
   try {
@@ -219,7 +230,33 @@ export function tripleQuoteIfNeeded(value: string, delimiter: TONLDelimiter): st
 
 /**
  * Create proper indentation string
+ * BUG-FIX-002: Added validation to prevent string repeat DoS attacks
+ * @param level - Indentation level (must be non-negative safe integer)
+ * @param spaces - Spaces per level (must be 0-100, typically 2 or 4)
+ * @returns Indentation string
+ * @throws RangeError if parameters are invalid or result would be too large
  */
 export function makeIndent(level: number, spaces: number): string {
-  return " ".repeat(level * spaces);
+  // Validate level
+  if (!Number.isSafeInteger(level) || level < 0) {
+    throw new RangeError(`Invalid indent level: ${level} (must be non-negative safe integer)`);
+  }
+
+  // Validate spaces
+  if (!Number.isSafeInteger(spaces) || spaces < 0 || spaces > 100) {
+    throw new RangeError(`Invalid spaces value: ${spaces} (must be 0-100)`);
+  }
+
+  // Calculate total spaces and check limit
+  const totalSpaces = level * spaces;
+  const MAX_INDENT = 10000; // Maximum 10,000 spaces to prevent DoS
+
+  if (totalSpaces > MAX_INDENT) {
+    throw new RangeError(
+      `Total indent too large: ${totalSpaces} spaces (max: ${MAX_INDENT}). ` +
+      `This may indicate excessive nesting depth or a DoS attack.`
+    );
+  }
+
+  return " ".repeat(totalSpaces);
 }

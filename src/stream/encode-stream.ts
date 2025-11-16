@@ -9,6 +9,13 @@ import { safeJsonParse } from '../utils/strings.js';
 import type { TONLValue } from '../types.js';
 
 /**
+ * Maximum buffer size to prevent memory exhaustion (10MB)
+ * If buffered input exceeds this size, an error will be thrown
+ * BUG-FIX-001: Added buffer size limit to match decode-stream security protections
+ */
+const MAX_BUFFER_SIZE = 10 * 1024 * 1024; // 10MB
+
+/**
  * Create a transform stream that encodes JSON chunks to TONL format
  */
 export function createEncodeStream(options?: StreamEncodeOptions): Transform {
@@ -20,13 +27,26 @@ export function createEncodeStream(options?: StreamEncodeOptions): Transform {
   let buffer = '';
   let isFirst = true;
 
-  return new Transform({
+  const stream = new Transform({
     objectMode: false,
     highWaterMark: opts.highWaterMark,
 
     transform(chunk: Buffer, encoding: string, callback: Function) {
       try {
-        buffer += chunk.toString('utf-8');
+        const chunkStr = chunk.toString('utf-8');
+
+        // BUG-FIX-001: Check buffer size BEFORE appending chunk to prevent memory exhaustion
+        if (buffer.length + chunkStr.length > MAX_BUFFER_SIZE) {
+          // Clear buffer to prevent memory leak on error
+          buffer = '';
+          return callback(new Error(
+            `Buffer overflow prevented: incoming chunk would exceed ${MAX_BUFFER_SIZE} bytes. ` +
+            `Current buffer: ${buffer.length} bytes, chunk: ${chunkStr.length} bytes. ` +
+            `This may indicate malformed JSON input or a DoS attack.`
+          ));
+        }
+
+        buffer += chunkStr;
 
         // Try to parse complete JSON objects from buffer
         // For streaming, we expect newline-delimited JSON (NDJSON)
@@ -54,6 +74,8 @@ export function createEncodeStream(options?: StreamEncodeOptions): Transform {
 
         callback();
       } catch (error) {
+        // BUG-FIX-001: Clear buffer on error to prevent memory leak
+        buffer = '';
         callback(error);
       }
     },
@@ -66,12 +88,29 @@ export function createEncodeStream(options?: StreamEncodeOptions): Transform {
           const tonlOutput = encodeTONL(jsonData, opts);
           this.push(tonlOutput);
         }
+
+        // BUG-FIX-001: Clear buffer after successful processing
+        buffer = '';
         callback();
       } catch (error) {
+        // BUG-FIX-001: Clear buffer even on error to prevent memory leak
+        buffer = '';
         callback(error);
       }
     }
   });
+
+  // BUG-FIX-001: Add cleanup handler for stream destruction
+  stream.on('destroy', () => {
+    buffer = '';
+  });
+
+  // BUG-FIX-001: Add error handler to ensure cleanup
+  stream.on('error', () => {
+    buffer = '';
+  });
+
+  return stream;
 }
 
 /**
