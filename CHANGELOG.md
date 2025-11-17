@@ -53,6 +53,31 @@ root:
 
 ---
 
+## [2.0.8] - 2025-11-18
+
+### 📦 **Version Bump Release**
+
+**Stability release with updated package version and documentation improvements.**
+
+#### **Updated:**
+- **Package Version** - Bumped to 2.0.8 for consistency with distribution
+- **Documentation** - Updated version references across project documentation
+- **Website Assets** - Synchronized version information displayed on project website
+- **Package Metadata** - Updated version tags in build distribution files
+
+#### **Technical Details:**
+- Version consistency across all package.json and distribution files
+- Updated website landing page to reflect current version
+- Synchronized README.md version badges and references
+- Maintained backward compatibility with zero breaking changes
+
+#### **Impact:**
+- **Zero Breaking Changes** - All existing code continues to work
+- **Version Consistency** - Aligned distribution and documentation versions
+- **Production Ready** - Ready for immediate use with updated version number
+
+---
+
 ## [Unreleased]
 
 ### Planned

@@ -1,6 +1,6 @@
-# Getting Started with TONL v2.0.6
+# Getting Started with TONL v2.0.8
 
-Welcome to TONL! This guide will help you get started with all the powerful features of TONL v2.0.6, including the revolutionary dual-mode system for handling problematic JSON keys.
+Welcome to TONL! This guide will help you get started with all the powerful features of TONL v2.0.8, including the revolutionary dual-mode system for handling problematic JSON keys and the latest documentation updates.
 
 ---
 

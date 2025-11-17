@@ -8,16 +8,16 @@
 
 **TONL** is a production-ready data platform that combines compact serialization with powerful query, modification, indexing, and streaming capabilities. Designed for LLM token efficiency while providing a rich API for data access and manipulation.
 
-## 🎉 Latest Release: v2.0.7 - Schema-First Nested Array Fix
+## 🎉 Latest Release: v2.0.8 - Documentation & Version Synchronization
 
-### ✨ Key Features in v2.0.7:
-- 🏗️ **Fixed schema-first nested array parsing** - Perfect round-trip for complex nested structures
-- 🌐 **Website playground enhancement** - Interactive schema-first toggle and examples
-- 🔄 **Bracket-aware parser** - Smart quote handling inside brackets in schema-first mode
-- ✅ **Perfect data integrity** - 100% round-trip preservation for schema-first arrays
-- 📋 **3 new website examples** - Teams, Products, Employees with nested arrays
-- 🎯 **Targeted fix** - Only affects schema-first parsing, zero impact on existing features
-- ✅ **100% test coverage maintained** - All 790+ tests passing
+### ✨ Key Features in v2.0.8:
+- 📦 **Version consistency update** - Synchronized version numbers across all distribution
+- 📚 **Documentation updates** - Updated version references throughout project
+- 🌐 **Website version sync** - Aligned website with current version information
+- 🔄 **Package metadata refresh** - Updated version tags in build artifacts
+- ✅ **Production stability** - Zero breaking changes, fully backward compatible
+- 🎯 **Release readiness** - Prepared distribution channels with consistent versioning
+- ✅ **All features maintained** - Complete feature set from v2.0.7 preserved
 
 [![npm version](https://badge.fury.io/js/tonl.svg)](https://www.npmjs.com/package/tonl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -367,7 +367,7 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 ### ESM (Modern Browsers)
 ```html
 <script type="module">
-  import { encodeTONL, decodeTONL } from 'https://cdn.jsdelivr.net/npm/tonl@2.0.6/+esm';
+  import { encodeTONL, decodeTONL } from 'https://cdn.jsdelivr.net/npm/tonl@2.0.8/+esm';
 
   const data = { users: [{ id: 1, name: "Alice" }] };
   const tonl = encodeTONL(data);
@@ -377,7 +377,7 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 
 ### UMD (Universal)
 ```html
-<script src="https://unpkg.com/tonl@2.0.6/dist/browser/tonl.umd.js"></script>
+<script src="https://unpkg.com/tonl@2.0.8/dist/browser/tonl.umd.js"></script>
 <script>
   const tonl = TONL.encodeTONL({ hello: "world" });
   console.log(tonl);
