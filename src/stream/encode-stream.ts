@@ -37,11 +37,13 @@ export function createEncodeStream(options?: StreamEncodeOptions): Transform {
 
         // BUG-FIX-001: Check buffer size BEFORE appending chunk to prevent memory exhaustion
         if (buffer.length + chunkStr.length > MAX_BUFFER_SIZE) {
+          // BUG-NEW-003 FIX: Save buffer size before clearing for accurate error message
+          const bufferSize = buffer.length;
           // Clear buffer to prevent memory leak on error
           buffer = '';
           return callback(new Error(
             `Buffer overflow prevented: incoming chunk would exceed ${MAX_BUFFER_SIZE} bytes. ` +
-            `Current buffer: ${buffer.length} bytes, chunk: ${chunkStr.length} bytes. ` +
+            `Current buffer: ${bufferSize} bytes, chunk: ${chunkStr.length} bytes. ` +
             `This may indicate malformed JSON input or a DoS attack.`
           ));
         }

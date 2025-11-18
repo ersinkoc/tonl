@@ -74,6 +74,8 @@ export interface TONLEncodeContext {
   schemaFirst: boolean;
   currentIndent: number;
   seen?: WeakSet<object>;  // Track circular references
+  currentDepth?: number;     // BUG-NEW-002 FIX: Track recursion depth
+  maxDepth?: number;         // BUG-NEW-002 FIX: Maximum nesting depth (default: 500)
 }
 
 /** Parser state for line-by-line processing */

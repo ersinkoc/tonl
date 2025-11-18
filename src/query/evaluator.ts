@@ -426,6 +426,12 @@ export class QueryEvaluator {
     if (!Number.isSafeInteger(step)) {
       throw new Error(`Slice step out of safe range: ${step}`);
     }
+    // BUG-NEW-004 FIX: Limit step size to prevent performance issues
+    // Step values larger than array length are inefficient and likely a mistake
+    const MAX_REASONABLE_STEP = 1000000; // 1 million
+    if (Math.abs(step) > MAX_REASONABLE_STEP) {
+      throw new Error(`Slice step too large: ${step}. Maximum allowed: ${MAX_REASONABLE_STEP}`);
+    }
 
     // Resolve start and end indices
     let actualStart = start !== undefined ? start : 0;
