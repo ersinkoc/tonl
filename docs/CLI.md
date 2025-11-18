@@ -2,7 +2,7 @@
 
 The TONL Command Line Interface provides powerful tools for converting, analyzing, and optimizing TONL data.
 
-## 🎉 v2.0.8 - Documentation & Version Synchronization
+## 🎉 v2.0.9 - Documentation & Version Synchronization
 
 **Updated CLI documentation** with synchronized version information:
 

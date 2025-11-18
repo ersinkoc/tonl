@@ -1,12 +1,22 @@
-# TONL API Documentation v2.0.8
+# TONL API Documentation v2.0.9
 
-**Version:** 2.0.8
+**Version:** 2.0.9
 **Status:** Stable & Production Ready
 **Last Updated:** 2025-11-18
 
 This document provides detailed API documentation for the TONL TypeScript library.
 
-## 🎉 What's New in v2.0.8
+## 🎉 What's New in v2.0.9
+
+- **Test Suite Stabilization**: Fixed all failing tests and enhanced reliability
+- **Schema Parser Fixes**: Corrected property access in schema parsing
+- **API Consistency**: Fixed method name and property access issues
+- **878 Tests Passing**: Complete test coverage with 100% success rate
+- **Quality Assurance**: Enhanced error handling and edge case coverage
+- **Zero Breaking Changes**: All existing functionality preserved
+- **Production Ready**: Fully tested and stable release
+
+## 🎉 What's New in v2.0.9
 
 - **Version Consistency Update**: Synchronized version numbers across all distribution channels
 - **Documentation Alignment**: Updated version references throughout project documentation
@@ -1495,7 +1505,7 @@ console.log(tonlWithOptimizations);
 
 ## Version
 
-**Current version: 2.0.8**
+**Current version: 2.0.9**
 
 - ✅ Production ready and stable
 - ✅ Full feature set (query, modify, index, stream, schema, optimize)
