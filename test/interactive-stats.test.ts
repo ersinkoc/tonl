@@ -2,13 +2,13 @@
  * Interactive CLI Stats Tests - 100% Coverage
  */
 
-import { test, describe } from "node:test";
+import { test, describe, after } from "node:test";
 import { strict as assert } from "node:assert";
 import { writeFileSync, readFileSync, unlinkSync, mkdirSync } from "fs";
 import { join } from "path";
 import { execSync } from "child_process";
-import { SimpleInteractiveStats } from "../src/cli/simple-interactive.js";
-import { EnhancedStats } from "../src/cli/simple-enhanced-stats.js";
+import { SimpleInteractiveStats } from "../dist/cli/simple-interactive.js";
+import { EnhancedStats } from "../dist/cli/simple-enhanced-stats.js";
 
 // Test data fixtures
 const testFixtures = {

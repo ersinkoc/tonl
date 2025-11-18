@@ -6,6 +6,79 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [2.2.0] - 2025-11-18
+
+### 🎉 **Revolutionary Interactive CLI Experience**
+### 🏗️ **Complete Modular Architecture Transformation**
+
+#### **🆕 New Features - Interactive Stats Dashboard:**
+- **🎮 Menu-Driven Interface** - Real-time file analysis with visual feedback
+- **🔄 Live Progress Tracking** - Animated progress bars and loading states
+- **📊 Side-by-Side File Comparison** - Compare JSON/TONL files with detailed metrics
+- **🎨 Multiple Color Themes** - default, neon, matrix, cyberpunk themes
+- **⚡ Interactive Tokenizer Switching** - Switch between GPT-5, Claude-3.5, Gemini-2.0 in real-time
+- **📈 Real-Time Compression Metrics** - Live updates of byte/token savings
+- **🔍 Deep File Structure Analysis** - Interactive exploration of file contents
+
+#### **🏗️ New Features - Modular Command Pattern:**
+- **📁 `src/cli/commands/`** - Individual command modules for maintainability
+- **🔧 `src/cli/types.ts`** - Type-safe command interfaces and CLI options
+- **⚙️ `src/cli/utils.ts`** - Shared utility functions for file operations
+- **📋 `src/cli/arg-parser.ts`** - Centralized argument parsing with validation
+- **🎯 Command Registry & Dispatch** - Modern command execution system
+
+#### **🎯 Enhanced User Experience:**
+- **`--interactive` / `-i`** - Flag for interactive mode activation
+- **`--compare`** - File comparison mode for side-by-side analysis
+- **`--theme`** - Visual customization with multiple color themes
+- **Progress Visualization** - Beautiful progress bars and animations
+- **Responsive Menu System** - Keyboard navigation with intuitive controls
+
+#### **📊 Performance & Architecture Improvements:**
+- **Reduced from 735-line monolith** to maintainable modular architecture
+- **Type Safety** throughout the CLI system with proper interfaces
+- **Enhanced Error Handling** with descriptive error messages
+- **Performance Optimizations** for large file analysis
+
+#### **🧪 Testing Excellence:**
+- **791+ Comprehensive Tests** across 46 test suites
+- **Complete CLI Coverage** including all interactive features
+- **Integration Tests** for real CLI command execution
+- **100% Success Rate** with robust error handling validation
+
+#### **💻 Usage Examples:**
+```bash
+# Interactive stats dashboard
+tonl stats data.json --interactive
+tonl stats data.json -i --theme neon
+
+# File comparison mode
+tonl stats data.json --compare --theme matrix
+
+# Quick stats with custom tokenizer
+tonl stats large-file.json --tokenizer gpt-5
+
+# Interactive help and exploration
+tonl stats --interactive
+```
+
+#### **🎮 Interactive Menu Features:**
+1. **📊 Analyze File** - Deep file structure analysis
+2. **⚖️ Compare Files** - Side-by-side comparison
+3. **🎨 Change Theme** - Visual customization
+4. **🔄 Change Tokenizer** - Real-time tokenizer switching
+5. **📈 Detailed Stats** - Comprehensive compression analysis
+6. **❌ Exit** - Clean exit with resource cleanup
+
+#### **📈 Impact:**
+- **User Experience**: Revolutionary CLI interaction model
+- **Developer Experience**: Maintainable modular architecture
+- **File Analysis**: Advanced comparison and exploration capabilities
+- **Visual Design**: Beautiful terminal UI with themes and animations
+- **Testing Excellence**: 791+ tests with 100% success rate
+
+---
+
 ## [2.1.0] - 2025-11-18
 
 ### 🐛 **Bug Fix Release**

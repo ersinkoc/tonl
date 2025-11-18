@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLI Examples - TONL v2.2.0</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="prism.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        code, pre { font-family: 'JetBrains Mono', monospace; }
+
+        /* Terminal Styles */
+        .terminal {
+            background: #1e293b;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #334155;
+            margin: 1.5rem 0;
+        }
+
+        .terminal-header {
+            background: #0f172a;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ef4444; }
+        .terminal-dot.yellow { background: #eab308; }
+        .terminal-dot.green { background: #22c55e; }
+
+        .terminal-title {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-left: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-content {
+            padding: 1rem;
+            color: #e2e8f0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            background: #1e293b;
+        }
+
+        .terminal-line {
+            margin: 0.25rem 0;
+            white-space: pre-wrap;
+        }
+
+        .terminal-output { color: #22c55e; }
+        .terminal-command { color: #e2e8f0; }
+        .terminal-prompt { color: #3b82f6; }
+        .terminal-error { color: #ef4444; }
+        .terminal-warning { color: #eab308; }
+        .terminal-info { color: #60a5fa; }
+
+        /* CLI Examples Grid */
+        .cli-examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .cli-example {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .example-header {
+            background: #f8fafc;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .example-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .example-description {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        .example-content {
+            padding: 1.5rem;
+        }
+
+        /* Command Section */
+        .command-section {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .command-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+
+        .command-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    
+    <!-- Navigation -->
+    <nav class="border-b border-slate-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50" x-data="{ mobileOpen: false }">
+        <div class="max-w-6xl mx-auto px-4 py-3" x-data="{ mobileOpen: false }">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="/" class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
+                        <span class="text-2xl font-bold text-white">T</span>
+                    </div>
+                    <span class="text-2xl font-bold text-slate-900">TONL</span>
+                </a>
+
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="docs.html" class="text-slate-600 hover:text-slate-900 font-medium transition">Docs</a>
+                    <a href="examples.html" class="text-slate-600 hover:text-slate-900 font-medium transition">Playground</a>
+                    <a href="cli.html" class="text-blue-600 hover:text-blue-800 font-medium transition font-semibold">CLI</a>
+                    <a href="https://github.com/tonl-dev/tonl" target="_blank" class="text-slate-600 hover:text-slate-900 font-medium transition">GitHub</a>
+                    <a href="https://www.npmjs.com/package/tonl" target="_blank" class="bg-slate-900 text-white px-5 py-2 rounded-lg font-semibold hover:bg-slate-800 transition">
+                        Install
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button @click="mobileOpen = !mobileOpen" class="md:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div x-show="mobileOpen" class="md:hidden mt-4 space-y-1" x-transition>
+                <a href="docs.html" class="block py-2 text-slate-600 hover:text-slate-900">Docs</a>
+                <a href="examples.html" class="block py-2 text-slate-600 hover:text-slate-900">Playground</a>
+                <a href="cli.html" class="block py-2 text-blue-600 hover:text-blue-800 font-semibold">CLI</a>
+                <a href="https://github.com/tonl-dev/tonl" class="block py-2 text-slate-600 hover:text-slate-900">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-24 bg-gradient-to-b from-slate-50 to-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center">
+                <h1 class="text-5xl md:text-6xl font-bold text-slate-900 mb-6">
+                    CLI Examples & Terminal Output
+                </h1>
+                <p class="text-xl md:text-2xl text-slate-600 mb-12 leading-relaxed max-w-4xl mx-auto">
+                    Explore TONL's powerful command-line interface with real terminal examples showing all available commands and their output.
+                </p>
+                <div class="inline-flex items-center px-4 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-sm font-medium text-emerald-700">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
+                    v2.2.0 - Interactive Stats Dashboard
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">Quick Installation</h2>
+                <p class="text-xl text-slate-600">Get started with TONL CLI in seconds</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-8">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">📦 Install TONL</h3>
+                            <div class="command-block">npm install -g tonl</div>
+                            <p class="text-slate-600 text-sm mt-2">Install globally using npm or yarn</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">✅ Verify Installation</h3>
+                            <div class="command-block">tonl --version</div>
+                            <p class="text-slate-600 text-sm mt-2">Should show version 2.2.0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CLI Examples -->
+    <section class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">CLI Command Examples</h2>
+                <p class="text-xl text-slate-600">Real terminal output showing TONL commands in action</p>
+            </div>
+
+            <div class="cli-examples-grid">
+                <!-- Stats Command Example -->
+                <div class="cli-example">
+                    <div class="example-header">
+                        <h3 class="example-title">📊 File Analysis Command</h3>
+                        <p class="example-description">Analyze file statistics and compression metrics</p>
+                    </div>
+                    <div class="example-content">
+                        <div class="command-section">
+                            <div class="command-label">Command:</div>
+                            <div class="command-block">tonl stats package.json</div>
+                        </div>
+
+                        <div class="terminal">
+                            <div class="terminal-header">
+                                <div class="terminal-dot red"></div>
+                                <div class="terminal-dot yellow"></div>
+                                <div class="terminal-dot green"></div>
+                                <div class="terminal-title">tonl stats package.json</div>
+                            </div>
+                            <div class="terminal-content">
+                                <div class="terminal-line terminal-output">📊 Analyzing package.json...</div>
+                                <div class="terminal-line terminal-output">📖 File size: 2,456 bytes</div>
+                                <div class="terminal-line terminal-output">⚙️  Processing data structure...</div>
+                                <div class="terminal-line terminal-output">✅ Analysis complete!</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-info">📈 Statistics:</div>
+                                <div class="terminal-line">  JSON: 2,456 bytes, 624 tokens</div>
+                                <div class="terminal-line">  TONL: 1,678 bytes, 412 tokens</div>
+                                <div class="terminal-line terminal-output">  💰 Compression: 31.7% bytes, 34.0% tokens</div>
+                                <div class="terminal-line">  ⚡ Processing time: 12ms</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-info">🔍 Data structure: 1 object, 8 properties, 2 nested objects</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Mode Example -->
+                <div class="cli-example">
+                    <div class="example-header">
+                        <h3 class="example-title">🎮 Interactive Dashboard</h3>
+                        <p class="example-description">Launch the interactive stats dashboard (v2.2.0)</p>
+                    </div>
+                    <div class="example-content">
+                        <div class="command-section">
+                            <div class="command-label">Command:</div>
+                            <div class="command-block">tonl stats data.json --interactive</div>
+                        </div>
+
+                        <div class="terminal">
+                            <div class="terminal-header">
+                                <div class="terminal-dot red"></div>
+                                <div class="terminal-dot yellow"></div>
+                                <div class="terminal-dot green"></div>
+                                <div class="terminal-title">tonl stats data.json -i</div>
+                            </div>
+                            <div class="terminal-content">
+                                <div class="terminal-line terminal-output">🚀 TONL Interactive Stats Dashboard v2.2.0</div>
+                                <div class="terminal-line terminal-output">==========================================</div>
+                                <div class="terminal-line terminal-output">📊 Analyzing data.json...</div>
+                                <div class="terminal-line terminal-output">📖 Reading data.json (1,245 bytes)...</div>
+                                <div class="terminal-line terminal-output">⚙️  Processing data...</div>
+                                <div class="terminal-line terminal-output">✅ Analysis complete!</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-output">📈 Results: 1,245 bytes → 892 bytes (28.4% savings)</div>
+                                <div class="terminal-line terminal-output">🧠 Tokens: 412 → 267 (35.2% reduction)</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-info">Interactive Menu:</div>
+                                <div class="terminal-line">  1. 📊 Analyze another file</div>
+                                <div class="terminal-line">  2. ⚖️ Compare two files</div>
+                                <div class="terminal-line">  3. 🎨 Change theme (default, neon, matrix, cyberpunk)</div>
+                                <div class="terminal-line">  4. 🔍 Change tokenizer (gpt-5, claude-3.5, gemini-2.0)</div>
+                                <div class="terminal-line">  5. 📈 Detailed statistics</div>
+                                <div class="terminal-line">  6. ❌ Exit</div>
+                                <div class="terminal-line terminal-prompt">tonl> </div>
+                                <div class="terminal-line terminal-command">_</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Encode Command Example -->
+                <div class="cli-example">
+                    <div class="example-header">
+                        <h3 class="example-title">⚡ Encode Command</h3>
+                        <p class="example-description">Convert JSON to TONL format with optimization</p>
+                    </div>
+                    <div class="example-content">
+                        <div class="command-section">
+                            <div class="command-label">Command:</div>
+                            <div class="command-block">tonl encode users.json --out users.tonl --smart</div>
+                        </div>
+
+                        <div class="terminal">
+                            <div class="terminal-header">
+                                <div class="terminal-dot red"></div>
+                                <div class="terminal-dot yellow"></div>
+                                <div class="terminal-dot green"></div>
+                                <div class="terminal-title">tonl encode users.json --out users.tonl --smart</div>
+                            </div>
+                            <div class="terminal-content">
+                                <div class="terminal-line terminal-output">📖 Reading users.json (3,567 bytes)...</div>
+                                <div class="terminal-line terminal-output">🔍 Analyzing data structure...</div>
+                                <div class="terminal-line terminal-info">  Found: 1 array, 150 objects, 8 properties per object</div>
+                                <div class="terminal-line terminal-output">⚙️  Smart encoding enabled...</div>
+                                <div class="terminal-line terminal-info">  Optimal delimiter: comma (,)</div>
+                                <div class="terminal-line terminal-info">  Optimization: dictionary + delta encoding</div>
+                                <div class="terminal-line terminal-output">✅ Encoding complete!</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-output">📊 Results:</div>
+                                <div class="terminal-line">  Original: 3,567 bytes (JSON)</div>
+                                <div class="terminal-line">  Compressed: 1,892 bytes (TONL)</div>
+                                <div class="terminal-line terminal-output">  💰 Savings: 1,675 bytes (47.0%)</div>
+                                <div class="terminal-line terminal-output">  ✅ Written to: users.tonl</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Example -->
+                <div class="cli-example">
+                    <div class="example-header">
+                        <h3 class="example-title">⚖️ File Comparison</h3>
+                        <p class="example-description">Compare JSON vs TONL files with detailed metrics</p>
+                    </div>
+                    <div class="example-content">
+                        <div class="command-section">
+                            <div class="command-label">Command:</div>
+                            <div class="command-block">tonl stats config.json --compare --tokenizer gpt-5</div>
+                        </div>
+
+                        <div class="terminal">
+                            <div class="terminal-header">
+                                <div class="terminal-dot red"></div>
+                                <div class="terminal-dot yellow"></div>
+                                <div class="terminal-dot green"></div>
+                                <div class="terminal-title">tonl stats config.json --compare --tokenizer gpt-5</div>
+                            </div>
+                            <div class="terminal-content">
+                                <div class="terminal-line terminal-output">📊 Analyzing config.json...</div>
+                                <div class="terminal-line terminal-output">⚖️ Comparing JSON vs TONL formats...</div>
+                                <div class="terminal-line terminal-output">🧠 Token analysis using GPT-5 tokenizer...</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-info">📋 File Comparison Results:</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line">  📄 JSON Format:</div>
+                                <div class="terminal-line">    Size: 8,234 bytes</div>
+                                <div class="terminal-line">    GPT-5 Tokens: 2,156</div>
+                                <div class="terminal-line">    Cost: ~$0.02156</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line">  📄 TONL Format:</div>
+                                <div class="terminal-line">    Size: 4,891 bytes</div>
+                                <div class="terminal-line">    GPT-5 Tokens: 1,342</div>
+                                <div class="terminal-line">    Cost: ~$0.01342</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-output">  💰 Savings: 3,343 bytes (40.6%), 814 tokens (37.7%)</div>
+                                <div class="terminal-line terminal-output">  💸 Cost Reduction: 37.7% cheaper</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-info">🔧 Optimization applied: dictionary encoding + smart delimiter selection</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theme Example -->
+                <div class="cli-example">
+                    <div class="example-header">
+                        <h3 class="example-title">🎨 Theme Customization</h3>
+                        <p class="example-description">Use different visual themes for interactive mode</p>
+                    </div>
+                    <div class="example-content">
+                        <div class="command-section">
+                            <div class="command-label">Available Themes:</div>
+                            <div class="command-block">tonl stats data.json -i --theme neon
+tonl stats data.json -i --theme matrix
+tonl stats data.json -i --theme cyberpunk
+tonl stats data.json -i --theme default</div>
+                        </div>
+
+                        <div class="terminal">
+                            <div class="terminal-header">
+                                <div class="terminal-dot red"></div>
+                                <div class="terminal-dot yellow"></div>
+                                <div class="terminal-dot green"></div>
+                                <div class="terminal-title">tonl stats data.json -i --theme neon</div>
+                            </div>
+                            <div class="terminal-content">
+                                <div class="terminal-line terminal-output" style="color: #ff00ff;">🚀 TONL Interactive Stats Dashboard v2.2.0</div>
+                                <div class="terminal-line terminal-output" style="color: #ff00ff;">==========================================</div>
+                                <div class="terminal-line terminal-output" style="color: #00ffff;">📊 Analyzing data.json with NEON theme...</div>
+                                <div class="terminal-line terminal-output" style="color: #00ffff;">📖 Reading file...</div>
+                                <div class="terminal-line terminal-output" style="color: #00ffff;">✅ Analysis complete!</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-info" style="color: #ffff00;">🎨 Current Theme: NEON</div>
+                                <div class="terminal-line terminal-info" style="color: #ffff00;">   - Bright magenta and cyan colors</div>
+                                <div class="terminal-line terminal-info" style="color: #ffff00;">   - High contrast terminal interface</div>
+                                <div class="terminal-line terminal-info" style="color: #ffff00;">   - Perfect for demonstrations and presentations</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-prompt">tonl> </div>
+                                <div class="terminal-line terminal-command">Type 'theme' to change visual style</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multi-Tokenizer Example -->
+                <div class="cli-example">
+                    <div class="example-header">
+                        <h3 class="example-title">🔍 Multi-Tokenizer Analysis</h3>
+                        <p class="example-description">Compare token costs across different LLM models</p>
+                    </div>
+                    <div class="example-content">
+                        <div class="command-section">
+                            <div class="command-label">Command:</div>
+                            <div class="command-block">tonl stats large-dataset.json --tokenizer claude-3.5</div>
+                        </div>
+
+                        <div class="terminal">
+                            <div class="terminal-header">
+                                <div class="terminal-dot red"></div>
+                                <div class="terminal-dot yellow"></div>
+                                <div class="terminal-dot green"></div>
+                                <div class="terminal-title">tonl stats large-dataset.json --tokenizer claude-3.5</div>
+                            </div>
+                            <div class="terminal-content">
+                                <div class="terminal-line terminal-output">📊 Analyzing large-dataset.json...</div>
+                                <div class="terminal-line terminal-output">📖 File size: 125,678 bytes</div>
+                                <div class="terminal-line terminal-output">🧠 Token analysis using Claude 3.5 tokenizer...</div>
+                                <div class="terminal-line terminal-output">⚙️  Processing large dataset (10,500 records)...</div>
+                                <div class="terminal-line terminal-output">✅ Analysis complete!</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-info">📈 Claude 3.5 Token Analysis:</div>
+                                <div class="terminal-line">  JSON: 42,156 tokens</div>
+                                <div class="terminal-line">  TONL: 24,891 tokens</div>
+                                <div class="terminal-line terminal-output">  💰 Token savings: 17,265 tokens (41.0%)</div>
+                                <div class="terminal-line">  💸 Cost savings: ~$0.17265 (assuming $0.01/1K tokens)</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-info">🔄 Available tokenizers: gpt-5, claude-3.5, gemini-2.0, llama-4, o200k, cl100k</div>
+                                <div class="terminal-line terminal-info">   Use --tokenizer flag to specify model for optimization</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decode Command Example -->
+                <div class="cli-example">
+                    <div class="example-header">
+                        <h3 class="example-title">📖 Decode Command</h3>
+                        <p class="example-description">Convert TONL back to JSON format</p>
+                    </div>
+                    <div class="example-content">
+                        <div class="command-section">
+                            <div class="command-label">Command:</div>
+                            <div class="command-block">tonl decode data.tonl --out data.json</div>
+                        </div>
+
+                        <div class="terminal">
+                            <div class="terminal-header">
+                                <div class="terminal-dot red"></div>
+                                <div class="terminal-dot yellow"></div>
+                                <div class="terminal-dot green"></div>
+                                <div class="terminal-title">tonl decode data.tonl --out data.json</div>
+                            </div>
+                            <div class="terminal-content">
+                                <div class="terminal-line terminal-output">📖 Reading data.tonl...</div>
+                                <div class="terminal-line terminal-output">🔍 Parsing TONL format...</div>
+                                <div class="terminal-line terminal-info">  Format detected: Standard TONL with type hints</div>
+                                <div class="terminal-line terminal-info">  Schema: users[150]{id:u32,name:str,email:str,age:u32,active:bool}</div>
+                                <div class="terminal-line terminal-output">⚙️  Converting to JSON...</div>
+                                <div class="terminal-line terminal-info">  Validating data integrity...</div>
+                                <div class="terminal-line terminal-output">✅ 150 records validated successfully</div>
+                                <div class="terminal-line terminal-output">✅ Decoding complete!</div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line terminal-output">📊 Results:</div>
+                                <div class="terminal-line">  TONL: 8,912 bytes (input)</div>
+                                <div class="terminal-line">  JSON: 15,432 bytes (output)</div>
+                                <div class="terminal-line terminal-output">  ✅ Round-trip successful: 100% data integrity maintained</div>
+                                <div class="terminal-line terminal-output">  ✅ Written to: data.json</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 bg-slate-50">
+      <div class="max-w-6xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <!-- Brand -->
+          <div class="col-span-1 md:col-span-2">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
+                <span class="text-2xl font-bold text-white">T</span>
+              </div>
+              <span class="text-2xl font-bold text-slate-900">TONL</span>
+            </div>
+            <p class="text-slate-600 mb-4 max-w-md">
+              Token-Optimized Notation Language.<br />
+              Reduce your LLM token costs by 32-45% while maintaining human
+              readability.
+            </p>
+            <div class="flex items-center gap-4 text-sm text-slate-500">
+              <span>Zero dependencies</span> <span>•</span>
+              <span>100% test coverage</span> <span>•</span>
+              <span>TypeScript native</span>
+            </div>
+            <div class="flex items-center gap-4 mt-4">
+              <a href="https://github.com/tonl-dev/tonl" target="_blank" class="text-slate-400 hover:text-slate-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a href="https://www.npmjs.com/package/tonl" target="_blank" class="text-slate-400 hover:text-slate-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm1.335 17.517h-2.67v-1.5h2.67v1.5zm0-2.5h-2.67V9.633h2.67v5.384zm0-6.384h-2.67v-1.5h2.67v1.5z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+          <!-- Links -->
+          <div>
+            <h3 class="font-semibold text-slate-900 mb-4">Quick Links</h3>
+            <ul class="space-y-2 text-sm">
+              <li>
+                <a
+                  href="docs.html"
+                  class="text-slate-600 hover:text-slate-900 transition"
+                  >Documentation</a
+                >
+              </li>
+              <li>
+                <a
+                  href="examples.html"
+                  class="text-slate-600 hover:text-slate-900 transition"
+                  >Playground</a
+                >
+              </li>
+              <li>
+                <a
+                  href="cli.html"
+                  class="text-slate-600 hover:text-slate-900 transition"
+                  >Interactive CLI</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/tonl-dev/tonl"
+                  target="_blank"
+                  class="text-slate-600 hover:text-slate-900 transition"
+                  >GitHub</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.npmjs.com/package/tonl"
+                  target="_blank"
+                  class="text-slate-600 hover:text-slate-900 transition"
+                  >npm Package</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- GitHub Star Button -->
+          <div>
+            <h3 class="font-semibold text-slate-900 mb-4">Support</h3>
+            <a
+              href="https://github.com/tonl-dev/tonl"
+              target="_blank"
+              class="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"
+                />
+              </svg>
+              Star on GitHub
+            </a>
+            <div class="mt-4">
+              <a
+                href="https://www.npmjs.com/package/tonl"
+                target="_blank"
+                class="text-xs text-slate-500 hover:text-slate-700 transition"
+              >
+                <span class="font-semibold">npm:</span> tonl
+              </a>
+            </div>
+            <div class="text-xs text-slate-500 mt-2">
+              <span class="font-semibold">Version:</span> 2.1.0
+            </div>
+          </div>
+        </div>
+        <div
+          class="border-t border-slate-200 mt-8 pt-8 text-center text-sm text-slate-500"
+        >
+          <p>&copy; 2025 TONL. All rights reserved. Licensed under MIT.</p>
+        </div>
+      </div>
+    </footer>
+    <script
+      defer
+      src="https://analytics.caprover.ecostack.ee/script.js"
+      data-website-id="8e65fa51-ece0-41b7-85fa-43e1862047a6"
+    ></script>
+  </body>
+</html>

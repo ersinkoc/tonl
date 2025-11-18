@@ -9,7 +9,7 @@ TONL (Token-Optimized Notation Language) CLI
 Usage:
   tonl encode <file.json> [--out <file.tonl>] [options]
   tonl decode <file.tonl> [--out <file.json>] [--strict]
-  tonl stats  <file.{json,tonl}> [--tokenizer <type>] [--interactive] [--theme <theme>]
+  tonl stats  [file.{json,tonl}] [--tokenizer <type>] [--interactive] [--theme <theme>]
   tonl format <file.tonl> [--pretty] [--out <file.tonl>] [options]
   tonl validate <file.tonl> --schema <file.schema.tonl> [--strict]
   tonl generate-types <file.schema.tonl> --out <file.ts>
@@ -48,5 +48,6 @@ Examples:
   tonl get data.tonl "user.profile.email"
   tonl stats data.json --interactive
   tonl stats data.tonl -i --theme cyberpunk
+  tonl stats --interactive
 `);
 }

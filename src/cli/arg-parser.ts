@@ -114,8 +114,19 @@ export function parseArgs(args: string[]): ParsedArgs {
     }
   }
 
-  if (!command || !file) {
+  // Require command for all operations
+  if (!command) {
     throw new Error("Usage: tonl <encode|decode|stats|format> <file> [options]");
+  }
+
+  // Require file for most commands, but allow optional file for interactive mode
+  if (!file && command !== "stats") {
+    throw new Error("Usage: tonl <encode|decode|stats|format> <file> [options]");
+  }
+
+  // For stats command without file but with interactive mode, allow empty file
+  if (command === "stats" && !file && !options.interactive) {
+    throw new Error("Usage: tonl stats <file> [options] or tonl stats --interactive");
   }
 
   return { command, file, options };

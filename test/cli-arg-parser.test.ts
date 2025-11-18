@@ -4,7 +4,7 @@
 
 import { test, describe } from "node:test";
 import { strict as assert } from "node:assert";
-import { parseArgs } from "../src/cli/arg-parser.js";
+import { parseArgs } from "../dist/cli/arg-parser.js";
 
 describe('CLI Argument Parser - Complete Coverage Tests', () => {
 

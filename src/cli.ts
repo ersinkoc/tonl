@@ -26,10 +26,10 @@ async function main() {
 
     // Special case for --version command (no file required)
     if (args.length === 1 && (args[0] === '--version' || args[0] === '-v')) {
-      const packageVersion = '2.0.4'; // Hard-coded version to avoid ES module issues
+      const packageVersion = '2.2.0'; // Hard-coded version to avoid ES module issues
       console.log(`📦 TONL Version: ${packageVersion}`);
       console.log(`🏠 Token-Optimized Notation Language`);
-      console.log(`📋 Built: 2025-11-15`);
+      console.log(`📋 Built: 2025-11-18`);
       console.log(`🔐 Production Ready with 100% Test Coverage`);
       return;
     }
@@ -44,8 +44,11 @@ async function main() {
       process.exit(1);
     }
 
-    // Safely read input file (with path validation)
-    const input = safeReadFile(file, options.preprocess || false);
+    // Safely read input file (with path validation) - skip if no file provided for interactive mode
+    let input = "";
+    if (file) {
+      input = safeReadFile(file, options.preprocess || false);
+    }
 
     // Prepare command context
     const context: CommandContext = {

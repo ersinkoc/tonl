@@ -1,7 +1,7 @@
 {
   "name": "tonl",
-  "version": "2.1.0",
-  "description": "Token-Optimized Notation Language - A text-first, LLM-friendly serialization format with schema validation, streaming, and browser support (Dual-Mode System Release)",
+  "version": "2.2.0",
+  "description": "Token-Optimized Notation Language - A text-first, LLM-friendly serialization format with interactive CLI dashboard, modular architecture, schema validation, streaming, and browser support (Revolutionary Interactive CLI Release)",
   "homepage": "https://github.com/tonl-dev/tonl",
   "repository": {
     "type": "git",
