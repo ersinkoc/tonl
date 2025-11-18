@@ -56,6 +56,9 @@ describe('BUG-NEW-003: Buffer race condition in stream error message', () => {
       errorMessage = err.message;
     });
 
+    // First, add some data to the buffer
+    stream.write('{"some": "data"}');
+
     // Create a chunk that will cause buffer overflow
     // MAX_BUFFER_SIZE is 10MB, so create 11MB of data
     const largeData = Buffer.from('x'.repeat(11 * 1024 * 1024));
@@ -65,10 +68,13 @@ describe('BUG-NEW-003: Buffer race condition in stream error message', () => {
     // Wait for error to be emitted
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Error message should show actual buffer size, not 0
+    // Error message should show actual buffer size in buffer
     assert.ok(errorMessage.includes('Buffer overflow prevented'));
-    // The error should show the actual buffer size before clearing, not "0 bytes"
+    // The error should show the actual buffer size before clearing, and should not be "0 bytes"
+    // since we added data before the large chunk
     assert.ok(!errorMessage.includes('Current buffer: 0 bytes'));
+    // Should show the chunk size correctly
+    assert.ok(errorMessage.includes('chunk: 11534336 bytes'));
   });
 });
 

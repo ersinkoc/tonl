@@ -8,16 +8,15 @@
 
 **TONL** is a production-ready data platform that combines compact serialization with powerful query, modification, indexing, and streaming capabilities. Designed for LLM token efficiency while providing a rich API for data access and manipulation.
 
-## 🎉 Latest Release: v2.0.9 - Test Suite Stabilization
+## 🎉 Latest Release: v2.1.0 - Bug Fix Release
 
-### ✨ Key Features in v2.0.9:
-- 🔧 **Test suite fixes** - Resolved all failing tests and enhanced reliability
-- 📊 **878 tests passing** - Complete test coverage with 100% success rate
-- 🛡️ **API consistency** - Fixed method name and property access issues
-- 🎯 **Quality assurance** - Enhanced error handling and edge case coverage
+### ✨ Key Features in v2.1.0:
+- 🐛 **Buffer size reporting** - Fixed accurate buffer size reporting in encode-stream overflow errors
+- 🔧 **Test suite stability** - Resolved incorrect test expectations for buffer overflow scenarios
+- 🛡️ **Enhanced error handling** - Improved error message accuracy for stream buffer overflow
 - ✅ **Production stability** - Zero breaking changes, fully backward compatible
-- 🔍 **Schema parser fixes** - Corrected property access for consistent parsing
-- 📦 **Comprehensive validation** - Fixed BitPacker, DictionaryBuilder, and SchemaInheritance tests
+- 🎯 **Improved debugging** - More accurate error reporting for better development experience
+- 📊 **887 tests passing** - Complete test coverage with 100% success rate
 
 [![npm version](https://badge.fury.io/js/tonl.svg)](https://www.npmjs.com/package/tonl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -367,7 +366,7 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 ### ESM (Modern Browsers)
 ```html
 <script type="module">
-  import { encodeTONL, decodeTONL } from 'https://cdn.jsdelivr.net/npm/tonl@2.0.9/+esm';
+  import { encodeTONL, decodeTONL } from 'https://cdn.jsdelivr.net/npm/tonl@2.1.0/+esm';
 
   const data = { users: [{ id: 1, name: "Alice" }] };
   const tonl = encodeTONL(data);
@@ -377,7 +376,7 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 
 ### UMD (Universal)
 ```html
-<script src="https://unpkg.com/tonl@2.0.9/dist/browser/tonl.umd.js"></script>
+<script src="https://unpkg.com/tonl@2.1.0/dist/browser/tonl.umd.js"></script>
 <script>
   const tonl = TONL.encodeTONL({ hello: "world" });
   console.log(tonl);
