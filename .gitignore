@@ -195,3 +195,5 @@ node_modules/
 .claude/
 tasks/
 bugfixtasks/
+
+tailwindcss-windows-x64.exe

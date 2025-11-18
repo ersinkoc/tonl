@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TONL Test</title>
+    <script src="js/tonl.iife.js"></script>
+</head>
+<body>
+    <h1>TONL Library Test</h1>
+    <div id="result"></div>
+
+    <script>
+        try {
+            // Test if TONL is available
+            if (typeof TONL !== 'undefined') {
+                document.getElementById('result').innerHTML = '<p style="color: green;">✅ TONL library loaded successfully!</p>';
+
+                // Test basic functionality
+                const testData = {
+                    users: [
+                        { id: 1, name: "Alice", role: "admin" },
+                        { id: 2, name: "Bob", role: "user" }
+                    ]
+                };
+
+                // Test encoding
+                const encoded = TONL.encodeTONL(testData);
+                document.getElementById('result').innerHTML += '<p>✅ Encoding works: ' + encoded + '</p>';
+
+                // Test decoding
+                const decoded = TONL.decodeTONL(encoded);
+                const match = JSON.stringify(testData) === JSON.stringify(decoded);
+                document.getElementById('result').innerHTML += '<p style="color: ' + (match ? 'green' : 'red') + ';">' + (match ? '✅' : '❌') + ' Round-trip test: ' + match + '</p>';
+
+            } else {
+                document.getElementById('result').innerHTML = '<p style="color: red;">❌ TONL library not found</p>';
+            }
+        } catch (error) {
+            document.getElementById('result').innerHTML = '<p style="color: red;">❌ Error: ' + error.message + '</p>';
+        }
+    </script>
+</body>
+</html>
