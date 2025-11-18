@@ -121,6 +121,17 @@ export function parseContent(content: string, context: TONLParseContext): TONLOb
         const key = arrayMatch[1].trim();
         const arrayLengthStr = arrayMatch[2].trim();
 
+        // BUG-NEW-008 FIX: Check length before regex to prevent ReDoS
+        // Max safe integer has 16 digits, reject longer strings immediately
+        if (arrayLengthStr.length > 16) {
+          throw new TONLParseError(
+            `Invalid array length: "${arrayLengthStr.substring(0, 20)}...". Array length too long (max 16 digits).`,
+            context.currentLine,
+            undefined,
+            line
+          );
+        }
+
         // BUGFIX BUG-F001: Validate array length string
         if (!/^\d+$/.test(arrayLengthStr)) {
           throw new TONLParseError(

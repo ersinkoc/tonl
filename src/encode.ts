@@ -40,7 +40,9 @@ export function encodeTONL(input: TONLValue, opts: {
     compactTables,
     schemaFirst,
     currentIndent: 0,
-    seen: new WeakSet()
+    seen: new WeakSet(),
+    currentDepth: 0,      // BUG-NEW-002 FIX: Initialize recursion depth
+    maxDepth: 500         // BUG-NEW-002 FIX: Maximum nesting depth to prevent stack overflow
   };
 
   const lines: string[] = [];
@@ -132,7 +134,7 @@ function encodeObjectCompact(obj: TONLObject, key: string, context: TONLEncodeCo
   // Create a simple header without column definitions for the container object
   lines.push(`${key}:`);
 
-  const childContext = { ...context, currentIndent: context.currentIndent + 1 };
+  const childContext = { ...context, currentIndent: context.currentIndent + 1, currentDepth: (context.currentDepth ?? 0) + 1 }; // BUG-NEW-002 FIX: Increment depth
 
   // Process each property
   for (const k of keys) {
@@ -265,6 +267,13 @@ function encodeArrayCompact(arr: TONLArray, key: string, context: TONLEncodeCont
  * Encode an object
  */
 function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext): string {
+  // BUG-NEW-002 FIX: Check recursion depth to prevent stack overflow
+  const currentDepth = context.currentDepth ?? 0;
+  const maxDepth = context.maxDepth ?? 500;
+  if (currentDepth >= maxDepth) {
+    throw new Error(`Maximum nesting depth exceeded (${maxDepth}) at key: ${key}. This may indicate deeply nested data or a circular reference.`);
+  }
+
   // Check if this object should use compact tables format
   if (context.compactTables && shouldUseCompactFormat(obj, key, context)) {
     return encodeObjectCompact(obj, key, context);
@@ -354,7 +363,7 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
 
   if (hasNestedObjects || Object.values(obj).some(v => Array.isArray(v)) || hasMultilineStrings || hasSpecialKeys || isSinglePropertyObject || keys.length > 1) {
     const lines: string[] = [header];
-    const childContext = { ...context, currentIndent: context.currentIndent + 1 };
+    const childContext = { ...context, currentIndent: context.currentIndent + 1, currentDepth: (context.currentDepth ?? 0) + 1 }; // BUG-NEW-002 FIX: Increment depth
 
     for (const k of keys) {
       const value = obj[k];
@@ -490,7 +499,7 @@ function encodeArraySchemaFirst(arr: TONLArray, key: string, context: TONLEncode
     `#schema ${key}{${schemaFields.join(",")}}`
   ];
 
-  const childContext = { ...context, currentIndent: context.currentIndent + 1 };
+  const childContext = { ...context, currentIndent: context.currentIndent + 1, currentDepth: (context.currentDepth ?? 0) + 1 }; // BUG-NEW-002 FIX: Increment depth
 
   // Add data rows using existing working format
   for (const item of arr) {
@@ -562,6 +571,13 @@ function encodeArraySchemaFirst(arr: TONLArray, key: string, context: TONLEncode
  * Encode an array
  */
 function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): string {
+  // BUG-NEW-002 FIX: Check recursion depth to prevent stack overflow
+  const currentDepth = context.currentDepth ?? 0;
+  const maxDepth = context.maxDepth ?? 500;
+  if (currentDepth >= maxDepth) {
+    throw new Error(`Maximum nesting depth exceeded (${maxDepth}) at key: ${key}. This may indicate deeply nested data or a circular reference.`);
+  }
+
   // Check if schema-first encoding should be used
   if (context.schemaFirst && shouldUseSchemaFirstFormat(arr, key, context)) {
     const schemaFirstResult = encodeArraySchemaFirst(arr, key, context);
@@ -639,7 +655,7 @@ function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): s
       }
 
       const lines: string[] = [`${key}[${arr.length}]{${columnDefs.join(",")}}:`];
-      const childContext = { ...context, currentIndent: context.currentIndent + 1 };
+      const childContext = { ...context, currentIndent: context.currentIndent + 1, currentDepth: (context.currentDepth ?? 0) + 1 }; // BUG-NEW-002 FIX: Increment depth
 
       for (const item of arr) {
         if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
@@ -672,7 +688,7 @@ function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): s
     } else {
       // Contains nested objects/arrays - use mixed array format instead
       const lines: string[] = [`${key}[${arr.length}]:`];
-      const childContext = { ...context, currentIndent: context.currentIndent + 1 };
+      const childContext = { ...context, currentIndent: context.currentIndent + 1, currentDepth: (context.currentDepth ?? 0) + 1 }; // BUG-NEW-002 FIX: Increment depth
 
       for (let i = 0; i < arr.length; i++) {
         const value = arr[i];
@@ -725,7 +741,7 @@ function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): s
   } else {
     // Mixed array - encode as inline JSON-like structure
     const lines: string[] = [`${key}[${arr.length}]:`];
-    const childContext = { ...context, currentIndent: context.currentIndent + 1 };
+    const childContext = { ...context, currentIndent: context.currentIndent + 1, currentDepth: (context.currentDepth ?? 0) + 1 }; // BUG-NEW-002 FIX: Increment depth
 
     for (let i = 0; i < arr.length; i++) {
       const value = arr[i];

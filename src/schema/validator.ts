@@ -475,6 +475,25 @@ function getBuiltinPattern(name: string): RegExp | null {
         return null;
       }
 
+      // BUG-NEW-012 FIX: Check for balanced parentheses/brackets before running ReDoS detection regexes
+      // This prevents the ReDoS detection regexes themselves from being vulnerable
+      let parenCount = 0;
+      let bracketCount = 0;
+      for (let i = 0; i < name.length; i++) {
+        if (name[i] === '(' && (i === 0 || name[i-1] !== '\\')) parenCount++;
+        if (name[i] === ')' && (i === 0 || name[i-1] !== '\\')) parenCount--;
+        if (name[i] === '[' && (i === 0 || name[i-1] !== '\\')) bracketCount++;
+        if (name[i] === ']' && (i === 0 || name[i-1] !== '\\')) bracketCount--;
+        // Reject patterns with unbalanced brackets (negative count indicates more closing than opening)
+        if (parenCount < 0 || bracketCount < 0) {
+          return null;
+        }
+      }
+      // Reject patterns with unclosed parentheses/brackets
+      if (parenCount !== 0 || bracketCount !== 0) {
+        return null;
+      }
+
       // Reject patterns with dangerous constructs
       // Look for nested quantifiers: (a+)+ or (a*)* or (a+)* etc.
       if (/(\([^)]*[+*]\)[+*?{])|(\[[^\]]*[+*]\][+*?{])/.test(name)) {
