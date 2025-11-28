@@ -8,7 +8,7 @@
 
 **TONL** is a production-ready data platform that combines compact serialization with powerful query, modification, indexing, and streaming capabilities. Designed for LLM token efficiency while providing a rich API for data access and manipulation.
 
-## 🎉 Latest Release: v2.4.0 - Advanced Query Extensions
+## 🎉 Latest Release: v2.4.1 - Advanced Query Extensions
 
 ### 📊 **Aggregation Functions:**
 - **count(), sum(), avg(), min(), max()** - Basic aggregations on query results
@@ -439,7 +439,7 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 ### ESM (Modern Browsers)
 ```html
 <script type="module">
-  import { encodeTONL, decodeTONL } from 'https://cdn.jsdelivr.net/npm/tonl@2.4.0/+esm';
+  import { encodeTONL, decodeTONL } from 'https://cdn.jsdelivr.net/npm/tonl@2.4.1/+esm';
 
   const data = { users: [{ id: 1, name: "Alice" }] };
   const tonl = encodeTONL(data);
@@ -449,7 +449,7 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 
 ### UMD (Universal)
 ```html
-<script src="https://unpkg.com/tonl@2.4.0/dist/browser/tonl.umd.js"></script>
+<script src="https://unpkg.com/tonl@2.4.1/dist/browser/tonl.umd.js"></script>
 <script>
   const tonl = TONL.encodeTONL({ hello: "world" });
   console.log(tonl);
@@ -659,7 +659,7 @@ tonl stats data.json --compare
 
 ## 🗺️ Roadmap
 
-**✅ v2.4.0 - Complete (Latest)**
+**✅ v2.4.1 - Complete (Latest)**
 - ✅ Aggregation Functions (count, sum, avg, groupBy, stats, median, percentile)
 - ✅ Fuzzy String Matching (Levenshtein, Jaro-Winkler, Soundex, Metaphone)
 - ✅ Temporal Queries (@now-7d, before, after, sameDay, daysAgo)
