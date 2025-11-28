@@ -49,3 +49,69 @@ export {
 
 // Export filter evaluator
 export { evaluateFilterExpression } from './filter-evaluator.js';
+
+// Export aggregators
+export {
+  aggregate,
+  agg,
+  AggregationResult,
+  type AggregationOptions
+} from './aggregators.js';
+
+// Export fuzzy matcher
+export {
+  levenshteinDistance,
+  levenshteinSimilarity,
+  jaroSimilarity,
+  jaroWinklerSimilarity,
+  diceSimilarity,
+  soundex,
+  metaphone,
+  soundsLike,
+  soundsLikeMetaphone,
+  fuzzyMatch,
+  similarity,
+  fuzzyContains,
+  fuzzyStartsWith,
+  fuzzyEndsWith,
+  fuzzySearch,
+  evaluateFuzzyOperator,
+  isFuzzyOperator,
+  type FuzzyOptions
+} from './fuzzy-matcher.js';
+
+// Export temporal evaluator
+export {
+  parseTemporalLiteral,
+  parseDuration,
+  durationToMilliseconds,
+  addDuration,
+  subtractDuration,
+  startOfDay,
+  endOfDay,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  startOfYear,
+  endOfYear,
+  toTemporalValue,
+  compareTemporalValues,
+  isBefore,
+  isAfter,
+  isBetween,
+  isDaysAgo,
+  isWeeksAgo,
+  isMonthsAgo,
+  isYearsAgo,
+  isSameDay,
+  isSameWeek,
+  isSameMonth,
+  isSameYear,
+  evaluateTemporalOperator,
+  isTemporalOperator,
+  isTemporalLiteral,
+  type TemporalValue,
+  type DurationValue,
+  type TemporalOptions
+} from './temporal-evaluator.js';

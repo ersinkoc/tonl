@@ -6,6 +6,75 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [2.4.0] - 2025-11-28
+
+### 📊 **Advanced Query Extensions Release**
+
+**Major feature release** adding powerful aggregation functions, fuzzy string matching, and temporal query capabilities to the TONL query system.
+
+#### **🆕 New Features:**
+
+##### **Aggregation Functions**
+- **count()** - Count array elements or query results
+- **sum(field)** - Sum numeric values
+- **avg(field)** - Calculate average
+- **min(field) / max(field)** - Find minimum and maximum values
+- **groupBy(field)** - Group results by field value
+- **distinct(field)** - Get unique values
+- **stats(field)** - Full statistics (count, sum, avg, min, max, variance, stdDev)
+- **median() / percentile(n)** - Statistical analysis
+- **frequency(field)** - Value frequency analysis
+- **filter() / map() / reduce()** - Functional transforms
+- **orderBy(field, 'asc'|'desc')** - Sorting
+- **take(n) / skip(n) / first() / last()** - Selection
+
+##### **Fuzzy String Matching**
+- **~= operator** - Fuzzy equality matching
+- **~contains / ~startsWith / ~endsWith** - Fuzzy string operations
+- **soundsLike operator** - Phonetic matching (Soundex/Metaphone)
+- **fuzzyMatch() / fuzzySearch()** - Direct API functions
+- **Levenshtein distance** - Edit distance calculation
+- **Jaro-Winkler similarity** - Optimized for short strings
+- **Dice coefficient** - Bigram-based similarity
+
+##### **Temporal Queries**
+- **@now, @today, @yesterday, @tomorrow** - Named date literals
+- **@now-7d, @now+1w, @now-3M** - Relative time expressions
+- **@2025-01-15** - ISO 8601 date literals
+- **before / after / between** - Date comparison operators
+- **daysAgo / weeksAgo / monthsAgo / yearsAgo** - Relative checks
+- **sameDay / sameWeek / sameMonth / sameYear** - Calendar period matching
+
+#### **📦 Usage Examples:**
+```typescript
+// Aggregation
+doc.count('users[*]');                    // 42
+doc.sum('orders[*]', 'total');            // 15420.50
+doc.groupBy('users[*]', 'country');       // { TR: [...], US: [...] }
+doc.aggregate('products[*]').stats('price');
+
+// Fuzzy matching
+doc.query("users[?(@.name ~= 'john')]");
+doc.query("users[?(@.name soundsLike 'Robert')]");
+
+// Temporal queries
+doc.query("events[?(@.date > @now-7d)]");
+doc.query("orders[?(@.created sameDay @today)]");
+```
+
+#### **🧪 Testing:**
+- **763 total tests** - All passing with 100% success rate
+- **267 new tests** for query extensions
+- **34 integration tests** for combined feature usage
+- **Performance tests** - 10K items processed in <1 second
+
+#### **📚 Documentation:**
+- New website documentation sections for all features
+- Interactive code examples
+- Complete API reference
+
+---
+
 ## [2.3.0] - 2025-11-23
 n
 ## [2.3.1] - 2025-11-23

@@ -16,6 +16,8 @@ import type {
 } from './types.js';
 import { RegexExecutor } from './regex-executor.js';
 import { SecurityError } from '../errors/index.js';
+import { evaluateFuzzyOperator, isFuzzyOperator } from './fuzzy-matcher.js';
+import { evaluateTemporalOperator, isTemporalOperator, parseTemporalLiteral } from './temporal-evaluator.js';
 
 /**
  * SECURITY: Dangerous property names that should never be accessed
@@ -144,6 +146,36 @@ function evaluateBinaryExpression(
         return typeof left === 'object' && left !== null && !Array.isArray(left);
       }
       return false;
+
+    // Fuzzy string operators
+    case '~=':
+    case 'fuzzyMatch':
+    case '~contains':
+    case '~startsWith':
+    case '~endsWith':
+    case 'soundsLike':
+    case 'similar':
+      return evaluateFuzzyOperator(expr.operator, left, right);
+
+    // Temporal operators
+    case 'before':
+    case 'after':
+    case 'sameDay':
+    case 'sameWeek':
+    case 'sameMonth':
+    case 'sameYear':
+      return evaluateTemporalOperator(expr.operator, left, right);
+
+    case 'daysAgo':
+    case 'weeksAgo':
+    case 'monthsAgo':
+    case 'yearsAgo':
+      return evaluateTemporalOperator(expr.operator, left, right);
+
+    case 'between':
+      // Between needs special handling - expects third argument
+      // For now, handle as comparison with right operand
+      return evaluateTemporalOperator(expr.operator, left, right);
 
     default:
       throw new Error(`Unknown binary operator: ${expr.operator}`);
@@ -286,6 +318,77 @@ function evaluateFunctionExpression(
         return val.length === 0;
       }
       return val === null || val === undefined;
+
+    // Fuzzy matching functions
+    case 'fuzzyMatch':
+      if (args.length < 2) {
+        throw new Error('fuzzyMatch() requires at least 2 arguments');
+      }
+      return evaluateFuzzyOperator('fuzzyMatch', args[0], args[1]);
+
+    case 'soundsLike':
+      if (args.length !== 2) {
+        throw new Error('soundsLike() requires exactly 2 arguments');
+      }
+      return evaluateFuzzyOperator('soundsLike', args[0], args[1]);
+
+    case 'similar':
+      if (args.length < 2) {
+        throw new Error('similar() requires at least 2 arguments');
+      }
+      return evaluateFuzzyOperator('similar', args[0], args[1]);
+
+    case 'levenshtein':
+      if (args.length !== 2) {
+        throw new Error('levenshtein() requires exactly 2 arguments');
+      }
+      // Import dynamically to avoid circular dependency
+      const { levenshteinDistance } = require('./fuzzy-matcher.js');
+      return levenshteinDistance(String(args[0]), String(args[1]));
+
+    // Temporal functions
+    case 'parseDate':
+      if (args.length !== 1) {
+        throw new Error('parseDate() requires exactly 1 argument');
+      }
+      try {
+        const temporal = parseTemporalLiteral(String(args[0]));
+        return temporal.timestamp;
+      } catch {
+        return null;
+      }
+
+    case 'now':
+      return Date.now();
+
+    case 'today':
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return today.getTime();
+
+    case 'daysAgo':
+      if (args.length !== 1) {
+        throw new Error('daysAgo() requires exactly 1 argument');
+      }
+      const daysAgoDate = new Date();
+      daysAgoDate.setDate(daysAgoDate.getDate() - Number(args[0]));
+      return daysAgoDate.getTime();
+
+    case 'weeksAgo':
+      if (args.length !== 1) {
+        throw new Error('weeksAgo() requires exactly 1 argument');
+      }
+      const weeksAgoDate = new Date();
+      weeksAgoDate.setDate(weeksAgoDate.getDate() - Number(args[0]) * 7);
+      return weeksAgoDate.getTime();
+
+    case 'monthsAgo':
+      if (args.length !== 1) {
+        throw new Error('monthsAgo() requires exactly 1 argument');
+      }
+      const monthsAgoDate = new Date();
+      monthsAgoDate.setMonth(monthsAgoDate.getMonth() - Number(args[0]));
+      return monthsAgoDate.getTime();
 
     default:
       throw new Error(`Unknown function: ${expr.name}()`);

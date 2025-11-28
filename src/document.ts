@@ -15,6 +15,7 @@ import { promises as fs } from 'fs';
 import { set as setByPath, deleteValue as deleteByPath, push as pushToArray, pop as popFromArray, merge as mergeAtPath, diff as diffDocuments, formatDiff, type DiffResult } from './modification/index.js';
 import { IndexManager, type IndexOptions, type IIndex } from './indexing/index.js';
 import { parseSchema, validateTONL, type ValidationResult } from './schema/index.js';
+import { aggregate, AggregationResult, type AggregationOptions } from './query/aggregators.js';
 
 /**
  * Document statistics
@@ -871,5 +872,171 @@ export class TONLDocument {
     } else {
       yield results;
     }
+  }
+
+  // ========================================
+  // Aggregation Methods (NEW!)
+  // ========================================
+
+  /**
+   * Aggregate query results with count, sum, avg, min, max, groupBy
+   *
+   * @param pathExpression - Path expression to query
+   * @param options - Aggregation options
+   * @returns AggregationResult wrapper for fluent operations
+   *
+   * @example
+   * ```typescript
+   * // Count users
+   * doc.aggregate("users[*]").count()  // 42
+   *
+   * // Sum order totals
+   * doc.aggregate("orders[*]").sum("total")  // 15420.50
+   *
+   * // Average age
+   * doc.aggregate("users[*]").avg("age")  // 29.5
+   *
+   * // Group by country
+   * doc.aggregate("users[*]").groupBy("country")
+   * // { "TR": [...], "US": [...] }
+   *
+   * // Chained operations
+   * doc.aggregate("users[*]")
+   *   .filter(u => u.active)
+   *   .orderBy("age", "desc")
+   *   .take(10)
+   *   .toArray()
+   *
+   * // Statistics
+   * doc.aggregate("products[*]").stats("price")
+   * // { count, sum, avg, min, max, variance, stdDev }
+   * ```
+   */
+  aggregate<T = any>(pathExpression: string, options?: AggregationOptions): AggregationResult<T> {
+    const results = this.query(pathExpression);
+    const items = Array.isArray(results) ? results : [results];
+    return aggregate<T>(items, options);
+  }
+
+  /**
+   * Count items matching a query
+   *
+   * @param pathExpression - Path expression to query
+   * @returns Number of matching items
+   *
+   * @example
+   * ```typescript
+   * doc.count("users[*]")                    // 42
+   * doc.count("users[?(@.active)]")          // 38
+   * doc.count("orders[?(@.status == 'pending')]")
+   * ```
+   */
+  count(pathExpression: string): number {
+    return this.aggregate(pathExpression).count();
+  }
+
+  /**
+   * Sum numeric values from query results
+   *
+   * @param pathExpression - Path expression to query
+   * @param field - Optional field name for object arrays
+   * @returns Sum of values
+   *
+   * @example
+   * ```typescript
+   * doc.sum("orders[*]", "total")           // 15420.50
+   * doc.sum("items[*].quantity")            // 150
+   * ```
+   */
+  sum(pathExpression: string, field?: string): number {
+    return this.aggregate(pathExpression).sum(field);
+  }
+
+  /**
+   * Calculate average from query results
+   *
+   * @param pathExpression - Path expression to query
+   * @param field - Optional field name for object arrays
+   * @returns Average value
+   *
+   * @example
+   * ```typescript
+   * doc.avg("users[*]", "age")              // 29.5
+   * doc.avg("products[*]", "price")         // 49.99
+   * ```
+   */
+  avg(pathExpression: string, field?: string): number {
+    return this.aggregate(pathExpression).avg(field);
+  }
+
+  /**
+   * Find minimum value from query results
+   *
+   * @param pathExpression - Path expression to query
+   * @param field - Optional field name for object arrays
+   * @returns Minimum value
+   *
+   * @example
+   * ```typescript
+   * doc.min("products[*]", "price")         // 9.99
+   * doc.min("users[*]", "age")              // 18
+   * ```
+   */
+  min(pathExpression: string, field?: string): any {
+    return this.aggregate(pathExpression).min(field);
+  }
+
+  /**
+   * Find maximum value from query results
+   *
+   * @param pathExpression - Path expression to query
+   * @param field - Optional field name for object arrays
+   * @returns Maximum value
+   *
+   * @example
+   * ```typescript
+   * doc.max("products[*]", "price")         // 999.99
+   * doc.max("users[*]", "age")              // 65
+   * ```
+   */
+  max(pathExpression: string, field?: string): any {
+    return this.aggregate(pathExpression).max(field);
+  }
+
+  /**
+   * Group query results by a field
+   *
+   * @param pathExpression - Path expression to query
+   * @param field - Field name to group by
+   * @returns Object with group keys and arrays of items
+   *
+   * @example
+   * ```typescript
+   * doc.groupBy("users[*]", "country")
+   * // { "TR": [user1, user2], "US": [user3] }
+   *
+   * doc.groupBy("orders[*]", "status")
+   * // { "pending": [...], "completed": [...] }
+   * ```
+   */
+  groupBy<K extends string>(pathExpression: string, field: K): Record<string, any[]> {
+    return this.aggregate(pathExpression).groupBy(field);
+  }
+
+  /**
+   * Get distinct values from query results
+   *
+   * @param pathExpression - Path expression to query
+   * @param field - Optional field name for object arrays
+   * @returns Array of unique values
+   *
+   * @example
+   * ```typescript
+   * doc.distinct("users[*]", "country")     // ["TR", "US", "DE"]
+   * doc.distinct("tags[*]")                 // ["js", "ts", "node"]
+   * ```
+   */
+  distinct(pathExpression: string, field?: string): any[] {
+    return this.aggregate(pathExpression).distinct(field);
   }
 }

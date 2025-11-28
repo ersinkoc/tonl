@@ -8,6 +8,21 @@
 
 import { encodeTONL, decodeTONL } from '../dist/index.js';
 import { TONLDocument } from '../dist/document.js';
+import { aggregate } from '../dist/query/aggregators.js';
+import {
+  levenshteinDistance,
+  jaroWinklerSimilarity,
+  soundsLike,
+  fuzzyMatch,
+  fuzzySearch
+} from '../dist/query/fuzzy-matcher.js';
+import {
+  parseTemporalLiteral,
+  isBefore,
+  isAfter,
+  isDaysAgo,
+  isSameDay
+} from '../dist/query/temporal-evaluator.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -459,6 +474,260 @@ async function runTests() {
         } catch (error) {
             // Expected in strict mode
         }
+    });
+
+    // ========================================
+    // 6. AGGREGATION API (v2.4.0)
+    // ========================================
+    section('Aggregation API (v2.4.0)');
+
+    // Fresh data for aggregation tests to avoid side effects from CRUD tests
+    const aggData = {
+        users: [
+            { id: 1, name: 'Alice', age: 30, role: 'admin' },
+            { id: 2, name: 'Bob', age: 25, role: 'user' },
+            { id: 3, name: 'Carol', age: 35, role: 'moderator' }
+        ]
+    };
+
+    test('Aggregation', 'count() - Count items', () => {
+        const doc = new TONLDocument(aggData);
+        const count = doc.count('users[*]');
+
+        if (count !== 3) {
+            throw new Error(`Expected 3 users, got ${count}`);
+        }
+    });
+
+    test('Aggregation', 'sum() - Sum numeric values', () => {
+        const doc = new TONLDocument(aggData);
+        const totalAge = doc.sum('users[*]', 'age');
+
+        if (totalAge !== 90) {
+            throw new Error(`Expected sum 90, got ${totalAge}`);
+        }
+    });
+
+    test('Aggregation', 'avg() - Calculate average', () => {
+        const doc = new TONLDocument(aggData);
+        const avgAge = doc.avg('users[*]', 'age');
+
+        if (avgAge !== 30) {
+            throw new Error(`Expected avg 30, got ${avgAge}`);
+        }
+    });
+
+    test('Aggregation', 'min() / max() - Find extremes', () => {
+        const doc = new TONLDocument(aggData);
+        const minAge = doc.min('users[*]', 'age');
+        const maxAge = doc.max('users[*]', 'age');
+
+        if (minAge !== 25 || maxAge !== 35) {
+            throw new Error(`Expected min 25, max 35, got min ${minAge}, max ${maxAge}`);
+        }
+    });
+
+    test('Aggregation', 'groupBy() - Group by field', () => {
+        const doc = new TONLDocument(sampleData);
+        const groups = doc.groupBy('users[*]', 'role');
+
+        if (!groups['admin'] || !groups['user'] || !groups['moderator']) {
+            throw new Error('groupBy missing expected groups');
+        }
+        console.log(`    💡 Groups: ${Object.keys(groups).join(', ')}`);
+    });
+
+    test('Aggregation', 'distinct() - Unique values', () => {
+        const doc = new TONLDocument(sampleData);
+        const roles = doc.distinct('users[*]', 'role');
+
+        if (roles.length !== 3) {
+            throw new Error(`Expected 3 distinct roles, got ${roles.length}`);
+        }
+    });
+
+    test('Aggregation', 'stats() - Full statistics', () => {
+        const doc = new TONLDocument(sampleData);
+        const stats = doc.aggregate('users[*]').stats('age');
+
+        if (!stats.count || !stats.avg || !stats.stdDev) {
+            throw new Error('stats() missing expected properties');
+        }
+        console.log(`    💡 Stats: count=${stats.count}, avg=${stats.avg}, stdDev=${stats.stdDev.toFixed(2)}`);
+    });
+
+    test('Aggregation', 'Chained operations - filter + orderBy + take', () => {
+        const doc = new TONLDocument(sampleData);
+        const result = doc.aggregate('users[*]')
+            .filter((u: any) => u.age > 25)
+            .orderBy('age', 'desc')
+            .take(2)
+            .toArray();
+
+        if (result.length !== 2 || result[0].name !== 'Carol') {
+            throw new Error('Chained operations failed');
+        }
+    });
+
+    test('Aggregation', 'Standalone aggregate() function', () => {
+        const numbers = [1, 2, 3, 4, 5];
+        const result = aggregate(numbers);
+
+        if (result.sum() !== 15 || result.avg() !== 3) {
+            throw new Error('Standalone aggregate failed');
+        }
+    });
+
+    // ========================================
+    // 7. FUZZY MATCHING API (v2.4.0)
+    // ========================================
+    section('Fuzzy Matching API (v2.4.0)');
+
+    test('Fuzzy', 'Levenshtein Distance - Edit distance', () => {
+        const dist = levenshteinDistance('kitten', 'sitting');
+
+        if (dist !== 3) {
+            throw new Error(`Expected distance 3, got ${dist}`);
+        }
+    });
+
+    test('Fuzzy', 'Jaro-Winkler Similarity', () => {
+        const sim = jaroWinklerSimilarity('MARTHA', 'MARHTA');
+
+        if (sim < 0.9) {
+            throw new Error(`Expected high similarity, got ${sim}`);
+        }
+        console.log(`    💡 Similarity: ${(sim * 100).toFixed(1)}%`);
+    });
+
+    test('Fuzzy', 'Soundex Phonetic Matching', () => {
+        const match = soundsLike('Smith', 'Smyth');
+
+        if (!match) {
+            throw new Error('Smith and Smyth should sound alike');
+        }
+    });
+
+    test('Fuzzy', 'fuzzyMatch() - Configurable matching', () => {
+        const match1 = fuzzyMatch('hello', 'helo', { threshold: 0.8 });
+        const match2 = fuzzyMatch('hello', 'world', { threshold: 0.8 });
+
+        if (!match1 || match2) {
+            throw new Error('fuzzyMatch behavior incorrect');
+        }
+    });
+
+    test('Fuzzy', 'fuzzySearch() - Find best matches', () => {
+        const candidates = ['JavaScript', 'TypeScript', 'Python', 'Java'];
+        const results = fuzzySearch('JavaScrpt', candidates, { limit: 2 });
+
+        if (results.length === 0 || results[0].value !== 'JavaScript') {
+            throw new Error('fuzzySearch failed to find best match');
+        }
+        console.log(`    💡 Best match: ${results[0].value} (${(results[0].score * 100).toFixed(1)}%)`);
+    });
+
+    test('Fuzzy', 'Case-insensitive matching', () => {
+        const match = fuzzyMatch('Hello', 'hello', { caseSensitive: false });
+
+        if (!match) {
+            throw new Error('Case-insensitive matching failed');
+        }
+    });
+
+    test('Fuzzy', 'Typo-tolerant search', () => {
+        const names = ['Alice Johnson', 'Bob Smith', 'Carol Williams'];
+        const results = fuzzySearch('Alise Jonson', names, { threshold: 0.6 });
+
+        if (results.length === 0) {
+            throw new Error('Typo-tolerant search failed');
+        }
+        console.log(`    💡 Found: ${results[0].value}`);
+    });
+
+    // ========================================
+    // 8. TEMPORAL QUERIES API (v2.4.0)
+    // ========================================
+    section('Temporal Queries API (v2.4.0)');
+
+    test('Temporal', '@now - Current timestamp', () => {
+        const now = parseTemporalLiteral('@now');
+        const diff = Math.abs(now.timestamp - Date.now());
+
+        if (diff > 1000) {
+            throw new Error('@now timestamp too far from actual time');
+        }
+    });
+
+    test('Temporal', '@today / @yesterday / @tomorrow', () => {
+        const today = parseTemporalLiteral('@today');
+        const yesterday = parseTemporalLiteral('@yesterday');
+        const tomorrow = parseTemporalLiteral('@tomorrow');
+
+        if (yesterday.timestamp >= today.timestamp || today.timestamp >= tomorrow.timestamp) {
+            throw new Error('Date order incorrect');
+        }
+    });
+
+    test('Temporal', 'Relative expressions (@now-7d)', () => {
+        const weekAgo = parseTemporalLiteral('@now-7d');
+        const expectedDiff = 7 * 24 * 60 * 60 * 1000;
+        const actualDiff = Date.now() - weekAgo.timestamp;
+
+        if (Math.abs(actualDiff - expectedDiff) > 1000) {
+            throw new Error('Relative time calculation incorrect');
+        }
+    });
+
+    test('Temporal', 'ISO 8601 date literals', () => {
+        const date = parseTemporalLiteral('@2025-06-15');
+        const parsed = new Date(date.timestamp);
+
+        if (parsed.getFullYear() !== 2025 || parsed.getMonth() !== 5) {
+            throw new Error('ISO date parsing failed');
+        }
+    });
+
+    test('Temporal', 'isBefore() / isAfter() comparisons', () => {
+        const date1 = new Date('2025-01-01');
+        const date2 = new Date('2025-12-31');
+
+        if (!isBefore(date1, date2) || !isAfter(date2, date1)) {
+            throw new Error('Date comparison failed');
+        }
+    });
+
+    test('Temporal', 'isDaysAgo() - Within N days', () => {
+        const fiveDaysAgo = new Date();
+        fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+
+        if (!isDaysAgo(fiveDaysAgo, 7) || isDaysAgo(fiveDaysAgo, 3)) {
+            throw new Error('isDaysAgo check failed');
+        }
+    });
+
+    test('Temporal', 'isSameDay() - Calendar matching', () => {
+        // Create dates at noon to avoid timezone edge cases
+        const date1 = new Date();
+        date1.setHours(12, 0, 0, 0);
+        const date2 = new Date(date1);
+        date2.setHours(14, 0, 0, 0); // 2 hours later, same day
+
+        if (!isSameDay(date1, date2)) {
+            throw new Error('isSameDay check failed');
+        }
+    });
+
+    test('Temporal', 'Different time units (s, m, h, d, w, M, y)', () => {
+        const units = ['@now-30s', '@now-5m', '@now-2h', '@now-1d', '@now-1w', '@now-1M', '@now-1y'];
+
+        for (const unit of units) {
+            const result = parseTemporalLiteral(unit);
+            if (!result.isRelative || result.timestamp >= Date.now()) {
+                throw new Error(`Failed to parse ${unit}`);
+            }
+        }
+        console.log(`    💡 All ${units.length} time units work correctly`);
     });
 
     // ========================================

@@ -83,10 +83,27 @@ export function tokenize(input: string): Token[] {
 
     // Check if it's a keyword operator
     const keywordMap: Record<string, TokenType> = {
+      // String operators
       'contains': TokenType.CONTAINS,
       'startsWith': TokenType.STARTS_WITH,
       'endsWith': TokenType.ENDS_WITH,
-      'matches': TokenType.MATCHES
+      'matches': TokenType.MATCHES,
+      // Fuzzy operators
+      'fuzzyMatch': TokenType.FUZZY_MATCH,
+      'soundsLike': TokenType.SOUNDS_LIKE,
+      'similar': TokenType.SIMILAR,
+      // Temporal operators
+      'before': TokenType.BEFORE,
+      'after': TokenType.AFTER,
+      'between': TokenType.BETWEEN,
+      'daysAgo': TokenType.DAYS_AGO,
+      'weeksAgo': TokenType.WEEKS_AGO,
+      'monthsAgo': TokenType.MONTHS_AGO,
+      'yearsAgo': TokenType.YEARS_AGO,
+      'sameDay': TokenType.SAME_DAY,
+      'sameWeek': TokenType.SAME_WEEK,
+      'sameMonth': TokenType.SAME_MONTH,
+      'sameYear': TokenType.SAME_YEAR
     };
 
     const tokenType = keywordMap[value] || TokenType.IDENTIFIER;
@@ -222,7 +239,7 @@ export function tokenize(input: string): Token[] {
   }
 
   /**
-   * Read a two-character operator (==, !=, >=, <=, &&, ||, ..)
+   * Read a two-character operator (==, !=, >=, <=, &&, ||, .., ~=)
    */
   function readTwoCharOperator(): Token | null {
     const start = position;
@@ -235,7 +252,8 @@ export function tokenize(input: string): Token[] {
       '<=': TokenType.LTE,
       '&&': TokenType.AND,
       '||': TokenType.OR,
-      '..': TokenType.DOUBLE_DOT
+      '..': TokenType.DOUBLE_DOT,
+      '~=': TokenType.FUZZY_EQ
     };
 
     if (tokenMap[twoChar]) {
@@ -246,6 +264,94 @@ export function tokenize(input: string): Token[] {
         position: start,
         length: 2
       };
+    }
+
+    return null;
+  }
+
+  /**
+   * Read a fuzzy keyword operator (~contains, ~startsWith, ~endsWith)
+   */
+  function readFuzzyKeyword(): Token | null {
+    if (peek() !== '~') return null;
+
+    const start = position;
+
+    // Check for ~keyword patterns
+    const fuzzyPatterns: Record<string, TokenType> = {
+      '~contains': TokenType.FUZZY_CONTAINS,
+      '~startsWith': TokenType.FUZZY_STARTS,
+      '~endsWith': TokenType.FUZZY_ENDS
+    };
+
+    for (const [pattern, tokenType] of Object.entries(fuzzyPatterns)) {
+      if (input.slice(position, position + pattern.length) === pattern) {
+        // Make sure it's not followed by alphanumeric (not part of longer identifier)
+        const nextChar = input[position + pattern.length];
+        if (!nextChar || !/[a-zA-Z0-9_]/.test(nextChar)) {
+          position += pattern.length;
+          return {
+            type: tokenType,
+            value: pattern,
+            position: start,
+            length: pattern.length
+          };
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Read a temporal literal (@now, @2024-01-15, @now-7d, etc.)
+   */
+  function readTemporalLiteral(): Token | null {
+    if (peek() !== '@') return null;
+
+    const start = position;
+    const nextChar = peek(1);
+
+    // Check if this looks like a temporal literal
+    // (not just @ for current item in filter)
+    if (nextChar && /[a-zA-Z0-9]/.test(nextChar)) {
+      consume(); // consume @
+      let value = '@';
+
+      // Read until we hit a non-temporal character
+      // Allow: letters, digits, -, +, :, .
+      while (position < input.length) {
+        const char = input[position];
+        if (/[a-zA-Z0-9\-+:.]/.test(char)) {
+          value += char;
+          position++;
+        } else {
+          break;
+        }
+      }
+
+      // Validate it looks like a temporal literal
+      const content = value.substring(1).toLowerCase();
+      const isTemporalPattern =
+        // Named dates
+        ['now', 'today', 'yesterday', 'tomorrow'].some(n => content.startsWith(n)) ||
+        // ISO date pattern
+        /^\d{4}(-\d{2})?(-\d{2})?(t\d{2}:\d{2})?/i.test(content) ||
+        // Duration pattern
+        /^p\d/i.test(content);
+
+      if (isTemporalPattern) {
+        return {
+          type: TokenType.TEMPORAL,
+          value,
+          position: start,
+          length: value.length
+        };
+      } else {
+        // Not a temporal literal, reset and return null
+        position = start;
+        return null;
+      }
     }
 
     return null;
@@ -264,10 +370,24 @@ export function tokenize(input: string): Token[] {
 
     if (!char) break;
 
-    // Try two-character operators first
+    // Try fuzzy keyword operators first (~contains, ~startsWith, ~endsWith)
+    const fuzzyToken = readFuzzyKeyword();
+    if (fuzzyToken) {
+      tokens.push(fuzzyToken);
+      continue;
+    }
+
+    // Try two-character operators (==, !=, >=, <=, &&, ||, .., ~=)
     const twoCharToken = readTwoCharOperator();
     if (twoCharToken) {
       tokens.push(twoCharToken);
+      continue;
+    }
+
+    // Try temporal literals (@now, @2024-01-15, etc.)
+    const temporalToken = readTemporalLiteral();
+    if (temporalToken) {
+      tokens.push(temporalToken);
       continue;
     }
 
@@ -517,6 +637,26 @@ export function getOperatorPrecedence(token: Token): number {
     [TokenType.STARTS_WITH]: 4,
     [TokenType.ENDS_WITH]: 4,
     [TokenType.MATCHES]: 4,
+    // Fuzzy operators
+    [TokenType.FUZZY_EQ]: 4,
+    [TokenType.FUZZY_CONTAINS]: 4,
+    [TokenType.FUZZY_STARTS]: 4,
+    [TokenType.FUZZY_ENDS]: 4,
+    [TokenType.FUZZY_MATCH]: 4,
+    [TokenType.SOUNDS_LIKE]: 4,
+    [TokenType.SIMILAR]: 4,
+    // Temporal operators
+    [TokenType.BEFORE]: 4,
+    [TokenType.AFTER]: 4,
+    [TokenType.BETWEEN]: 4,
+    [TokenType.DAYS_AGO]: 4,
+    [TokenType.WEEKS_AGO]: 4,
+    [TokenType.MONTHS_AGO]: 4,
+    [TokenType.YEARS_AGO]: 4,
+    [TokenType.SAME_DAY]: 4,
+    [TokenType.SAME_WEEK]: 4,
+    [TokenType.SAME_MONTH]: 4,
+    [TokenType.SAME_YEAR]: 4,
     [TokenType.NOT]: 5
   };
 

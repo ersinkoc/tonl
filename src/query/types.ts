@@ -183,11 +183,59 @@ export type BinaryOperator =
   | 'startsWith'  // String starts with
   | 'endsWith'    // String ends with
   | 'matches'     // Regex match
+  // Fuzzy string operators
+  | '~='              // Fuzzy match (Levenshtein)
+  | '~contains'       // Fuzzy contains
+  | '~startsWith'     // Fuzzy starts with
+  | '~endsWith'       // Fuzzy ends with
+  | 'fuzzyMatch'      // Explicit fuzzy match
+  | 'soundsLike'      // Phonetic match (Soundex)
+  | 'similar'         // Similarity with threshold
+  // Temporal operators
+  | 'before'      // Date before
+  | 'after'       // Date after
+  | 'between'     // Date between (ternary, uses extra arg)
+  | 'daysAgo'     // Within N days
+  | 'weeksAgo'    // Within N weeks
+  | 'monthsAgo'   // Within N months
+  | 'yearsAgo'    // Within N years
+  | 'sameDay'     // Same calendar day
+  | 'sameWeek'    // Same calendar week
+  | 'sameMonth'   // Same calendar month
+  | 'sameYear'    // Same calendar year
   // Array operators
   | 'in'          // Element in array
   // Type operators
   | 'typeof'      // Type check
   | 'instanceof'; // Instance check
+
+/**
+ * Fuzzy matching operators
+ */
+export type FuzzyOperator =
+  | '~='
+  | '~contains'
+  | '~startsWith'
+  | '~endsWith'
+  | 'fuzzyMatch'
+  | 'soundsLike'
+  | 'similar';
+
+/**
+ * Temporal comparison operators
+ */
+export type TemporalOperator =
+  | 'before'
+  | 'after'
+  | 'between'
+  | 'daysAgo'
+  | 'weeksAgo'
+  | 'monthsAgo'
+  | 'yearsAgo'
+  | 'sameDay'
+  | 'sameWeek'
+  | 'sameMonth'
+  | 'sameYear';
 
 /**
  * Unary operators for filter expressions
@@ -240,6 +288,31 @@ export enum TokenType {
   STARTS_WITH = 'STARTS_WITH', // startsWith
   ENDS_WITH = 'ENDS_WITH',    // endsWith
   MATCHES = 'MATCHES',        // matches
+
+  // Fuzzy operators
+  FUZZY_EQ = 'FUZZY_EQ',              // ~=
+  FUZZY_CONTAINS = 'FUZZY_CONTAINS',  // ~contains
+  FUZZY_STARTS = 'FUZZY_STARTS',      // ~startsWith
+  FUZZY_ENDS = 'FUZZY_ENDS',          // ~endsWith
+  FUZZY_MATCH = 'FUZZY_MATCH',        // fuzzyMatch
+  SOUNDS_LIKE = 'SOUNDS_LIKE',        // soundsLike
+  SIMILAR = 'SIMILAR',                // similar
+
+  // Temporal operators
+  BEFORE = 'BEFORE',          // before
+  AFTER = 'AFTER',            // after
+  BETWEEN = 'BETWEEN',        // between
+  DAYS_AGO = 'DAYS_AGO',      // daysAgo
+  WEEKS_AGO = 'WEEKS_AGO',    // weeksAgo
+  MONTHS_AGO = 'MONTHS_AGO',  // monthsAgo
+  YEARS_AGO = 'YEARS_AGO',    // yearsAgo
+  SAME_DAY = 'SAME_DAY',      // sameDay
+  SAME_WEEK = 'SAME_WEEK',    // sameWeek
+  SAME_MONTH = 'SAME_MONTH',  // sameMonth
+  SAME_YEAR = 'SAME_YEAR',    // sameYear
+
+  // Temporal literal
+  TEMPORAL = 'TEMPORAL',      // @now, @2024-01-15, etc.
 
   // End of input
   EOF = 'EOF'

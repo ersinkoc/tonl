@@ -225,6 +225,33 @@
             </a>
 
             <div class="pt-4 mt-4 border-t border-slate-200">
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-2">
+                v2.4.0 New Features
+              </div>
+            </div>
+            <a
+              @click="tab = 'aggregation'"
+              :class="tab === 'aggregation' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              📊 Aggregation
+            </a>
+            <a
+              @click="tab = 'fuzzy'"
+              :class="tab === 'fuzzy' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              🔍 Fuzzy Matching
+            </a>
+            <a
+              @click="tab = 'temporal'"
+              :class="tab === 'temporal' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              ⏰ Temporal Queries
+            </a>
+
+            <div class="pt-4 mt-4 border-t border-slate-200">
               <a
                 href="https://github.com/tonl-dev/tonl/tree/main/docs"
                 target="_blank"
@@ -806,12 +833,12 @@ doc.set(<span class="text-emerald-400">'users[0].age'</span>, <span class="text-
             </div>
 
             <div class="space-y-6">
-              <!-- v2.3.1 Interactive CLI Commands -->
+              <!-- v2.4.0 Interactive CLI Commands -->
               <div
                 class="bg-gradient-to-br from-blue-50 to-purple-100 border-2 border-blue-300 rounded-xl p-6"
               >
                 <h3 class="font-semibold text-blue-900 mb-3">
-                  🎮 v2.3.1 Interactive CLI Dashboard
+                  🎮 v2.4.0 Interactive CLI Dashboard
                 </h3>
                 <div class="grid md:grid-cols-2 gap-4">
                   <div class="bg-blue-900 rounded-lg p-5">
@@ -1748,6 +1775,330 @@ console.log(<span class="text-emerald-400">`Directives: ${result.directives.leng
               </div>
             </div>
           </div>
+
+          <!-- Aggregation Functions -->
+          <div x-show="tab === 'aggregation'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                📊 Aggregation Functions
+              </h1>
+              <p class="text-lg text-slate-600">
+                Powerful data aggregation with fluent API - count, sum, avg, min, max, groupBy and more
+              </p>
+            </div>
+
+            <div class="bg-gradient-to-br from-emerald-50 to-green-100 border-2 border-emerald-300 rounded-xl p-6">
+              <h3 class="font-semibold text-emerald-900 mb-2">
+                🆕 New in v2.4.0
+              </h3>
+              <p class="text-emerald-800 text-sm">
+                Full-featured aggregation system with 15+ functions, fluent chaining, and deep integration with TONLDocument queries.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900 mb-4">
+                Quick Start
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-6">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-purple-400">import</span> { TONLDocument } <span class="text-purple-400">from</span> <span class="text-emerald-400">'tonl'</span>;
+
+<span class="text-purple-400">const</span> doc = TONLDocument.fromJSON({ users: [...], orders: [...] });
+
+<span class="text-slate-500">// Count users</span>
+doc.count(<span class="text-emerald-400">'users[*]'</span>);                    <span class="text-slate-500">// 42</span>
+
+<span class="text-slate-500">// Sum order totals</span>
+doc.sum(<span class="text-emerald-400">'orders[*]'</span>, <span class="text-emerald-400">'total'</span>);           <span class="text-slate-500">// 15420.50</span>
+
+<span class="text-slate-500">// Average age</span>
+doc.avg(<span class="text-emerald-400">'users[*]'</span>, <span class="text-emerald-400">'age'</span>);             <span class="text-slate-500">// 29.5</span>
+
+<span class="text-slate-500">// Group by country</span>
+doc.groupBy(<span class="text-emerald-400">'users[*]'</span>, <span class="text-emerald-400">'country'</span>);    <span class="text-slate-500">// { TR: [...], US: [...] }</span>
+
+<span class="text-slate-500">// Chained operations</span>
+doc.aggregate(<span class="text-emerald-400">'users[*]'</span>)
+  .filter(u => u.active)
+  .orderBy(<span class="text-emerald-400">'age'</span>, <span class="text-emerald-400">'desc'</span>)
+  .take(<span class="text-orange-400">10</span>)
+  .toArray();</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900 mb-4">
+                Available Functions
+              </h3>
+              <div class="grid md:grid-cols-3 gap-4">
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Basic</h4>
+                  <code class="text-xs text-slate-600 block">count(), sum(field), avg(field), min(field), max(field)</code>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Grouping</h4>
+                  <code class="text-xs text-slate-600 block">groupBy(field), distinct(field), frequency(field)</code>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Statistical</h4>
+                  <code class="text-xs text-slate-600 block">stats(), median(), percentile(n), variance, stdDev</code>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Transform</h4>
+                  <code class="text-xs text-slate-600 block">filter(), map(), reduce(), flatten()</code>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Selection</h4>
+                  <code class="text-xs text-slate-600 block">first(), last(), at(n), take(n), skip(n)</code>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Sorting</h4>
+                  <code class="text-xs text-slate-600 block">orderBy(field, 'asc'|'desc'), partition(fn)</code>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900 mb-4">
+                Full Statistics Example
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-6">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-purple-400">const</span> stats = doc.aggregate(<span class="text-emerald-400">'products[*]'</span>).stats(<span class="text-emerald-400">'price'</span>);
+<span class="text-slate-500">// Returns:</span>
+<span class="text-slate-500">// {</span>
+<span class="text-slate-500">//   count: 150,</span>
+<span class="text-slate-500">//   sum: 7499.50,</span>
+<span class="text-slate-500">//   avg: 49.99,</span>
+<span class="text-slate-500">//   min: 9.99,</span>
+<span class="text-slate-500">//   max: 999.99,</span>
+<span class="text-slate-500">//   variance: 12500.25,</span>
+<span class="text-slate-500">//   stdDev: 111.80</span>
+<span class="text-slate-500">// }</span></code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fuzzy Matching -->
+          <div x-show="tab === 'fuzzy'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                🔍 Fuzzy Matching
+              </h1>
+              <p class="text-lg text-slate-600">
+                Levenshtein, Jaro-Winkler, Soundex algorithms for approximate string matching
+              </p>
+            </div>
+
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-300 rounded-xl p-6">
+              <h3 class="font-semibold text-blue-900 mb-2">
+                🆕 New in v2.4.0
+              </h3>
+              <p class="text-blue-800 text-sm">
+                Find similar strings even with typos, variations, or phonetic similarities. Perfect for search, name matching, and data cleanup.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900 mb-4">
+                Query Operators
+              </h3>
+              <div class="space-y-3">
+                <div class="border-l-4 border-blue-500 bg-blue-50 p-4">
+                  <div class="font-mono text-sm text-slate-800 mb-1">
+                    users[?(@.name ~= 'john')]
+                  </div>
+                  <div class="text-xs text-slate-600">Fuzzy equality match (finds John, Jon, Joan...)</div>
+                </div>
+                <div class="border-l-4 border-blue-500 bg-blue-50 p-4">
+                  <div class="font-mono text-sm text-slate-800 mb-1">
+                    users[?(@.name ~contains 'smith')]
+                  </div>
+                  <div class="text-xs text-slate-600">Fuzzy contains (finds Smith, Smyth, Smithe...)</div>
+                </div>
+                <div class="border-l-4 border-blue-500 bg-blue-50 p-4">
+                  <div class="font-mono text-sm text-slate-800 mb-1">
+                    users[?(@.name soundsLike 'Robert')]
+                  </div>
+                  <div class="text-xs text-slate-600">Phonetic match using Soundex (finds Robert, Rupert...)</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900 mb-4">
+                Direct API Usage
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-6">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-purple-400">import</span> {
+  levenshteinDistance,
+  fuzzyMatch,
+  soundsLike,
+  fuzzySearch
+} <span class="text-purple-400">from</span> <span class="text-emerald-400">'tonl/query/fuzzy-matcher'</span>;
+
+<span class="text-slate-500">// Levenshtein distance</span>
+levenshteinDistance(<span class="text-emerald-400">'kitten'</span>, <span class="text-emerald-400">'sitting'</span>);  <span class="text-slate-500">// 3</span>
+
+<span class="text-slate-500">// Fuzzy match with threshold</span>
+fuzzyMatch(<span class="text-emerald-400">'John'</span>, <span class="text-emerald-400">'Jon'</span>, { threshold: <span class="text-orange-400">0.8</span> });  <span class="text-slate-500">// true</span>
+
+<span class="text-slate-500">// Phonetic matching</span>
+soundsLike(<span class="text-emerald-400">'Smith'</span>, <span class="text-emerald-400">'Smyth'</span>);  <span class="text-slate-500">// true</span>
+
+<span class="text-slate-500">// Search with ranking</span>
+fuzzySearch(<span class="text-emerald-400">'JavaScrpt'</span>, [<span class="text-emerald-400">'JavaScript'</span>, <span class="text-emerald-400">'TypeScript'</span>, <span class="text-emerald-400">'Python'</span>]);
+<span class="text-slate-500">// [{ value: 'JavaScript', similarity: 0.9, index: 0 }]</span></code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900 mb-4">
+                Algorithms
+              </h3>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Levenshtein</h4>
+                  <p class="text-xs text-slate-600">Edit distance - insertions, deletions, substitutions</p>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Jaro-Winkler</h4>
+                  <p class="text-xs text-slate-600">Optimized for short strings with prefix bonus</p>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Dice Coefficient</h4>
+                  <p class="text-xs text-slate-600">Bigram overlap for longer text comparison</p>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Soundex/Metaphone</h4>
+                  <p class="text-xs text-slate-600">Phonetic encoding for name matching</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Temporal Queries -->
+          <div x-show="tab === 'temporal'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                ⏰ Temporal Queries
+              </h1>
+              <p class="text-lg text-slate-600">
+                Filter and compare dates with natural syntax - @now-7d, @today, before, after, sameWeek
+              </p>
+            </div>
+
+            <div class="bg-gradient-to-br from-orange-50 to-amber-100 border-2 border-orange-300 rounded-xl p-6">
+              <h3 class="font-semibold text-orange-900 mb-2">
+                🆕 New in v2.4.0
+              </h3>
+              <p class="text-orange-800 text-sm">
+                Query data by date ranges, relative times, and calendar periods. Perfect for logs, events, and time-series data.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900 mb-4">
+                Temporal Literals
+              </h3>
+              <div class="space-y-3">
+                <div class="border-l-4 border-orange-500 bg-orange-50 p-4">
+                  <div class="font-mono text-sm text-slate-800 mb-1">@now</div>
+                  <div class="text-xs text-slate-600">Current timestamp</div>
+                </div>
+                <div class="border-l-4 border-orange-500 bg-orange-50 p-4">
+                  <div class="font-mono text-sm text-slate-800 mb-1">@today, @yesterday, @tomorrow</div>
+                  <div class="text-xs text-slate-600">Named dates (start of day)</div>
+                </div>
+                <div class="border-l-4 border-orange-500 bg-orange-50 p-4">
+                  <div class="font-mono text-sm text-slate-800 mb-1">@now-7d, @now+1w, @now-3M</div>
+                  <div class="text-xs text-slate-600">Relative time (d=days, w=weeks, M=months, y=years)</div>
+                </div>
+                <div class="border-l-4 border-orange-500 bg-orange-50 p-4">
+                  <div class="font-mono text-sm text-slate-800 mb-1">@2025-01-15, @2025-01-15T10:30:00Z</div>
+                  <div class="text-xs text-slate-600">ISO 8601 dates</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900 mb-4">
+                Query Examples
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-6">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-slate-500">// Events in the last 7 days</span>
+doc.query(<span class="text-emerald-400">'events[?(@.date > @now-7d)]'</span>);
+
+<span class="text-slate-500">// Orders from today</span>
+doc.query(<span class="text-emerald-400">'orders[?(@.createdAt sameDay @today)]'</span>);
+
+<span class="text-slate-500">// Logs before a specific date</span>
+doc.query(<span class="text-emerald-400">'logs[?(@.timestamp before @2025-01-01)]'</span>);
+
+<span class="text-slate-500">// Tasks due this week</span>
+doc.query(<span class="text-emerald-400">'tasks[?(@.dueDate sameWeek @now)]'</span>);
+
+<span class="text-slate-500">// Records older than 3 months</span>
+doc.query(<span class="text-emerald-400">'records[?(@.date daysAgo 90)]'</span>);</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900 mb-4">
+                Temporal Operators
+              </h3>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Comparison</h4>
+                  <code class="text-xs text-slate-600 block">before, after, between</code>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Relative</h4>
+                  <code class="text-xs text-slate-600 block">daysAgo, weeksAgo, monthsAgo, yearsAgo</code>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Calendar</h4>
+                  <code class="text-xs text-slate-600 block">sameDay, sameWeek, sameMonth, sameYear</code>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Units</h4>
+                  <code class="text-xs text-slate-600 block">s(sec), m(min), h(hour), d(day), w(week), M(month), y(year)</code>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900 mb-4">
+                Direct API Usage
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-6">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-purple-400">import</span> {
+  parseTemporalLiteral,
+  isBefore,
+  isAfter,
+  isSameDay
+} <span class="text-purple-400">from</span> <span class="text-emerald-400">'tonl/query/temporal-evaluator'</span>;
+
+<span class="text-slate-500">// Parse temporal literal</span>
+<span class="text-purple-400">const</span> lastWeek = parseTemporalLiteral(<span class="text-emerald-400">'@now-7d'</span>);
+console.log(lastWeek.timestamp);  <span class="text-slate-500">// Unix timestamp</span>
+
+<span class="text-slate-500">// Compare dates</span>
+isBefore(<span class="text-purple-400">new</span> Date(<span class="text-emerald-400">'2025-01-01'</span>), <span class="text-purple-400">new</span> Date(<span class="text-emerald-400">'2025-12-31'</span>));  <span class="text-slate-500">// true</span>
+isAfter(<span class="text-purple-400">new</span> Date(<span class="text-emerald-400">'2025-12-31'</span>), <span class="text-purple-400">new</span> Date(<span class="text-emerald-400">'2025-01-01'</span>));   <span class="text-slate-500">// true</span>
+isSameDay(<span class="text-purple-400">new</span> Date(), <span class="text-purple-400">new</span> Date());  <span class="text-slate-500">// true</span></code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1884,7 +2235,7 @@ console.log(<span class="text-emerald-400">`Directives: ${result.directives.leng
               </a>
             </div>
             <div class="text-xs text-slate-500 mt-2">
-              <span class="font-semibold">Version:</span> 2.3.1
+              <span class="font-semibold">Version:</span> 2.4.0
             </div>
           </div>
         </div>
