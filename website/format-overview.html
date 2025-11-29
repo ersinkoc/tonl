@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Format Overview - TONL</title>
+    <meta name="description" content="TONL syntax reference with concrete examples. Learn the data model, objects, arrays, type hints, and quoting rules." />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      code,
+      pre {
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* Copy button for code blocks */
+      .code-wrapper {
+        position: relative;
+      }
+      .copy-code-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        padding: 4px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        color: white;
+        font-size: 11px;
+        cursor: pointer;
+        opacity: 0;
+        transition: all 0.2s;
+      }
+      .code-wrapper:hover .copy-code-btn {
+        opacity: 1;
+      }
+      .copy-code-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .copy-code-btn.copied {
+        background: #10b981;
+        border-color: #10b981;
+      }
+
+      /* Smooth transitions */
+      html {
+        scroll-behavior: smooth;
+      }
+      .sidebar a {
+        transition: all 0.2s;
+      }
+
+      /* Table styles */
+      .doc-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .doc-table th,
+      .doc-table td {
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .doc-table th {
+        background: #f8fafc;
+        font-weight: 600;
+        color: #1e293b;
+      }
+      .doc-table td {
+        color: #475569;
+      }
+      .doc-table code {
+        background: #f1f5f9;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.875rem;
+      }
+
+      /* Note/Tip boxes */
+      .note-box {
+        background: #eff6ff;
+        border-left: 4px solid #3b82f6;
+        padding: 16px;
+        border-radius: 0 8px 8px 0;
+        margin: 16px 0;
+      }
+      .note-box.tip {
+        background: #f0fdf4;
+        border-left-color: #22c55e;
+      }
+      .note-box p {
+        margin: 0;
+        color: #1e40af;
+      }
+      .note-box.tip p {
+        color: #166534;
+      }
+    </style>
+  </head>
+  <body class="bg-white">
+    <!-- Navigation -->
+    <nav
+      class="border-b border-slate-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm"
+    >
+      <div class="max-w-6xl mx-auto px-4 py-3" x-data="{ mobileOpen: false }">
+        <div class="flex items-center justify-between">
+          <!-- Logo -->
+          <a href="index.html" class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center"
+            >
+              <span class="text-2xl font-bold text-white">T</span>
+            </div>
+            <span class="text-2xl font-bold text-slate-900">TONL</span>
+          </a>
+
+          <!-- Desktop Nav -->
+          <div class="hidden md:flex items-center gap-8">
+            <a href="format-overview.html" class="text-slate-900 font-medium transition"
+              >Format</a
+            >
+            <a href="docs.html" class="text-slate-600 hover:text-slate-900 font-medium transition"
+              >Docs</a
+            >
+            <a
+              href="examples.html"
+              class="text-slate-600 hover:text-slate-900 font-medium transition"
+              >Playground</a
+            >
+            <a
+              href="cli.html"
+              class="text-slate-600 hover:text-slate-900 font-medium transition"
+              >CLI</a
+            >
+            <a
+              href="https://github.com/tonl-dev/tonl"
+              target="_blank"
+              class="text-slate-600 hover:text-slate-900 font-medium transition"
+              >GitHub</a
+            >
+            <a
+              href="https://www.npmjs.com/package/tonl"
+              target="_blank"
+              class="bg-slate-900 text-white px-5 py-2 rounded-lg font-semibold hover:bg-slate-800 transition"
+            >
+              Install
+            </a>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <button @click="mobileOpen = !mobileOpen" class="md:hidden">
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div x-show="mobileOpen" class="md:hidden mt-4 space-y-1" x-transition>
+          <a
+            href="format-overview.html"
+            class="block py-2 text-slate-900 font-semibold"
+            >Format</a
+          >
+          <a
+            href="docs.html"
+            class="block py-2 text-slate-600 hover:text-slate-900"
+            >Docs</a
+          >
+          <a
+            href="examples.html"
+            class="block py-2 text-slate-600 hover:text-slate-900"
+            >Playground</a
+          >
+          <a
+            href="cli.html"
+            class="block py-2 text-slate-600 hover:text-slate-900"
+            >CLI</a
+          >
+          <a
+            href="https://github.com/tonl-dev/tonl"
+            class="block py-2 text-slate-600 hover:text-slate-900"
+            >GitHub</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 py-12" x-data="{ section: 'data-model' }">
+      <div class="grid md:grid-cols-4 gap-8">
+        <!-- Sidebar -->
+        <div class="md:col-span-1">
+          <div class="sticky top-24 space-y-1">
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-2">
+              Format Basics
+            </div>
+            <a
+              @click="section = 'data-model'"
+              :class="section === 'data-model' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              Data Model
+            </a>
+            <a
+              @click="section = 'headers'"
+              :class="section === 'headers' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              Document Headers
+            </a>
+            <a
+              @click="section = 'objects'"
+              :class="section === 'objects' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              Objects
+            </a>
+            <a
+              @click="section = 'arrays'"
+              :class="section === 'arrays' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              Arrays
+            </a>
+
+            <div class="pt-4 mt-4 border-t border-slate-200">
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-2">
+                Type System
+              </div>
+            </div>
+            <a
+              @click="section = 'type-hints'"
+              :class="section === 'type-hints' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              Type Hints
+            </a>
+            <a
+              @click="section = 'quoting'"
+              :class="section === 'quoting' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              Quoting & Types
+            </a>
+
+            <div class="pt-4 mt-4 border-t border-slate-200">
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-2">
+                Advanced
+              </div>
+            </div>
+            <a
+              @click="section = 'keys'"
+              :class="section === 'keys' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              Key Handling
+            </a>
+            <a
+              @click="section = 'examples'"
+              :class="section === 'examples' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              Complete Examples
+            </a>
+            <a
+              @click="section = 'comparison'"
+              :class="section === 'comparison' ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50'"
+              class="block px-4 py-2 rounded-lg cursor-pointer transition"
+            >
+              JSON Comparison
+            </a>
+
+            <div class="pt-4 mt-4 border-t border-slate-200">
+              <a
+                href="docs.html"
+                class="block px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition"
+              >
+                Full Docs &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="md:col-span-3">
+
+          <!-- Data Model Section -->
+          <div x-show="section === 'data-model'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                Format Overview
+              </h1>
+              <p class="text-lg text-slate-600">
+                TONL syntax reference with concrete examples. See <a href="docs.html" class="text-blue-600 hover:underline">Documentation</a> for full API reference.
+              </p>
+            </div>
+
+            <div>
+              <h2 class="text-2xl font-semibold text-slate-900 mb-4">
+                Data Model
+              </h2>
+              <p class="text-slate-600 mb-4">
+                TONL models data the same way as JSON:
+              </p>
+              <ul class="list-disc list-inside text-slate-600 space-y-2 ml-4">
+                <li><strong>Primitives</strong>: strings, numbers, booleans, and <code class="bg-slate-100 px-1 rounded">null</code></li>
+                <li><strong>Objects</strong>: mappings from string keys to values</li>
+                <li><strong>Arrays</strong>: ordered sequences of values</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Root Forms
+              </h3>
+              <p class="text-slate-600 mb-4">
+                A TONL document can represent different root forms:
+              </p>
+              <ul class="list-disc list-inside text-slate-600 space-y-2 ml-4">
+                <li><strong>Root object</strong> (most common): Fields appear at depth 0 with no parent key</li>
+                <li><strong>Root array</strong>: Begins with <code class="bg-slate-100 px-1 rounded">key[N]{fields}:</code> at depth 0</li>
+                <li><strong>Root primitive</strong>: A single primitive value (string, number, boolean, or null)</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Document Headers Section -->
+          <div x-show="section === 'headers'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                Document Headers
+              </h1>
+              <p class="text-lg text-slate-600">
+                TONL documents can include optional metadata headers at the top.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Version Header
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm"><code><span class="text-emerald-400">#version</span> 1.0</code></pre>
+                </div>
+              </div>
+              <p class="text-slate-600 mt-2">
+                Specifies the TONL format version. Defaults to <code class="bg-slate-100 px-1 rounded">1.0</code> if omitted.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Delimiter Header
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm"><code><span class="text-emerald-400">#delimiter</span> "|"</code></pre>
+                </div>
+              </div>
+              <p class="text-slate-600 mt-4 mb-4">
+                Declares the column separator for tabular data. Supported delimiters:
+              </p>
+              <table class="doc-table rounded-lg overflow-hidden border border-slate-200">
+                <thead>
+                  <tr>
+                    <th>Delimiter</th>
+                    <th>Declaration</th>
+                    <th>Use Case</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Comma</td>
+                    <td><code>(default)</code></td>
+                    <td>Most compact, standard data</td>
+                  </tr>
+                  <tr>
+                    <td>Pipe</td>
+                    <td><code>#delimiter "|"</code></td>
+                    <td>Data containing commas</td>
+                  </tr>
+                  <tr>
+                    <td>Tab</td>
+                    <td><code>#delimiter "\t"</code></td>
+                    <td>Visual alignment, spreadsheet-like</td>
+                  </tr>
+                  <tr>
+                    <td>Semicolon</td>
+                    <td><code>#delimiter ";"</code></td>
+                    <td>CSV-style data with embedded commas</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Complete Header Example
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-emerald-400">#version</span> 1.0
+<span class="text-emerald-400">#delimiter</span> "|"
+
+<span class="text-blue-400">users</span>[<span class="text-orange-400">2</span>]{<span class="text-purple-400">id</span>|<span class="text-purple-400">name</span>|<span class="text-purple-400">role</span>}:
+  <span class="text-orange-400">1</span>|Alice|admin
+  <span class="text-orange-400">2</span>|Bob|user</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Objects Section -->
+          <div x-show="section === 'objects'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                Objects
+              </h1>
+              <p class="text-lg text-slate-600">
+                Objects use indentation-based syntax. One space follows the colon.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Simple Objects
+              </h3>
+              <p class="text-slate-600 mb-4">
+                Objects with primitive values use <code class="bg-slate-100 px-1 rounded">key: value</code> syntax:
+              </p>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-blue-400">id</span>: <span class="text-orange-400">123</span>
+<span class="text-blue-400">name</span>: Ada
+<span class="text-blue-400">active</span>: <span class="text-orange-400">true</span></code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Objects with Type Hints
+              </h3>
+              <p class="text-slate-600 mb-4">
+                Type hints are optional and appear in the header:
+              </p>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-blue-400">user</span>{<span class="text-purple-400">id:u32</span>,<span class="text-purple-400">name:str</span>,<span class="text-purple-400">active:bool</span>}:
+  <span class="text-blue-400">id</span>: <span class="text-orange-400">123</span>
+  <span class="text-blue-400">name</span>: Ada
+  <span class="text-blue-400">active</span>: <span class="text-orange-400">true</span></code></pre>
+                </div>
+              </div>
+              <p class="text-slate-600 mt-2">
+                The header <code class="bg-slate-100 px-1 rounded">user{id:u32,name:str,active:bool}:</code> declares object name and field types.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Nested Objects
+              </h3>
+              <p class="text-slate-600 mb-4">
+                Nested objects add one indentation level (default: 2 spaces):
+              </p>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-blue-400">user</span>{<span class="text-purple-400">id:u32</span>,<span class="text-purple-400">name:str</span>,<span class="text-purple-400">contact:obj</span>}:
+  <span class="text-blue-400">id</span>: <span class="text-orange-400">1</span>
+  <span class="text-blue-400">name</span>: Alice
+  <span class="text-blue-400">contact</span>{<span class="text-purple-400">email:str</span>,<span class="text-purple-400">phone:str</span>}:
+    <span class="text-blue-400">email</span>: alice@example.com
+    <span class="text-blue-400">phone</span>: +123456789</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Empty Objects
+              </h3>
+              <p class="text-slate-600 mb-4">
+                A nested empty object is <code class="bg-slate-100 px-1 rounded">key:</code> alone, with no children:
+              </p>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-blue-400">user</span>{<span class="text-purple-400">id:u32</span>,<span class="text-purple-400">metadata:obj</span>}:
+  <span class="text-blue-400">id</span>: <span class="text-orange-400">1</span>
+  <span class="text-blue-400">metadata</span>:</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arrays Section -->
+          <div x-show="section === 'arrays'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                Arrays
+              </h1>
+              <p class="text-lg text-slate-600">
+                TONL detects array structure and chooses the most efficient representation. Arrays declare their length in brackets: <code class="bg-slate-100 px-1 rounded">[N]</code>.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Primitive Arrays (Inline)
+              </h3>
+              <p class="text-slate-600 mb-4">
+                Arrays of primitives are rendered inline:
+              </p>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-blue-400">tags</span>[<span class="text-orange-400">3</span>]: admin, ops, dev
+<span class="text-blue-400">scores</span>[<span class="text-orange-400">4</span>]: <span class="text-orange-400">95</span>, <span class="text-orange-400">87</span>, <span class="text-orange-400">92</span>, <span class="text-orange-400">100</span>
+<span class="text-blue-400">flags</span>[<span class="text-orange-400">3</span>]: <span class="text-orange-400">true</span>, <span class="text-orange-400">false</span>, <span class="text-orange-400">true</span></code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Arrays of Objects (Tabular)
+              </h3>
+              <p class="text-slate-600 mb-4">
+                When all objects share the same primitive-valued keys, TONL uses tabular format:
+              </p>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-blue-400">users</span>[<span class="text-orange-400">3</span>]{<span class="text-purple-400">id:u32</span>,<span class="text-purple-400">name:str</span>,<span class="text-purple-400">role:str</span>}:
+  <span class="text-orange-400">1</span>, Alice, admin
+  <span class="text-orange-400">2</span>, Bob, user
+  <span class="text-orange-400">3</span>, Carol, editor</code></pre>
+                </div>
+              </div>
+
+              <div class="note-box mt-4">
+                <p><strong>Note:</strong> Tabular format requires identical field sets across all objects and primitive values only (no nested arrays/objects).</p>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                With Quoted Values
+              </h3>
+              <p class="text-slate-600 mb-4">
+                Strings containing the delimiter must be quoted:
+              </p>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-blue-400">users</span>[<span class="text-orange-400">2</span>]{<span class="text-purple-400">id:u32</span>,<span class="text-purple-400">name:str</span>,<span class="text-purple-400">role:str</span>}:
+  <span class="text-orange-400">1</span>, Alice Admin, admin
+  <span class="text-orange-400">2</span>, <span class="text-emerald-400">"Bob, Jr."</span>, user</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Empty Arrays
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm"><code><span class="text-blue-400">items</span>[<span class="text-orange-400">0</span>]:</code></pre>
+                </div>
+              </div>
+              <p class="text-slate-600 mt-2">
+                The header declares length zero, with no elements following.
+              </p>
+            </div>
+
+            <div class="note-box tip">
+              <p><strong>Tip:</strong> The array length <code>[N]</code> helps LLMs validate structure. If you ask a model to generate TONL output, explicit lengths let you detect truncation or malformed data.</p>
+            </div>
+          </div>
+
+          <!-- Type Hints Section -->
+          <div x-show="section === 'type-hints'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                Type Hints
+              </h1>
+              <p class="text-lg text-slate-600">
+                Type hints are optional annotations that provide schema information in the header.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Syntax
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm"><code><span class="text-blue-400">key</span>{<span class="text-purple-400">field:type</span>,<span class="text-purple-400">field:type</span>,...}:</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Available Types
+              </h3>
+              <table class="doc-table rounded-lg overflow-hidden border border-slate-200">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>str</code></td>
+                    <td>String</td>
+                    <td><code>name:str</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>u32</code></td>
+                    <td>Unsigned 32-bit integer</td>
+                    <td><code>id:u32</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>i32</code></td>
+                    <td>Signed 32-bit integer</td>
+                    <td><code>count:i32</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>f64</code></td>
+                    <td>64-bit float</td>
+                    <td><code>price:f64</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>bool</code></td>
+                    <td>Boolean</td>
+                    <td><code>active:bool</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>null</code></td>
+                    <td>Null value</td>
+                    <td><code>deleted:null</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>obj</code></td>
+                    <td>Object</td>
+                    <td><code>contact:obj</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>list</code></td>
+                    <td>Array</td>
+                    <td><code>tags:list</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Type Inference
+              </h3>
+              <p class="text-slate-600 mb-4">
+                When type hints are omitted, the decoder infers types automatically:
+              </p>
+              <table class="doc-table rounded-lg overflow-hidden border border-slate-200">
+                <thead>
+                  <tr>
+                    <th>Token</th>
+                    <th>Inferred Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Unquoted number</td>
+                    <td>numeric (u32, i32, or f64)</td>
+                  </tr>
+                  <tr>
+                    <td>Quoted number</td>
+                    <td>string</td>
+                  </tr>
+                  <tr>
+                    <td><code>true</code> / <code>false</code></td>
+                    <td>boolean</td>
+                  </tr>
+                  <tr>
+                    <td><code>null</code></td>
+                    <td>null</td>
+                  </tr>
+                  <tr>
+                    <td>Everything else</td>
+                    <td>string</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Type Coercion
+              </h3>
+              <p class="text-slate-600 mb-4">
+                In strict mode, values are coerced to match type hints:
+              </p>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-blue-400">user</span>{<span class="text-purple-400">age:u32</span>,<span class="text-purple-400">name:str</span>,<span class="text-purple-400">active:bool</span>}:
+  <span class="text-blue-400">age</span>: <span class="text-emerald-400">"25"</span>           <span class="text-slate-500"># Coerced to number 25</span>
+  <span class="text-blue-400">name</span>: alice         <span class="text-slate-500"># Coerced to string "alice"</span>
+  <span class="text-blue-400">active</span>: <span class="text-emerald-400">"true"</span>      <span class="text-slate-500"># Coerced to boolean true</span></code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quoting & Types Section -->
+          <div x-show="section === 'quoting'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                Quoting and Types
+              </h1>
+              <p class="text-lg text-slate-600">
+                TONL quotes strings only when necessary to maximize token efficiency.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                When Strings Need Quotes
+              </h3>
+              <p class="text-slate-600 mb-4">
+                A string must be quoted if:
+              </p>
+              <ul class="list-disc list-inside text-slate-600 space-y-2 ml-4">
+                <li>It's empty (<code class="bg-slate-100 px-1 rounded">""</code>)</li>
+                <li>It has leading or trailing whitespace</li>
+                <li>It equals <code class="bg-slate-100 px-1 rounded">true</code>, <code class="bg-slate-100 px-1 rounded">false</code>, or <code class="bg-slate-100 px-1 rounded">null</code></li>
+                <li>It looks like a number (e.g., <code class="bg-slate-100 px-1 rounded">"42"</code>, <code class="bg-slate-100 px-1 rounded">"-3.14"</code>)</li>
+                <li>It contains special characters: <code class="bg-slate-100 px-1 rounded">:</code> <code class="bg-slate-100 px-1 rounded">,</code> <code class="bg-slate-100 px-1 rounded">#</code> <code class="bg-slate-100 px-1 rounded">{}</code> <code class="bg-slate-100 px-1 rounded">[]</code> <code class="bg-slate-100 px-1 rounded">"</code> <code class="bg-slate-100 px-1 rounded">\</code></li>
+                <li>It contains the active delimiter character</li>
+              </ul>
+
+              <p class="text-slate-600 mt-4">
+                Otherwise, strings can be unquoted. Unicode, emoji, and internal spaces are safe:
+              </p>
+              <div class="code-wrapper mt-2">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-blue-400">message</span>: Hello world
+<span class="text-blue-400">note</span>: This has inner spaces
+<span class="text-blue-400">emoji</span>: Check this out</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Escape Sequences
+              </h3>
+              <table class="doc-table rounded-lg overflow-hidden border border-slate-200">
+                <thead>
+                  <tr>
+                    <th>Character</th>
+                    <th>Escape</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Backslash (<code>\</code>)</td>
+                    <td><code>\\</code></td>
+                  </tr>
+                  <tr>
+                    <td>Double quote (<code>"</code>)</td>
+                    <td><code>""</code> or <code>\"</code></td>
+                  </tr>
+                  <tr>
+                    <td>Newline</td>
+                    <td><code>\n</code></td>
+                  </tr>
+                  <tr>
+                    <td>Carriage return</td>
+                    <td><code>\r</code></td>
+                  </tr>
+                  <tr>
+                    <td>Tab</td>
+                    <td><code>\t</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Multiline Strings
+              </h3>
+              <p class="text-slate-600 mb-4">
+                Triple quotes (<code class="bg-slate-100 px-1 rounded">"""</code>) are used for multiline content:
+              </p>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-blue-400">description</span>: <span class="text-emerald-400">"""This is a
+multi-line string
+with preserved formatting"""</span></code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Type Conversions
+              </h3>
+              <table class="doc-table rounded-lg overflow-hidden border border-slate-200">
+                <thead>
+                  <tr>
+                    <th>Input</th>
+                    <th>Output</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Finite number</td>
+                    <td>Canonical decimal</td>
+                  </tr>
+                  <tr>
+                    <td><code>NaN</code>, <code>Infinity</code></td>
+                    <td><code>null</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>BigInt</code> (safe range)</td>
+                    <td>Number</td>
+                  </tr>
+                  <tr>
+                    <td><code>BigInt</code> (out of range)</td>
+                    <td>Quoted decimal string</td>
+                  </tr>
+                  <tr>
+                    <td><code>Date</code></td>
+                    <td>ISO string in quotes</td>
+                  </tr>
+                  <tr>
+                    <td><code>undefined</code>, <code>function</code>, <code>symbol</code></td>
+                    <td><code>null</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Key Handling Section -->
+          <div x-show="section === 'keys'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                Key Handling
+              </h1>
+              <p class="text-lg text-slate-600">
+                Rules for object keys and special character handling.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Valid Identifiers
+              </h3>
+              <ul class="list-disc list-inside text-slate-600 space-y-2 ml-4">
+                <li><strong>Characters</strong>: Letters, numbers, underscore (<code class="bg-slate-100 px-1 rounded">_</code>)</li>
+                <li><strong>First character</strong>: Must be a letter or underscore</li>
+                <li><strong>Case sensitivity</strong>: Case-sensitive</li>
+              </ul>
+              <div class="code-wrapper mt-4">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-blue-400">valid_name</span>: value
+<span class="text-blue-400">isValid123</span>: value
+<span class="text-blue-400">_privateField</span>: value</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Quoted Keys (Special Characters)
+              </h3>
+              <p class="text-slate-600 mb-4">
+                Keys containing special characters must be quoted:
+              </p>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-emerald-400">"field-with-dash"</span>: value
+<span class="text-emerald-400">"key with spaces"</span>: value
+<span class="text-emerald-400">"@type"</span>: value
+<span class="text-emerald-400">"#comment"</span>: value</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Dual-Mode System (v2.0.6+)
+              </h3>
+              <p class="text-slate-600 mb-4">
+                TONL offers two modes for handling problematic keys:
+              </p>
+
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Default Mode (Quoting)</h4>
+                  <p class="text-slate-600 text-sm mb-3">Perfect round-trip fidelity</p>
+                  <div class="bg-slate-900 rounded-lg p-3">
+                    <pre class="text-slate-300 text-xs leading-relaxed"><code><span class="text-emerald-400">""</span>[1]:
+  empty-value
+<span class="text-emerald-400">"#"</span>[1]:
+  hash-value</code></pre>
+                  </div>
+                </div>
+
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-slate-900 mb-2">Preprocessing Mode</h4>
+                  <p class="text-slate-600 text-sm mb-3">Clean, readable keys (<code>--preprocess</code>)</p>
+                  <div class="bg-slate-900 rounded-lg p-3">
+                    <pre class="text-slate-300 text-xs leading-relaxed"><code><span class="text-blue-400">empty</span>[1]:
+  empty-value
+<span class="text-blue-400">comment</span>[1]:
+  hash-value</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <table class="doc-table rounded-lg overflow-hidden border border-slate-200 mt-4">
+                <thead>
+                  <tr>
+                    <th>Original Key</th>
+                    <th>Preprocessed Key</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>""</code> (empty)</td>
+                    <td><code>empty</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>"#"</code></td>
+                    <td><code>comment</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>"@type"</code></td>
+                    <td><code>type</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>"key with spaces"</code></td>
+                    <td><code>key_with_spaces</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Complete Examples Section -->
+          <div x-show="section === 'examples'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                Complete Examples
+              </h1>
+              <p class="text-lg text-slate-600">
+                Real-world TONL document examples.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                E-commerce Order
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-emerald-400">@tonl</span> v1
+
+<span class="text-blue-400">order</span>{<span class="text-purple-400">orderId</span>,<span class="text-purple-400">status</span>,<span class="text-purple-400">placedAt</span>}:
+  <span class="text-blue-400">orderId</span>: ORD-2025-11-001234
+  <span class="text-blue-400">status</span>: processing
+  <span class="text-blue-400">placedAt</span>: 2025-11-03T14:30:00Z
+
+<span class="text-blue-400">customer</span>{<span class="text-purple-400">id:u32</span>,<span class="text-purple-400">name:str</span>,<span class="text-purple-400">email:str</span>,<span class="text-purple-400">tier:str</span>}:
+  <span class="text-blue-400">id</span>: <span class="text-orange-400">5678</span>
+  <span class="text-blue-400">name</span>: <span class="text-emerald-400">"John Smith"</span>
+  <span class="text-blue-400">email</span>: john.smith@example.com
+  <span class="text-blue-400">tier</span>: premium
+
+<span class="text-blue-400">items</span>[<span class="text-orange-400">3</span>]{<span class="text-purple-400">sku</span>,<span class="text-purple-400">name</span>,<span class="text-purple-400">quantity:u32</span>,<span class="text-purple-400">unitPrice:f64</span>,<span class="text-purple-400">discount:f64</span>}:
+  WIDGET-001, <span class="text-emerald-400">"Premium Widget"</span>, <span class="text-orange-400">2</span>, <span class="text-orange-400">29.99</span>, <span class="text-orange-400">0.10</span>
+  GADGET-042, <span class="text-emerald-400">"Smart Gadget Pro"</span>, <span class="text-orange-400">1</span>, <span class="text-orange-400">149.99</span>, <span class="text-orange-400">0.00</span>
+  ACCESSORY-123, <span class="text-emerald-400">"Universal Adapter"</span>, <span class="text-orange-400">3</span>, <span class="text-orange-400">12.99</span>, <span class="text-orange-400">0.15</span>
+
+<span class="text-blue-400">summary</span>{<span class="text-purple-400">subtotal:f64</span>,<span class="text-purple-400">tax:f64</span>,<span class="text-purple-400">shipping:f64</span>,<span class="text-purple-400">total:f64</span>}:
+  <span class="text-blue-400">subtotal</span>: <span class="text-orange-400">248.93</span>
+  <span class="text-blue-400">tax</span>: <span class="text-orange-400">21.16</span>
+  <span class="text-blue-400">shipping</span>: <span class="text-orange-400">9.99</span>
+  <span class="text-blue-400">total</span>: <span class="text-orange-400">266.63</span>
+
+<span class="text-blue-400">notes</span>[<span class="text-orange-400">2</span>]: <span class="text-emerald-400">"Gift wrap requested"</span>, <span class="text-emerald-400">"Leave package at front door"</span></code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                User Profile with Nested Data
+              </h3>
+              <div class="code-wrapper">
+                <div class="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+                  <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-emerald-400">#version</span> 1.0
+
+<span class="text-blue-400">user</span>{<span class="text-purple-400">id:u32</span>,<span class="text-purple-400">name:str</span>,<span class="text-purple-400">email:str</span>,<span class="text-purple-400">preferences:obj</span>}:
+  <span class="text-blue-400">id</span>: <span class="text-orange-400">1</span>
+  <span class="text-blue-400">name</span>: Ahmet Yilmaz
+  <span class="text-blue-400">email</span>: ahmet@example.com
+  <span class="text-blue-400">preferences</span>{<span class="text-purple-400">language:str</span>,<span class="text-purple-400">notifications:bool</span>,<span class="text-purple-400">theme:str</span>}:
+    <span class="text-blue-400">language</span>: tr
+    <span class="text-blue-400">notifications</span>: <span class="text-orange-400">true</span>
+    <span class="text-blue-400">theme</span>: dark
+
+<span class="text-blue-400">stats</span>{<span class="text-purple-400">loginCount:u32</span>,<span class="text-purple-400">sessionDuration:f64</span>}:
+  <span class="text-blue-400">loginCount</span>: <span class="text-orange-400">156</span>
+  <span class="text-blue-400">sessionDuration</span>: <span class="text-orange-400">45.2</span>
+
+<span class="text-blue-400">roles</span>[<span class="text-orange-400">3</span>]: admin, editor, viewer</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- JSON Comparison Section -->
+          <div x-show="section === 'comparison'" class="space-y-8">
+            <div>
+              <h1 class="text-4xl font-bold text-slate-900 mb-4">
+                JSON Comparison
+              </h1>
+              <p class="text-lg text-slate-600">
+                See how TONL compares to JSON in terms of size and token efficiency.
+              </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-900 mb-3">
+                  JSON <span class="text-sm font-normal text-slate-500">(245 bytes, ~89 tokens)</span>
+                </h3>
+                <div class="code-wrapper">
+                  <div class="bg-slate-900 rounded-lg p-4">
+                    <pre class="text-slate-300 text-sm leading-relaxed"><code>{
+  <span class="text-emerald-400">"users"</span>: [
+    { <span class="text-emerald-400">"id"</span>: <span class="text-orange-400">1</span>, <span class="text-emerald-400">"name"</span>: <span class="text-emerald-400">"Alice"</span>, <span class="text-emerald-400">"role"</span>: <span class="text-emerald-400">"admin"</span> },
+    { <span class="text-emerald-400">"id"</span>: <span class="text-orange-400">2</span>, <span class="text-emerald-400">"name"</span>: <span class="text-emerald-400">"Bob, Jr."</span>, <span class="text-emerald-400">"role"</span>: <span class="text-emerald-400">"user"</span> },
+    { <span class="text-emerald-400">"id"</span>: <span class="text-orange-400">3</span>, <span class="text-emerald-400">"name"</span>: <span class="text-emerald-400">"Carol"</span>, <span class="text-emerald-400">"role"</span>: <span class="text-emerald-400">"editor"</span> }
+  ]
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-semibold text-slate-900 mb-3">
+                  TONL <span class="text-sm font-normal text-emerald-600">(158 bytes, ~49 tokens - 45% reduction)</span>
+                </h3>
+                <div class="code-wrapper">
+                  <div class="bg-slate-900 rounded-lg p-4">
+                    <pre class="text-slate-300 text-sm leading-relaxed"><code><span class="text-emerald-400">#version</span> 1.0
+<span class="text-blue-400">users</span>[<span class="text-orange-400">3</span>]{<span class="text-purple-400">id:u32</span>,<span class="text-purple-400">name:str</span>,<span class="text-purple-400">role:str</span>}:
+  <span class="text-orange-400">1</span>, Alice, admin
+  <span class="text-orange-400">2</span>, <span class="text-emerald-400">"Bob, Jr."</span>, user
+  <span class="text-orange-400">3</span>, Carol, editor</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-8">
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Key Differences
+              </h3>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="text-emerald-500 text-xl">&#10003;</span>
+                    <span class="font-semibold text-slate-900">No redundant field names</span>
+                  </div>
+                  <p class="text-slate-600 text-sm">Field names declared once in header, not repeated per row</p>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="text-emerald-500 text-xl">&#10003;</span>
+                    <span class="font-semibold text-slate-900">No structural punctuation</span>
+                  </div>
+                  <p class="text-slate-600 text-sm">No braces or commas around objects</p>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="text-emerald-500 text-xl">&#10003;</span>
+                    <span class="font-semibold text-slate-900">Tabular data format</span>
+                  </div>
+                  <p class="text-slate-600 text-sm">Values separated by delimiter, not key-value pairs</p>
+                </div>
+                <div class="border border-slate-200 rounded-lg p-4">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="text-emerald-500 text-xl">&#10003;</span>
+                    <span class="font-semibold text-slate-900">Type information</span>
+                  </div>
+                  <p class="text-slate-600 text-sm">Optional type hints for validation and documentation</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-8 bg-slate-50 border border-slate-200 rounded-lg p-6">
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">
+                Performance Summary
+              </h3>
+              <table class="doc-table rounded-lg overflow-hidden border border-slate-200 bg-white">
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>JSON</th>
+                    <th>TONL</th>
+                    <th>Improvement</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Size (bytes)</strong></td>
+                    <td>245</td>
+                    <td>158</td>
+                    <td class="text-emerald-600 font-semibold">36% smaller</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tokens (GPT-5)</strong></td>
+                    <td>89</td>
+                    <td>49</td>
+                    <td class="text-emerald-600 font-semibold">45% fewer</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Encoding Speed</strong></td>
+                    <td>1.0x</td>
+                    <td>12-15x</td>
+                    <td class="text-emerald-600 font-semibold">12-15x faster</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Decoding Speed</strong></td>
+                    <td>1.0x</td>
+                    <td>10x</td>
+                    <td class="text-emerald-600 font-semibold">10x faster</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mt-8 text-center">
+              <a href="examples.html" class="inline-flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-slate-800 transition">
+                Try the Playground
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 bg-slate-50">
+      <div class="max-w-6xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <!-- Brand -->
+          <div class="col-span-1 md:col-span-2">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+                <span class="text-lg font-bold text-white">T</span>
+              </div>
+              <span class="text-xl font-bold text-slate-900">TONL</span>
+            </div>
+            <p class="text-slate-600 mb-4 max-w-md">
+              Token-Optimized Notation Language.<br>
+              Reduce your LLM token costs by 32-45% while maintaining human readability.
+            </p>
+            <div class="flex items-center gap-4 text-sm text-slate-500">
+              <span>Zero dependencies</span>
+              <span>&bull;</span>
+              <span>100% test coverage</span>
+              <span>&bull;</span>
+              <span>TypeScript native</span>
+            </div>
+            <div class="flex items-center gap-4 mt-4">
+              <a href="https://github.com/tonl-dev/tonl" target="_blank" class="text-slate-400 hover:text-slate-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a href="https://www.npmjs.com/package/tonl" target="_blank" class="text-slate-400 hover:text-slate-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm1.335 17.517h-2.67v-1.5h2.67v1.5zm0-2.5h-2.67V9.633h2.67v5.384zm0-6.384h-2.67v-1.5h2.67v1.5z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Links -->
+          <div>
+            <h3 class="font-semibold text-slate-900 mb-4">Quick Links</h3>
+            <ul class="space-y-2 text-sm">
+              <li><a href="format-overview.html" class="text-slate-600 hover:text-slate-900 transition">Format Overview</a></li>
+              <li><a href="docs.html" class="text-slate-600 hover:text-slate-900 transition">Documentation</a></li>
+              <li><a href="examples.html" class="text-slate-600 hover:text-slate-900 transition">Playground</a></li>
+              <li><a href="https://github.com/tonl-dev/tonl" target="_blank" class="text-slate-600 hover:text-slate-900 transition">GitHub</a></li>
+              <li><a href="https://www.npmjs.com/package/tonl" target="_blank" class="text-slate-600 hover:text-slate-900 transition">npm Package</a></li>
+            </ul>
+          </div>
+
+          <!-- GitHub Star Button -->
+          <div>
+            <h3 class="font-semibold text-slate-900 mb-4">Support</h3>
+            <a href="https://github.com/tonl-dev/tonl" target="_blank" class="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
+              </svg>
+              Star on GitHub
+            </a>
+            <div class="mt-4">
+              <a href="https://www.npmjs.com/package/tonl" target="_blank" class="text-xs text-slate-500 hover:text-slate-700 transition">
+                <span class="font-semibold">npm:</span> tonl
+              </a>
+            </div>
+            <div class="text-xs text-slate-500 mt-2">
+              <span class="font-semibold">Version:</span> 2.4.1
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-200 mt-8 pt-8 text-center text-sm text-slate-500">
+          <p>&copy; 2025 TONL. All rights reserved. Licensed under MIT.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Copy code functionality -->
+    <script>
+      function copyCode(btn, code) {
+        navigator.clipboard.writeText(code).then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      }
+    </script>
+  </body>
+</html>
