@@ -6,7 +6,7 @@
     "role": "admin",
     "active": true,
     "tags": ["engineering", "management"],
-    "lastLogin": "2024-01-15T10:30:00Z"
+    "lastLogin": "2025-01-15T10:30:00Z"
   },
   {
     "id": 2,
@@ -15,7 +15,7 @@
     "role": "user",
     "active": false,
     "tags": ["marketing", "sales"],
-    "lastLogin": "2024-01-10T14:22:00Z"
+    "lastLogin": "2025-01-10T14:22:00Z"
   },
   {
     "id": 3,
@@ -24,6 +24,6 @@
     "role": "user",
     "active": true,
     "tags": ["support"],
-    "lastLogin": "2024-01-18T09:15:00Z"
+    "lastLogin": "2025-01-18T09:15:00Z"
   }
 ]

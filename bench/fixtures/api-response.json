@@ -31,12 +31,12 @@
           }
         },
         "activity": {
-          "last_login": "2024-11-02T10:30:00Z",
+          "last_login": "2025-11-02T10:30:00Z",
           "login_count": 247,
           "sessions": [
             {
               "id": "sess_987",
-              "start_time": "2024-11-02T09:15:00Z",
+              "start_time": "2025-11-02T09:15:00Z",
               "duration": 5400,
               "ip_address": "192.168.1.100",
               "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
@@ -55,7 +55,7 @@
     }
   },
   "meta": {
-    "timestamp": "2024-11-02T15:45:30Z",
+    "timestamp": "2025-11-02T15:45:30Z",
     "request_id": "req_abc123def456",
     "version": "v2.1.0",
     "server_info": {

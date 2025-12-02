@@ -19,27 +19,7 @@ import { createContext, createChildContext, isMaxDepthReached, checkIterationLim
 import { QueryCache, getGlobalCache } from './cache.js';
 import { evaluateFilterExpression } from './filter-evaluator.js';
 import { SecurityError } from '../errors/index.js';
-
-/**
- * Dangerous property names that could lead to prototype pollution
- * These properties are blocked in all query and modification operations
- */
-const DANGEROUS_PROPERTIES = new Set([
-  '__proto__',
-  'constructor',
-  'prototype',
-  '__defineGetter__',
-  '__defineSetter__',
-  '__lookupGetter__',
-  '__lookupSetter__',
-]);
-
-/**
- * Check if a property name is dangerous (prototype pollution risk)
- */
-function isDangerousProperty(propertyName: string): boolean {
-  return DANGEROUS_PROPERTIES.has(propertyName);
-}
+import { isDangerousProperty } from '../utils/property-security.js';
 
 /**
  * Query Evaluator - evaluates path expressions against documents

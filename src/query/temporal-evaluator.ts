@@ -2,7 +2,7 @@
  * Temporal Query Evaluator for TONL Query API
  *
  * Provides temporal query capabilities including:
- * - Date literal parsing (@2024-01-15, @now, @now-7d)
+ * - Date literal parsing (@2025-01-15, @now, @now-7d)
  * - Temporal comparison operators (before, after, between)
  * - Relative time expressions (daysAgo, weeksAgo, monthsAgo)
  * - ISO 8601 duration support
@@ -11,7 +11,7 @@
  * ```typescript
  * // Query filters with temporal expressions:
  * doc.query("events[?(@.date > @now-7d)]")        // Last 7 days
- * doc.query("events[?(@.date between @2024-01-01 @2024-12-31)]")
+ * doc.query("events[?(@.date between @2025-01-01 @2025-12-31)]")
  * doc.query("posts[?(@.publishedAt before @now)]")
  * ```
  */
@@ -107,7 +107,7 @@ const TEMPORAL_PREFIX = '@';
  * Parse a temporal literal string
  *
  * Supports:
- * - ISO 8601 dates: @2024-01-15, @2024-01-15T10:30:00Z
+ * - ISO 8601 dates: @2025-01-15, @2025-01-15T10:30:00Z
  * - Relative expressions: @now, @now-7d, @now+1w, @now-3M
  * - Named dates: @today, @yesterday, @tomorrow
  *
@@ -117,7 +117,7 @@ const TEMPORAL_PREFIX = '@';
  *
  * @example
  * ```typescript
- * parseTemporalLiteral("@2024-01-15")        // Specific date
+ * parseTemporalLiteral("@2025-01-15")        // Specific date
  * parseTemporalLiteral("@now")               // Current time
  * parseTemporalLiteral("@now-7d")            // 7 days ago
  * parseTemporalLiteral("@now+2w")            // 2 weeks from now

@@ -10,7 +10,43 @@ import { TONLParseError } from "./errors/index.js";
 import { parseContent } from "./parser/content-parser.js";
 
 /**
- * Main decode function
+ * Decode a TONL formatted string back to JavaScript value.
+ *
+ * Parses TONL text and converts it to JavaScript objects, arrays,
+ * and primitives. Supports auto-detection of delimiters and handles
+ * all TONL features including tabular data, multiline strings, and
+ * nested structures.
+ *
+ * @param text - The TONL formatted string to decode
+ * @param opts - Decoding options
+ * @param opts.delimiter - Override delimiter detection: "," | "|" | "\t" | ";" (default: auto-detect)
+ * @param opts.strict - Enable strict parsing mode (default: false)
+ * @returns Parsed JavaScript value (object, array, or primitive)
+ * @throws {TONLParseError} When TONL syntax is invalid
+ * @throws {TONLParseError} When delimiter is invalid
+ * @throws {TONLParseError} When maximum nesting depth exceeded
+ *
+ * @example
+ * ```typescript
+ * // Basic decoding
+ * const data = decodeTONL(`
+ * #version 1.0
+ * root:
+ *   name: Alice
+ *   age: 30
+ * `);
+ * // Result: { name: 'Alice', age: 30 }
+ *
+ * // With explicit delimiter
+ * const data = decodeTONL(tonlString, { delimiter: '|' });
+ *
+ * // Strict mode for validation
+ * const data = decodeTONL(tonlString, { strict: true });
+ * ```
+ *
+ * @since 1.0.0
+ * @see encodeTONL - For encoding JavaScript to TONL
+ * @see TONLDocument.parse - For document-based API
  */
 export function decodeTONL(text: string, opts: {
   delimiter?: TONLDelimiter;

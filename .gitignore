@@ -24,6 +24,10 @@ coverage/
 
 # Test temporary files
 test/format-test-files/
+test/*.d.ts
+test/*.d.ts.map
+test/*.js
+test/*.js.map
 
 # Dependency directories
 jspm_packages/

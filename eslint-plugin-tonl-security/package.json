@@ -1,0 +1,24 @@
+{
+  "name": "eslint-plugin-tonl-security",
+  "version": "1.0.0",
+  "description": "Custom ESLint rules for TONL security patterns",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "security",
+    "prototype-pollution",
+    "redos",
+    "tonl"
+  ],
+  "author": "TONL Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "eslint": ">=8.0.0"
+  }
+}

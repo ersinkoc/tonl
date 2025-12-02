@@ -152,7 +152,7 @@
       "skills": "rust, redis, spring, nodejs, terraform, aws",
       "location": "Austin",
       "manager": 2006,
-      "hired": "2024-08-08",
+      "hired": "2025-08-08",
       "email": "william.lewis@company.com",
       "status": "active"
     },
@@ -186,7 +186,7 @@
       "skills": "postgres, terraform, react, react, redis",
       "location": "Remote",
       "manager": 2001,
-      "hired": "2024-04-07",
+      "hired": "2025-04-07",
       "email": "david.wilson@company.com",
       "status": "active"
     },
@@ -356,7 +356,7 @@
       "skills": "python, golang, airflow, airflow, aws, javascript",
       "location": "Boston",
       "manager": 2006,
-      "hired": "2024-12-26",
+      "hired": "2025-12-26",
       "email": "christopher.hall@company.com",
       "status": "active"
     },
@@ -412,7 +412,7 @@
       "status": "active"
     },
     {
-      "empId": 2024,
+      "empId": 2025,
       "firstName": "Matthew",
       "lastName": "Perez",
       "title": "Architect",
@@ -509,7 +509,7 @@
       "skills": "vue, vue, python, kubernetes, golang, angular",
       "location": "New York",
       "manager": 2006,
-      "hired": "2024-12-23",
+      "hired": "2025-12-23",
       "email": "sandra.ramirez@company.com",
       "status": "active"
     },
@@ -662,7 +662,7 @@
       "skills": "vue, gcp, gcp, terraform, azure",
       "location": "San Francisco",
       "manager": 2004,
-      "hired": "2024-11-26",
+      "hired": "2025-11-26",
       "email": "joshua.jones@company.com",
       "status": "active"
     },
@@ -815,7 +815,7 @@
       "skills": "javascript, golang, azure",
       "location": "Chicago",
       "manager": 2002,
-      "hired": "2024-06-13",
+      "hired": "2025-06-13",
       "email": "melissa.allen@company.com",
       "status": "active"
     },
@@ -917,7 +917,7 @@
       "skills": "rust, kafka, airflow, java",
       "location": "Remote",
       "manager": 2008,
-      "hired": "2024-05-31",
+      "hired": "2025-05-31",
       "email": "patricia.martinez@company.com",
       "status": "active"
     },
@@ -1512,7 +1512,7 @@
       "skills": "kafka, spring, kafka",
       "location": "Seattle",
       "manager": 2002,
-      "hired": "2024-10-14",
+      "hired": "2025-10-14",
       "email": "joshua.perez@company.com",
       "status": "active"
     },

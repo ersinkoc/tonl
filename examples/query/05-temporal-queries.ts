@@ -350,13 +350,13 @@ console.log('\n12. EDGE CASES');
 console.log('─'.repeat(50));
 
 console.log('\n   Year boundaries:');
-const dec31 = parseTemporalLiteral('@2024-12-31');
+const dec31 = parseTemporalLiteral('@2025-12-31');
 const jan1 = parseTemporalLiteral('@2025-01-01');
-console.log(`   Dec 31, 2024 before Jan 1, 2025: ${isBefore(new Date(dec31.timestamp), new Date(jan1.timestamp)) ? '✓' : '✗'}`);
+console.log(`   Dec 31, 2025 before Jan 1, 2025: ${isBefore(new Date(dec31.timestamp), new Date(jan1.timestamp)) ? '✓' : '✗'}`);
 
 console.log('\n   Leap year handling:');
-const feb29 = parseTemporalLiteral('@2024-02-29');
-console.log(`   Feb 29, 2024 parsed: ${new Date(feb29.timestamp).toISOString().split('T')[0]}`);
+const feb29 = parseTemporalLiteral('@2025-02-29');
+console.log(`   Feb 29, 2025 parsed: ${new Date(feb29.timestamp).toISOString().split('T')[0]}`);
 
 console.log('\n   Month boundary calculations:');
 const jan31 = new Date('2025-01-31');

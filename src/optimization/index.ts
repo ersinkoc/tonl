@@ -4,6 +4,23 @@
  * Advanced token and byte optimization strategies for TONL v2.0
  */
 
+// Base utilities and interfaces
+export {
+  type OptimizationMetrics,
+  type OptimizationResult,
+  type Optimizer,
+  calculateByteSize,
+  calculateMetrics,
+  isBeneficial,
+  createResult,
+  optimizerRegistry,
+  chainOptimizers,
+  selectBestOptimizer,
+  analyzeArray,
+  estimateTokens
+} from './base.js';
+
+// Optimization strategies
 export { DictionaryBuilder, DictionaryDecoder } from './dictionary.js';
 export { ColumnReorderer } from './column-reorder.js';
 export { NumericQuantizer, type PrecisionAnalysis } from './quantizer.js';

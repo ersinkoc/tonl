@@ -16,7 +16,40 @@ import { inferPrimitiveType, coerceValue, isUniformObjectArray } from "./infer.j
 
 export { _encodeTONL as encodeTONL, _decodeTONL as decodeTONL, parseTONLLine, parseHeaderLine, parseObjectHeader, detectDelimiter, inferPrimitiveType, coerceValue, isUniformObjectArray };
 
-/** Analyze a JSON value and choose the most compact text layout automatically. */
+/**
+ * Smart encode a JavaScript value to TONL with automatic optimization.
+ *
+ * Analyzes the input data to automatically select the best delimiter
+ * that minimizes quoting and maximizes token efficiency. This is the
+ * recommended encoding function for LLM contexts where token cost matters.
+ *
+ * @param input - The value to encode (object, array, or primitive)
+ * @param opts - Optional encoding options (delimiter is auto-selected if not specified)
+ * @param opts.delimiter - Override automatic delimiter selection
+ * @param opts.includeTypes - Add type hints to headers (default: false)
+ * @param opts.version - TONL version string (default: "1.0")
+ * @param opts.indent - Spaces per indentation level (default: 2)
+ * @param opts.singleLinePrimitiveLists - Encode primitive arrays on single line (default: true)
+ * @param opts.compactTables - Use compact table format when possible (default: false)
+ * @param opts.schemaFirst - Output schema before data (default: false)
+ * @returns TONL formatted string optimized for minimal token usage
+ * @throws {Error} When circular reference detected in input
+ * @throws {Error} When maximum nesting depth exceeded
+ *
+ * @example
+ * ```typescript
+ * // Automatic delimiter selection based on content
+ * const tonl = encodeSmart({ message: 'Hello, World!' });
+ * // Uses '|' delimiter since commas appear in content
+ *
+ * // With additional options
+ * const tonl = encodeSmart(data, { includeTypes: true });
+ * ```
+ *
+ * @since 1.0.0
+ * @see encodeTONL - For manual delimiter control
+ * @see decodeTONL - For decoding TONL back to JavaScript
+ */
 export function encodeSmart(input: TONLValue, opts?: {
   delimiter?: "," | "|" | "\t" | ";";
   includeTypes?: boolean;

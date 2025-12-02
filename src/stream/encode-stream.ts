@@ -8,12 +8,8 @@ import { encodeTONL } from '../encode.js';
 import { safeJsonParse } from '../utils/strings.js';
 import type { TONLValue } from '../types.js';
 
-/**
- * Maximum buffer size to prevent memory exhaustion (10MB)
- * If buffered input exceeds this size, an error will be thrown
- * BUG-FIX-001: Added buffer size limit to match decode-stream security protections
- */
-const MAX_BUFFER_SIZE = 10 * 1024 * 1024; // 10MB
+// Task 013: Import from centralized security limits
+import { MAX_BUFFER_SIZE } from '../utils/security-limits.js';
 
 /**
  * Create a transform stream that encodes JSON chunks to TONL format

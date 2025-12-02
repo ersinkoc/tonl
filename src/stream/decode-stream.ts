@@ -6,11 +6,8 @@ import { Transform } from 'stream';
 import type { StreamDecodeOptions } from './types.js';
 import { decodeTONL } from '../decode.js';
 
-/**
- * Maximum buffer size to prevent memory exhaustion (10MB)
- * If a single TONL block exceeds this size, an error will be thrown
- */
-const MAX_BUFFER_SIZE = 10 * 1024 * 1024; // 10MB
+// Task 013: Import from centralized security limits
+import { MAX_BUFFER_SIZE } from '../utils/security-limits.js';
 
 /**
  * Create a transform stream that decodes TONL chunks to JSON

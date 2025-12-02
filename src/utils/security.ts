@@ -5,29 +5,15 @@
 
 import { SecurityError } from '../errors/index.js';
 
-/**
- * Security configuration interface
- */
-export interface SecurityLimits {
-  MAX_LINE_LENGTH: number;
-  MAX_FIELDS_PER_LINE: number;
-  MAX_NESTING_DEPTH: number;
-  MAX_JSON_SIZE: number;
-  MAX_REGEX_PATTERN_LENGTH: number;
-  MAX_REGEX_NESTING_DEPTH: number;
-}
+// Task 013: Import from centralized security limits
+import {
+  SecurityLimits,
+  DEFAULT_SECURITY_LIMITS,
+} from './security-limits.js';
 
-/**
- * Default security limits
- */
-export const DEFAULT_SECURITY_LIMITS: SecurityLimits = {
-  MAX_LINE_LENGTH: 100_000,        // 100KB per line
-  MAX_FIELDS_PER_LINE: 10_000,     // Maximum fields per line
-  MAX_NESTING_DEPTH: 100,          // Maximum nesting levels
-  MAX_JSON_SIZE: 10 * 1024 * 1024, // 10MB JSON limit
-  MAX_REGEX_PATTERN_LENGTH: 100,   // Maximum regex pattern length
-  MAX_REGEX_NESTING_DEPTH: 3,      // Maximum regex nesting depth
-};
+// Re-export for backward compatibility
+export type { SecurityLimits };
+export { DEFAULT_SECURITY_LIMITS };
 
 /**
  * Regex Security Validator

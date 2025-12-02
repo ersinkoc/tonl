@@ -85,13 +85,13 @@
       },
       "medicalHistory": [
         {
-          "date": "2024-03-15",
+          "date": "2025-03-15",
           "diagnosis": "Hypertension",
           "treatment": "Blood pressure medication therapy",
           "doctor": "Dr. James Anderson"
         },
         {
-          "date": "2024-09-20",
+          "date": "2025-09-20",
           "diagnosis": "Type 2 Diabetes",
           "treatment": "Insulin therapy initiated",
           "doctor": "Dr. Emily Chen"
@@ -102,13 +102,13 @@
         {
           "name": "Lisinopril 10mg",
           "dosage": "1x1",
-          "startDate": "2024-03-15",
+          "startDate": "2025-03-15",
           "prescribedBy": "Dr. James Anderson"
         },
         {
           "name": "Metformin 1000mg",
           "dosage": "1x2",
-          "startDate": "2024-09-20",
+          "startDate": "2025-09-20",
           "prescribedBy": "Dr. Emily Chen"
         }
       ],

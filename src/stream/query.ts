@@ -13,11 +13,8 @@ import { decodeTONL } from '../decode.js';
 import type { TONLValue } from '../types.js';
 import { PathValidator } from '../cli/path-validator.js';
 
-/**
- * Maximum buffer size for TONL accumulation (10MB)
- * BUG-FIX-003: Added buffer limit to prevent memory exhaustion
- */
-const MAX_BUFFER_SIZE = 10 * 1024 * 1024; // 10MB
+// Task 013: Import from centralized security limits
+import { MAX_BUFFER_SIZE } from '../utils/security-limits.js';
 
 export interface StreamQueryOptions {
   /**

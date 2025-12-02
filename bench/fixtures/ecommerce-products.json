@@ -20,14 +20,14 @@
           "rating": 5,
           "comment": "Excellent sound quality!",
           "reviewer": "John D.",
-          "date": "2024-10-15"
+          "date": "2025-10-15"
         },
         {
           "id": "rev_002",
           "rating": 4,
           "comment": "Good value for money",
           "reviewer": "Sarah M.",
-          "date": "2024-10-20"
+          "date": "2025-10-20"
         }
       ]
     },
@@ -51,7 +51,7 @@
           "rating": 4,
           "comment": "Great features, battery could be better",
           "reviewer": "Mike R.",
-          "date": "2024-10-18"
+          "date": "2025-10-18"
         }
       ]
     },

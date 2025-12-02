@@ -2,6 +2,9 @@
  * Metrics utilities for token estimation and performance analysis
  */
 
+// Task 013: Import from centralized security limits
+import { MAX_INPUT_SIZE } from "./security-limits.js";
+
 /**
  * Simple token estimation based on common tokenizers
  *
@@ -11,8 +14,6 @@ export function estimateTokens(text: string, tokenizer: "gpt-5" | "gpt-4.5" | "g
   if (!text) return 0;
 
   // SECURITY FIX (SEC-001): Prevent ReDoS by limiting input size
-  // Maximum 10MB of text for token estimation
-  const MAX_INPUT_SIZE = 10_000_000;
   if (text.length > MAX_INPUT_SIZE) {
     throw new Error(`Input too large for token estimation: ${text.length} bytes (max: ${MAX_INPUT_SIZE})`);
   }

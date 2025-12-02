@@ -11,12 +11,44 @@ export type TONLTypeHint = "u32" | "i32" | "f64" | "bool" | "null" | "str" | "ob
 export type TONLDelimiter = "," | "|" | "\t" | ";";
 
 /**
- * Sentinel value to represent missing/undefined fields in tabular format
- * Distinguishes between explicit null (field exists with null value)
- * and missing field (field doesn't exist in original data)
+ * Sentinel value to represent missing/undefined fields in tabular format.
  *
+ * ## Behavior
+ * - Distinguishes between explicit `null` (field exists with null value)
+ *   and missing field (field doesn't exist in original data)
+ * - Used in tabular encoding: trailing comma with nothing = missing field
+ *
+ * ## Encoding Rules
+ * - Missing field (undefined or not in object): outputs nothing after delimiter
+ * - Explicit empty string "": outputs `""`  (quoted empty string)
+ * - Explicit null: outputs `null`
+ *
+ * ## Decoding Rules
+ * - Empty value after delimiter: field is omitted from decoded object
+ * - Quoted empty string `""`: decoded as empty string ""
+ * - `null` literal: decoded as null
+ *
+ * ## Known Limitation
+ * In tabular format rows, the parser currently treats unquoted empty and
+ * quoted empty `""` identically due to quote stripping. Both become missing
+ * fields. For explicit empty strings in tables, use key-value format instead:
+ *
+ * ```tonl
+ * # Preferred: explicit empty string as key-value
+ * items[2]{name,value}:
+ *   [0]:
+ *     name: ""
+ *     value: test
+ *   [1]:
+ *     name: Alice
+ *     value: ""
+ * ```
+ *
+ * ## History
  * BUG-001 FIX: Changed from "-" to "" (empty string) to avoid collision
  * with legitimate user data containing "-"
+ *
+ * @see https://github.com/user/tonl/issues/001
  */
 export const MISSING_FIELD_MARKER = "";
 
@@ -61,6 +93,7 @@ export interface TONLParseContext {
   allLines?: string[];       // All lines (for error context)
   currentDepth?: number;     // SECURITY FIX (SEC-002): Track recursion depth
   maxDepth?: number;         // SECURITY FIX (SEC-002): Maximum nesting depth (default: 100)
+  maxBlockLines?: number;    // SECURITY FIX (Task 001): Maximum lines per block (default: 10000)
 }
 
 export interface TONLEncodeContext {

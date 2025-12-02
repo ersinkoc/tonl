@@ -304,7 +304,7 @@ export function tokenize(input: string): Token[] {
   }
 
   /**
-   * Read a temporal literal (@now, @2024-01-15, @now-7d, etc.)
+   * Read a temporal literal (@now, @2025-01-15, @now-7d, etc.)
    */
   function readTemporalLiteral(): Token | null {
     if (peek() !== '@') return null;
@@ -384,7 +384,7 @@ export function tokenize(input: string): Token[] {
       continue;
     }
 
-    // Try temporal literals (@now, @2024-01-15, etc.)
+    // Try temporal literals (@now, @2025-01-15, etc.)
     const temporalToken = readTemporalLiteral();
     if (temporalToken) {
       tokens.push(temporalToken);

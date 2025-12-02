@@ -55,7 +55,8 @@ export {
   aggregate,
   agg,
   AggregationResult,
-  type AggregationOptions
+  type AggregationOptions,
+  type StatisticsResult
 } from './aggregators.js';
 
 // Export fuzzy matcher

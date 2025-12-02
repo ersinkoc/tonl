@@ -4,10 +4,8 @@
 
 import type { TONLDelimiter, TONLTypeHint } from "../types.js";
 
-/**
- * Maximum JSON string size to prevent ReDoS attacks (10MB)
- */
-const MAX_JSON_SIZE = 10 * 1024 * 1024;
+// Task 013: Import from centralized security limits
+import { MAX_JSON_SIZE, MAX_INDENT } from "./security-limits.js";
 
 /**
  * Complexity limits for JSON parsing to prevent ReDoS
@@ -249,7 +247,6 @@ export function makeIndent(level: number, spaces: number): string {
 
   // Calculate total spaces and check limit
   const totalSpaces = level * spaces;
-  const MAX_INDENT = 10000; // Maximum 10,000 spaces to prevent DoS
 
   if (totalSpaces > MAX_INDENT) {
     throw new RangeError(

@@ -537,7 +537,7 @@ describe("Comprehensive Round-Trip Guarantee - ALL JSON Types", () => {
             categories: ["Electronics", "Wearables", "Fitness"],
             specifications: {
               brand: "TechWatch",
-              model: "SW-Fit2024",
+              model: "SW-Fit2025",
               color: "Silver",
               display: "1.4\" AMOLED",
               batteryLife: "7 days",
@@ -547,7 +547,7 @@ describe("Comprehensive Round-Trip Guarantee - ALL JSON Types", () => {
               inStock: false,
               quantity: 0,
               warehouses: [],
-              restockDate: "2024-02-15"
+              restockDate: "2025-02-15"
             }
           }
         ],
@@ -586,7 +586,7 @@ describe("Comprehensive Round-Trip Guarantee - ALL JSON Types", () => {
               {
                 id: "post_456",
                 content: "Just discovered an amazing new framework! Check it out 👀",
-                timestamp: "2024-01-15T10:30:00Z",
+                timestamp: "2025-01-15T10:30:00Z",
                 likes: 234,
                 retweets: 45,
                 hashtags: ["programming", "javascript", "webdev"],

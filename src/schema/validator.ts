@@ -471,7 +471,8 @@ function getBuiltinPattern(name: string): RegExp | null {
     default:
       // BUGFIX (BUG-003): Validate regex pattern to prevent ReDoS
       // Reject patterns that are too long (potential DoS)
-      if (name.length > 200) {
+      // Aligned with DEFAULT_SECURITY_LIMITS.MAX_REGEX_PATTERN_LENGTH (Task 004)
+      if (name.length > 100) {
         return null;
       }
 

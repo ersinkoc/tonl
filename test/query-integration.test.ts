@@ -264,14 +264,14 @@ describe('Integration: Temporal Queries', () => {
 
   describe('Edge cases', () => {
     it('should handle year boundaries', () => {
-      const dec31 = parseTemporalLiteral('@2024-12-31');
+      const dec31 = parseTemporalLiteral('@2025-12-31');
       const jan1 = parseTemporalLiteral('@2025-01-01');
 
       assert.ok(dec31.timestamp < jan1.timestamp);
     });
 
     it('should handle leap years', () => {
-      const feb29 = parseTemporalLiteral('@2024-02-29');
+      const feb29 = parseTemporalLiteral('@2025-02-29');
       assert.ok(feb29.timestamp > 0);
     });
 

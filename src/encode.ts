@@ -8,7 +8,46 @@ import { inferPrimitiveType, isUniformObjectArray, getUniformColumns, isSemiUnif
 import { quoteIfNeeded, tripleQuoteIfNeeded, makeIndent } from "./utils/strings.js";
 
 /**
- * Main encode function
+ * Encode a JavaScript value to TONL format.
+ *
+ * Converts JavaScript objects, arrays, and primitives to the
+ * Token-Optimized Notation Language format. TONL provides
+ * 32-45% token reduction compared to JSON for LLM contexts.
+ *
+ * @param input - The value to encode (object, array, or primitive)
+ * @param opts - Encoding options
+ * @param opts.delimiter - Field delimiter: "," | "|" | "\t" | ";" (default: ",")
+ * @param opts.includeTypes - Add type hints to headers (default: false)
+ * @param opts.version - TONL version string (default: "1.0")
+ * @param opts.indent - Spaces per indentation level (default: 2)
+ * @param opts.singleLinePrimitiveLists - Encode primitive arrays on single line (default: true)
+ * @param opts.prettyDelimiters - Add spaces around delimiters (default: false)
+ * @param opts.compactTables - Use compact table format when possible (default: false)
+ * @param opts.schemaFirst - Output schema before data (default: false)
+ * @returns TONL formatted string with version header
+ * @throws {Error} When circular reference detected in input
+ * @throws {Error} When maximum nesting depth (500) exceeded
+ *
+ * @example
+ * ```typescript
+ * // Basic encoding
+ * const tonl = encodeTONL({ name: 'Alice', age: 30 });
+ * // Output:
+ * // #version 1.0
+ * // root:
+ * //   name: Alice
+ * //   age: 30
+ *
+ * // With custom delimiter for data containing commas
+ * const tonl = encodeTONL(data, { delimiter: '|' });
+ *
+ * // With type hints for schema validation
+ * const tonl = encodeTONL(data, { includeTypes: true });
+ * ```
+ *
+ * @since 1.0.0
+ * @see decodeTONL - For decoding TONL back to JavaScript
+ * @see encodeSmart - For automatic delimiter selection
  */
 export function encodeTONL(input: TONLValue, opts: {
   delimiter?: TONLDelimiter;
@@ -306,6 +345,10 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
 
   context.seen.add(obj);
 
+  // Task 011: Wrap encoding in try-finally to remove object from seen after processing
+  // This allows shared references (same object at multiple paths) while still detecting cycles
+  try {
+
   // BUG-013 FIX: Use Reflect.ownKeys() to include all properties including __proto__
   // Object.keys() doesn't include __proto__ as an own property, causing data loss
   const keys = Reflect.ownKeys(obj)
@@ -416,6 +459,12 @@ function encodeObject(obj: TONLObject, key: string, context: TONLEncodeContext):
       // undefined values are already filtered out from keys
     }
     return parts.join(" ");
+  }
+
+  } finally {
+    // Task 011: Remove object from seen after processing
+    // This allows shared references (same object at multiple paths) while detecting cycles
+    context.seen.delete(obj);
   }
 }
 
@@ -604,6 +653,10 @@ function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): s
   }
 
   context.seen.add(arr);
+
+  // Task 011: Wrap encoding in try-finally to remove array from seen after processing
+  // This allows shared references (same array at multiple paths) while still detecting cycles
+  try {
 
   if (arr.length === 0) {
     return `${key}[0]:`;
@@ -800,5 +853,9 @@ function encodeArray(arr: TONLArray, key: string, context: TONLEncodeContext): s
     }
 
     return lines.join("\n");
+  }
+  } finally {
+    // Task 011: Remove array from seen after processing
+    context.seen.delete(arr);
   }
 }

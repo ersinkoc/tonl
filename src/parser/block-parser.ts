@@ -101,9 +101,24 @@ export function parseBlock(
   const headerIndent = lines[startIndex]?.match(/^(\s*)/)?.[1]?.length || 0;
   let i = startIndex + 1;
 
+  // SECURITY FIX (Task 001): Get max block lines limit
+  const maxBlockLines = context.maxBlockLines ?? 10000;
+
   // Find the block's content lines
   let inMultilineString = false;
+  let blockLineCount = 0;
   while (i < lines.length) {
+    // SECURITY FIX (Task 001): Check block line limit to prevent DoS
+    blockLineCount++;
+    if (blockLineCount > maxBlockLines) {
+      throw new TONLParseError(
+        `Maximum block lines exceeded (${maxBlockLines}). Block has more than ${maxBlockLines} lines.`,
+        context.currentLine,
+        undefined,
+        `Block starting at line ${startIndex + 1}`
+      );
+    }
+
     const line = lines[i];
     const trimmed = line.trim();
 
@@ -187,12 +202,25 @@ export function parseBlock(
 
 /**
  * Parse an object block - handles nested objects and key-value pairs
+ *
+ * SECURITY FIX (Task 001): Added block line limit check
  */
 export function parseObjectBlock(
   header: TONLObjectHeader | null,
   lines: string[],
   context: TONLParseContext
 ): TONLObject {
+  // SECURITY FIX (Task 001): Validate input lines count
+  const maxBlockLines = context.maxBlockLines ?? 10000;
+  if (lines.length > maxBlockLines) {
+    throw new TONLParseError(
+      `Maximum block lines exceeded (${maxBlockLines}). Object block has ${lines.length} lines.`,
+      context.currentLine,
+      undefined,
+      `Object block with ${lines.length} lines`
+    );
+  }
+
   // First pass: check if we have any keys that require special handling
   const needsSpecialHandling: string[] = [];
 
@@ -672,12 +700,25 @@ export function parseObjectBlock(
 
 /**
  * Parse an array block - handles both primitive and object arrays
+ *
+ * SECURITY FIX (Task 001): Added block line limit check
  */
 export function parseArrayBlock(
   header: TONLObjectHeader | null,
   lines: string[],
   context: TONLParseContext
 ): TONLArray {
+  // SECURITY FIX (Task 001): Validate input lines count
+  const maxBlockLines = context.maxBlockLines ?? 10000;
+  if (lines.length > maxBlockLines) {
+    throw new TONLParseError(
+      `Maximum block lines exceeded (${maxBlockLines}). Array block has ${lines.length} lines.`,
+      context.currentLine,
+      undefined,
+      `Array block with ${lines.length} lines`
+    );
+  }
+
   const result: TONLArray = [];
 
   if (!header || header.columns.length === 0) {

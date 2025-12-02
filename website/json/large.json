@@ -91,7 +91,7 @@
           {
             "name": "Kubernetes Administrator (CKA)",
             "issuer": "Cloud Native Computing Foundation",
-            "issueDate": "2024-01-20",
+            "issueDate": "2025-01-20",
             "expiryDate": "2027-01-20",
             "credentialId": "CKA-CERT-67890"
           }
@@ -100,7 +100,7 @@
           {
             "projectId": "PROJ-ALPHA",
             "role": "Technical Lead",
-            "startDate": "2024-01-15",
+            "startDate": "2025-01-15",
             "endDate": null,
             "status": "active",
             "allocation": 100
@@ -109,7 +109,7 @@
             "projectId": "PROJ-BETA",
             "role": "Senior Developer",
             "startDate": "2023-06-01",
-            "endDate": "2024-01-10",
+            "endDate": "2025-01-10",
             "status": "completed",
             "allocation": 50
           }

@@ -7,26 +7,7 @@ import type { SetOptions, ModificationResult } from './types.js';
 import { parsePath } from '../query/path-parser.js';
 import type { PathNode } from '../query/types.js';
 import { SecurityError } from '../errors/index.js';
-
-/**
- * Dangerous property names that could lead to prototype pollution
- */
-const DANGEROUS_PROPERTIES = new Set([
-  '__proto__',
-  'constructor',
-  'prototype',
-  '__defineGetter__',
-  '__defineSetter__',
-  '__lookupGetter__',
-  '__lookupSetter__',
-]);
-
-/**
- * Check if a property name is dangerous
- */
-function isDangerousProperty(propertyName: string): boolean {
-  return DANGEROUS_PROPERTIES.has(propertyName);
-}
+import { isDangerousProperty } from '../utils/property-security.js';
 
 /**
  * Set a value at a specific path in a document

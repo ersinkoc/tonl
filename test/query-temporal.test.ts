@@ -143,27 +143,27 @@ describe('parseTemporalLiteral()', () => {
 
   describe('ISO 8601 dates', () => {
     it('should parse date only', () => {
-      const result = parseTemporalLiteral('@2024-01-15');
-      assert.strictEqual(result.date.getFullYear(), 2024);
+      const result = parseTemporalLiteral('@2025-01-15');
+      assert.strictEqual(result.date.getFullYear(), 2025);
       assert.strictEqual(result.date.getMonth(), 0); // January
       assert.strictEqual(result.date.getDate(), 15);
     });
 
     it('should parse datetime', () => {
-      const result = parseTemporalLiteral('@2024-06-15T10:30:00');
-      assert.strictEqual(result.date.getFullYear(), 2024);
+      const result = parseTemporalLiteral('@2025-06-15T10:30:00');
+      assert.strictEqual(result.date.getFullYear(), 2025);
       assert.strictEqual(result.date.getMonth(), 5); // June
       assert.strictEqual(result.date.getDate(), 15);
     });
 
     it('should parse datetime with Z timezone', () => {
-      const result = parseTemporalLiteral('@2024-01-15T10:30:00Z');
+      const result = parseTemporalLiteral('@2025-01-15T10:30:00Z');
       assert.ok(result.iso.includes('T'));
     });
 
     it('should parse year-month', () => {
-      const result = parseTemporalLiteral('@2024-06');
-      assert.strictEqual(result.date.getFullYear(), 2024);
+      const result = parseTemporalLiteral('@2025-06');
+      assert.strictEqual(result.date.getFullYear(), 2025);
       assert.strictEqual(result.date.getMonth(), 5);
     });
   });
@@ -185,8 +185,8 @@ describe('parseTemporalLiteral()', () => {
     });
 
     it('should parse ISO date without @ prefix', () => {
-      const result = parseTemporalLiteral('2024-01-15');
-      assert.strictEqual(result.date.getFullYear(), 2024);
+      const result = parseTemporalLiteral('2025-01-15');
+      assert.strictEqual(result.date.getFullYear(), 2025);
     });
   });
 });
@@ -262,28 +262,28 @@ describe('durationToMilliseconds()', () => {
 
 describe('addDuration() and subtractDuration()', () => {
   it('should add days', () => {
-    const date = new Date('2024-01-15');
+    const date = new Date('2025-01-15');
     const d = parseDuration('P5D');
     const result = addDuration(date, d);
     assert.strictEqual(result.getDate(), 20);
   });
 
   it('should subtract days', () => {
-    const date = new Date('2024-01-15');
+    const date = new Date('2025-01-15');
     const d = parseDuration('P5D');
     const result = subtractDuration(date, d);
     assert.strictEqual(result.getDate(), 10);
   });
 
   it('should add months', () => {
-    const date = new Date('2024-01-15');
+    const date = new Date('2025-01-15');
     const d = parseDuration('P2M');
     const result = addDuration(date, d);
     assert.strictEqual(result.getMonth(), 2); // March
   });
 
   it('should add years', () => {
-    const date = new Date('2024-01-15');
+    const date = new Date('2025-01-15');
     const d = parseDuration('P1Y');
     const result = addDuration(date, d);
     assert.strictEqual(result.getFullYear(), 2025);
@@ -293,14 +293,14 @@ describe('addDuration() and subtractDuration()', () => {
 describe('Date utility functions', () => {
   describe('startOfDay() and endOfDay()', () => {
     it('should get start of day', () => {
-      const result = startOfDay(new Date('2024-06-15T14:30:00'));
+      const result = startOfDay(new Date('2025-06-15T14:30:00'));
       assert.strictEqual(result.getHours(), 0);
       assert.strictEqual(result.getMinutes(), 0);
       assert.strictEqual(result.getSeconds(), 0);
     });
 
     it('should get end of day', () => {
-      const result = endOfDay(new Date('2024-06-15T14:30:00'));
+      const result = endOfDay(new Date('2025-06-15T14:30:00'));
       assert.strictEqual(result.getHours(), 23);
       assert.strictEqual(result.getMinutes(), 59);
       assert.strictEqual(result.getSeconds(), 59);
@@ -309,42 +309,42 @@ describe('Date utility functions', () => {
 
   describe('startOfWeek() and endOfWeek()', () => {
     it('should get start of week (Monday)', () => {
-      const result = startOfWeek(new Date('2024-06-15')); // Saturday
+      const result = startOfWeek(new Date('2025-06-15')); // Saturday
       assert.strictEqual(result.getDay(), 1); // Monday
     });
 
     it('should get end of week (Sunday)', () => {
-      const result = endOfWeek(new Date('2024-06-15'));
+      const result = endOfWeek(new Date('2025-06-15'));
       assert.strictEqual(result.getDay(), 0); // Sunday
     });
   });
 
   describe('startOfMonth() and endOfMonth()', () => {
     it('should get start of month', () => {
-      const result = startOfMonth(new Date('2024-06-15'));
+      const result = startOfMonth(new Date('2025-06-15'));
       assert.strictEqual(result.getDate(), 1);
     });
 
     it('should get end of month', () => {
-      const result = endOfMonth(new Date('2024-06-15'));
+      const result = endOfMonth(new Date('2025-06-15'));
       assert.strictEqual(result.getDate(), 30); // June has 30 days
     });
 
     it('should handle February correctly', () => {
-      const result = endOfMonth(new Date('2024-02-15'));
-      assert.strictEqual(result.getDate(), 29); // 2024 is leap year
+      const result = endOfMonth(new Date('2025-02-15'));
+      assert.strictEqual(result.getDate(), 29); // 2025 is leap year
     });
   });
 
   describe('startOfYear() and endOfYear()', () => {
     it('should get start of year', () => {
-      const result = startOfYear(new Date('2024-06-15'));
+      const result = startOfYear(new Date('2025-06-15'));
       assert.strictEqual(result.getMonth(), 0);
       assert.strictEqual(result.getDate(), 1);
     });
 
     it('should get end of year', () => {
-      const result = endOfYear(new Date('2024-06-15'));
+      const result = endOfYear(new Date('2025-06-15'));
       assert.strictEqual(result.getMonth(), 11);
       assert.strictEqual(result.getDate(), 31);
     });
@@ -353,7 +353,7 @@ describe('Date utility functions', () => {
 
 describe('toTemporalValue()', () => {
   it('should convert Date object', () => {
-    const date = new Date('2024-06-15');
+    const date = new Date('2025-06-15');
     const result = toTemporalValue(date);
     assert.ok(result);
     assert.strictEqual(result!.timestamp, date.getTime());
@@ -367,9 +367,9 @@ describe('toTemporalValue()', () => {
   });
 
   it('should convert ISO string', () => {
-    const result = toTemporalValue('2024-06-15');
+    const result = toTemporalValue('2025-06-15');
     assert.ok(result);
-    assert.strictEqual(result!.date.getFullYear(), 2024);
+    assert.strictEqual(result!.date.getFullYear(), 2025);
   });
 
   it('should convert temporal literal string', () => {
@@ -390,20 +390,20 @@ describe('toTemporalValue()', () => {
 
 describe('compareTemporalValues()', () => {
   it('should return negative for earlier date', () => {
-    const a = parseTemporalLiteral('@2024-01-01');
-    const b = parseTemporalLiteral('@2024-12-31');
+    const a = parseTemporalLiteral('@2025-01-01');
+    const b = parseTemporalLiteral('@2025-12-31');
     assert.ok(compareTemporalValues(a, b) < 0);
   });
 
   it('should return positive for later date', () => {
-    const a = parseTemporalLiteral('@2024-12-31');
-    const b = parseTemporalLiteral('@2024-01-01');
+    const a = parseTemporalLiteral('@2025-12-31');
+    const b = parseTemporalLiteral('@2025-01-01');
     assert.ok(compareTemporalValues(a, b) > 0);
   });
 
   it('should return 0 for same date', () => {
-    const a = parseTemporalLiteral('@2024-06-15');
-    const b = parseTemporalLiteral('@2024-06-15');
+    const a = parseTemporalLiteral('@2025-06-15');
+    const b = parseTemporalLiteral('@2025-06-15');
     assert.strictEqual(compareTemporalValues(a, b), 0);
   });
 });
@@ -411,15 +411,15 @@ describe('compareTemporalValues()', () => {
 describe('Temporal comparison functions', () => {
   describe('isBefore()', () => {
     it('should return true for earlier date', () => {
-      assert.ok(isBefore('2024-01-01', '2024-12-31'));
+      assert.ok(isBefore('2025-01-01', '2025-12-31'));
     });
 
     it('should return false for later date', () => {
-      assert.ok(!isBefore('2024-12-31', '2024-01-01'));
+      assert.ok(!isBefore('2025-12-31', '2025-01-01'));
     });
 
     it('should return false for same date', () => {
-      assert.ok(!isBefore('2024-06-15', '2024-06-15'));
+      assert.ok(!isBefore('2025-06-15', '2025-06-15'));
     });
 
     it('should handle temporal literals', () => {
@@ -429,29 +429,29 @@ describe('Temporal comparison functions', () => {
 
   describe('isAfter()', () => {
     it('should return true for later date', () => {
-      assert.ok(isAfter('2024-12-31', '2024-01-01'));
+      assert.ok(isAfter('2025-12-31', '2025-01-01'));
     });
 
     it('should return false for earlier date', () => {
-      assert.ok(!isAfter('2024-01-01', '2024-12-31'));
+      assert.ok(!isAfter('2025-01-01', '2025-12-31'));
     });
   });
 
   describe('isBetween()', () => {
     it('should return true for date in range', () => {
-      assert.ok(isBetween('2024-06-15', '2024-01-01', '2024-12-31'));
+      assert.ok(isBetween('2025-06-15', '2025-01-01', '2025-12-31'));
     });
 
     it('should return true for date at start', () => {
-      assert.ok(isBetween('2024-01-01', '2024-01-01', '2024-12-31'));
+      assert.ok(isBetween('2025-01-01', '2025-01-01', '2025-12-31'));
     });
 
     it('should return true for date at end', () => {
-      assert.ok(isBetween('2024-12-31', '2024-01-01', '2024-12-31'));
+      assert.ok(isBetween('2025-12-31', '2025-01-01', '2025-12-31'));
     });
 
     it('should return false for date outside range', () => {
-      assert.ok(!isBetween('2025-01-01', '2024-01-01', '2024-12-31'));
+      assert.ok(!isBetween('2025-01-01', '2025-01-01', '2025-12-31'));
     });
   });
 
@@ -495,58 +495,58 @@ describe('Temporal comparison functions', () => {
 
   describe('isSameDay()', () => {
     it('should return true for same day', () => {
-      const a = new Date('2024-06-15T10:00:00');
-      const b = new Date('2024-06-15T20:00:00');
+      const a = new Date('2025-06-15T10:00:00');
+      const b = new Date('2025-06-15T20:00:00');
       assert.ok(isSameDay(a, b));
     });
 
     it('should return false for different days', () => {
-      const a = new Date('2024-06-15');
-      const b = new Date('2024-06-16');
+      const a = new Date('2025-06-15');
+      const b = new Date('2025-06-16');
       assert.ok(!isSameDay(a, b));
     });
   });
 
   describe('isSameWeek()', () => {
     it('should return true for same week', () => {
-      const a = new Date('2024-06-10'); // Monday
-      const b = new Date('2024-06-14'); // Friday
+      const a = new Date('2025-06-10'); // Monday
+      const b = new Date('2025-06-14'); // Friday
       assert.ok(isSameWeek(a, b));
     });
   });
 
   describe('isSameMonth()', () => {
     it('should return true for same month', () => {
-      assert.ok(isSameMonth('2024-06-01', '2024-06-30'));
+      assert.ok(isSameMonth('2025-06-01', '2025-06-30'));
     });
 
     it('should return false for different months', () => {
-      assert.ok(!isSameMonth('2024-06-15', '2024-07-15'));
+      assert.ok(!isSameMonth('2025-06-15', '2025-07-15'));
     });
   });
 
   describe('isSameYear()', () => {
     it('should return true for same year', () => {
-      assert.ok(isSameYear('2024-01-01', '2024-12-31'));
+      assert.ok(isSameYear('2025-01-01', '2025-12-31'));
     });
 
     it('should return false for different years', () => {
-      assert.ok(!isSameYear('2024-06-15', '2025-06-15'));
+      assert.ok(!isSameYear('2025-06-15', '2025-06-15'));
     });
   });
 });
 
 describe('evaluateTemporalOperator()', () => {
   it('should evaluate before operator', () => {
-    assert.ok(evaluateTemporalOperator('before', '2024-01-01', '2024-12-31'));
+    assert.ok(evaluateTemporalOperator('before', '2025-01-01', '2025-12-31'));
   });
 
   it('should evaluate after operator', () => {
-    assert.ok(evaluateTemporalOperator('after', '2024-12-31', '2024-01-01'));
+    assert.ok(evaluateTemporalOperator('after', '2025-12-31', '2025-01-01'));
   });
 
   it('should evaluate between operator', () => {
-    assert.ok(evaluateTemporalOperator('between', '2024-06-15', '2024-01-01', '2024-12-31'));
+    assert.ok(evaluateTemporalOperator('between', '2025-06-15', '2025-01-01', '2025-12-31'));
   });
 
   it('should evaluate daysAgo operator', () => {
@@ -556,7 +556,7 @@ describe('evaluateTemporalOperator()', () => {
   });
 
   it('should evaluate sameDay operator', () => {
-    assert.ok(evaluateTemporalOperator('sameDay', '2024-06-15T10:00', '2024-06-15T20:00'));
+    assert.ok(evaluateTemporalOperator('sameDay', '2025-06-15T10:00', '2025-06-15T20:00'));
   });
 
   it('should return false for unknown operator', () => {
@@ -594,15 +594,15 @@ describe('isTemporalLiteral()', () => {
     assert.ok(isTemporalLiteral('@tomorrow'));
     assert.ok(isTemporalLiteral('@now-7d'));
     assert.ok(isTemporalLiteral('@now+1w'));
-    assert.ok(isTemporalLiteral('@2024-01-15'));
-    assert.ok(isTemporalLiteral('@2024-01-15T10:30:00Z'));
+    assert.ok(isTemporalLiteral('@2025-01-15'));
+    assert.ok(isTemporalLiteral('@2025-01-15T10:30:00Z'));
     assert.ok(isTemporalLiteral('@P1D'));
   });
 
   it('should reject non-temporal literals', () => {
     assert.ok(!isTemporalLiteral('hello'));
     assert.ok(!isTemporalLiteral('@unknown'));
-    assert.ok(!isTemporalLiteral('2024-01-15')); // No @ prefix
+    assert.ok(!isTemporalLiteral('2025-01-15')); // No @ prefix
   });
 });
 

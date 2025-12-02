@@ -673,7 +673,7 @@ test('complex nested structure round-trips perfectly', () => {
   const input = {
     users: [
       { id: 1, name: 'Alice', tags: ['admin', 'active'] },
-      { id: 2, name: 'Bob', metadata: { created: '2024-01-01' } },
+      { id: 2, name: 'Bob', metadata: { created: '2025-01-01' } },
     ],
     config: { timeout: 5000, retries: 3 },
   };

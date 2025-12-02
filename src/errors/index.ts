@@ -2,6 +2,9 @@
  * TONL Error classes with enhanced reporting
  */
 
+// Task 014: Export centralized error messages
+export { ErrorMessages, type ErrorMessageKey } from './messages.js';
+
 /**
  * Base TONL error class with location tracking
  */

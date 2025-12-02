@@ -312,7 +312,7 @@ export enum TokenType {
   SAME_YEAR = 'SAME_YEAR',    // sameYear
 
   // Temporal literal
-  TEMPORAL = 'TEMPORAL',      // @now, @2024-01-15, etc.
+  TEMPORAL = 'TEMPORAL',      // @now, @2025-01-15, etc.
 
   // End of input
   EOF = 'EOF'

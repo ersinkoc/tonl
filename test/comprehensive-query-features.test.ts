@@ -24,8 +24,8 @@ describe("Comprehensive Query Features - Complete Coverage", () => {
 
       // Nested objects
       metadata: {
-        created: "2024-01-15T10:30:00Z",
-        modified: "2024-01-20T15:45:00Z",
+        created: "2025-01-15T10:30:00Z",
+        modified: "2025-01-20T15:45:00Z",
         author: {
           id: "user_001",
           name: "John Doe",
@@ -161,7 +161,7 @@ describe("Comprehensive Query Features - Complete Coverage", () => {
           status: "completed",
           priority: "high",
           startDate: "2023-10-01",
-          endDate: "2024-01-15",
+          endDate: "2025-01-15",
           team: ["user_001"],
           budget: 50000,
           actualCost: 47500,
@@ -169,7 +169,7 @@ describe("Comprehensive Query Features - Complete Coverage", () => {
           deliverables: [
             { type: "frontend", status: "completed", dueDate: "2023-12-01" },
             { type: "backend", status: "completed", dueDate: "2023-12-15" },
-            { type: "testing", status: "completed", dueDate: "2024-01-10" }
+            { type: "testing", status: "completed", dueDate: "2025-01-10" }
           ]
         },
         {
@@ -178,16 +178,16 @@ describe("Comprehensive Query Features - Complete Coverage", () => {
           description: "RESTful API for mobile applications",
           status: "in_progress",
           priority: "medium",
-          startDate: "2024-01-01",
-          endDate: "2024-03-01",
+          startDate: "2025-01-01",
+          endDate: "2025-03-01",
           team: ["user_001", "user_004"],
           budget: 30000,
           actualCost: 18000,
           technologies: ["Node.js", "Express", "PostgreSQL"],
           deliverables: [
-            { type: "design", status: "completed", dueDate: "2024-01-10" },
-            { type: "implementation", status: "in_progress", dueDate: "2024-02-15" },
-            { type: "documentation", status: "pending", dueDate: "2024-02-28" }
+            { type: "design", status: "completed", dueDate: "2025-01-10" },
+            { type: "implementation", status: "in_progress", dueDate: "2025-02-15" },
+            { type: "documentation", status: "pending", dueDate: "2025-02-28" }
           ]
         },
         {
@@ -197,7 +197,7 @@ describe("Comprehensive Query Features - Complete Coverage", () => {
           status: "completed",
           priority: "high",
           startDate: "2023-11-15",
-          endDate: "2024-01-10",
+          endDate: "2025-01-10",
           team: ["user_002"],
           budget: 25000,
           actualCost: 26200,
@@ -205,7 +205,7 @@ describe("Comprehensive Query Features - Complete Coverage", () => {
           deliverables: [
             { type: "wireframes", status: "completed", dueDate: "2023-12-01" },
             { type: "mockups", status: "completed", dueDate: "2023-12-20" },
-            { type: "prototype", status: "completed", dueDate: "2024-01-05" }
+            { type: "prototype", status: "completed", dueDate: "2025-01-05" }
           ]
         }
       ],
@@ -285,7 +285,7 @@ describe("Comprehensive Query Features - Complete Coverage", () => {
     });
 
     test("should access nested object properties", () => {
-      assert.strictEqual(doc.query("metadata.created"), "2024-01-15T10:30:00Z");
+      assert.strictEqual(doc.query("metadata.created"), "2025-01-15T10:30:00Z");
       assert.strictEqual(doc.query("metadata.author.name"), "John Doe");
       assert.strictEqual(doc.query("metadata.author.profile.role"), "admin");
       assert.deepStrictEqual(doc.query("metadata.author.profile.permissions"), ["read", "write", "delete"]);

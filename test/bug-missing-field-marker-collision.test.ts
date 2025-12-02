@@ -1,16 +1,22 @@
 /**
  * BUG-001: MISSING_FIELD_MARKER Data Corruption Test
  *
- * Severity: CRITICAL
+ * Status: FIXED
  *
- * Description: The MISSING_FIELD_MARKER is defined as "-", which collides with
- * legitimate user data containing the exact string "-". During encode/decode
- * round-trip, user data containing "-" is silently dropped.
+ * Description: The MISSING_FIELD_MARKER was changed from "-" to "" (empty string)
+ * to avoid collision with legitimate user data containing "-".
  *
- * Files affected:
- * - src/types.ts:18 - MISSING_FIELD_MARKER = "-"
- * - src/encode.ts:239 - Encodes missing fields as "-"
- * - src/parser/block-parser.ts:301 - Skips fields with value "-"
+ * Resolution:
+ * - Missing fields use empty string marker (unquoted trailing delimiter)
+ * - Explicit empty strings are quoted as ""
+ * - Dash "-" values are preserved correctly
+ *
+ * Files:
+ * - src/types.ts - MISSING_FIELD_MARKER = ""
+ * - src/encode.ts - Encodes missing fields as empty (nothing after delimiter)
+ * - src/parser/block-parser.ts - Skips empty fields (missing marker)
+ *
+ * Task 016: Added edge case tests for empty string handling
  */
 
 import { test } from 'node:test';
@@ -135,4 +141,85 @@ test('BUG-001: Edge case - array of all "-" values', () => {
   assert.strictEqual(decodedData.flags[0].value, '-');
   assert.strictEqual(decodedData.flags[1].value, '-');
   assert.strictEqual(decodedData.flags[2].value, '-');
+});
+
+// ============================================================
+// Empty String Edge Cases (Task 016)
+// ============================================================
+
+test('Empty string in simple key-value format is preserved', () => {
+  // Simple key-value format properly preserves empty strings
+  const original = { name: '', age: 30 };
+  const encoded = encodeTONL(original);
+  const decoded = decodeTONL(encoded);
+
+  assert.strictEqual('name' in decoded, true, 'Empty string field should exist');
+  assert.strictEqual(decoded.name, '', 'Empty string should be preserved');
+  assert.strictEqual(decoded.age, 30);
+});
+
+test('Empty string with other string values', () => {
+  // Multiple string fields including empty
+  const original = { a: '', b: 'hello', c: '', d: 'world' };
+  const encoded = encodeTONL(original);
+  const decoded = decodeTONL(encoded);
+
+  assert.strictEqual(decoded.a, '');
+  assert.strictEqual(decoded.b, 'hello');
+  assert.strictEqual(decoded.c, '');
+  assert.strictEqual(decoded.d, 'world');
+});
+
+test('Null vs empty string distinction', () => {
+  // Null and empty string should be distinguished
+  const original = { emptyStr: '', nullVal: null, hasValue: 'test' };
+  const encoded = encodeTONL(original);
+  const decoded = decodeTONL(encoded);
+
+  assert.strictEqual(decoded.emptyStr, '', 'Empty string preserved');
+  assert.strictEqual(decoded.nullVal, null, 'Null preserved');
+  assert.strictEqual(decoded.hasValue, 'test', 'String preserved');
+});
+
+test('Missing field vs null vs empty in tables', () => {
+  // Test distinctions in tabular format
+  const original = {
+    items: [
+      { a: 'x', b: null, c: 'z' },      // b is explicit null
+      { a: 'x', c: 'z' },                // b is missing
+    ]
+  };
+
+  const encoded = encodeTONL(original);
+  const decoded = decodeTONL(encoded);
+
+  // First row: b should be null
+  assert.strictEqual(decoded.items[0].b, null, 'Explicit null preserved');
+
+  // Second row: b should be missing (not in object)
+  assert.strictEqual('b' in decoded.items[1], false, 'Missing field not added');
+});
+
+test('Empty string in nested object', () => {
+  const original = {
+    user: {
+      name: '',
+      email: 'test@example.com'
+    }
+  };
+
+  const encoded = encodeTONL(original);
+  const decoded = decodeTONL(encoded);
+
+  assert.strictEqual(decoded.user.name, '', 'Nested empty string preserved');
+  assert.strictEqual(decoded.user.email, 'test@example.com');
+});
+
+test('Encoding explicitly quotes empty strings', () => {
+  // Verify the encoder outputs quoted empty strings
+  const original = { name: '', value: 'test' };
+  const encoded = encodeTONL(original);
+
+  // The encoded output should contain "" for the empty string
+  assert.ok(encoded.includes('""'), 'Empty string should be quoted in output');
 });

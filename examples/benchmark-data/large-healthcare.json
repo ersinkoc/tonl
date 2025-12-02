@@ -85,13 +85,13 @@
       },
       "medicalHistory": [
         {
-          "date": "2024-03-15",
+          "date": "2025-03-15",
           "diagnosis": "Hipertansiyon",
           "treatment": "Tansiyon ilacı tedavisi",
           "doctor": "Dr. Ahmet Yılmaz"
         },
         {
-          "date": "2024-09-20",
+          "date": "2025-09-20",
           "diagnosis": "Tip 2 Diyabet",
           "treatment": "Insülin tedavisi başlandı",
           "doctor": "Dr. Fatma Öztürk"
@@ -102,13 +102,13 @@
         {
           "name": "Losartan 50mg",
           "dosage": "1x1",
-          "startDate": "2024-03-15",
+          "startDate": "2025-03-15",
           "prescribedBy": "Dr. Ahmet Yılmaz"
         },
         {
           "name": "Metformin 1000mg",
           "dosage": "1x2",
-          "startDate": "2024-09-20",
+          "startDate": "2025-09-20",
           "prescribedBy": "Dr. Fatma Öztürk"
         }
       ],

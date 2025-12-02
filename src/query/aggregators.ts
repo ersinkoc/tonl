@@ -15,6 +15,29 @@
  * ```
  */
 
+import { isDangerousProperty } from '../utils/property-security.js';
+import { SecurityError } from '../errors/index.js';
+
+/**
+ * Statistical result from aggregation operations
+ */
+export interface StatisticsResult {
+  /** Number of values */
+  count: number;
+  /** Sum of all values */
+  sum: number;
+  /** Average value (mean) */
+  avg: number;
+  /** Minimum value, or undefined if empty */
+  min: number | undefined;
+  /** Maximum value, or undefined if empty */
+  max: number | undefined;
+  /** Variance of the dataset */
+  variance: number;
+  /** Standard deviation */
+  stdDev: number;
+}
+
 /**
  * Options for aggregation operations
  */
@@ -213,10 +236,10 @@ export class AggregationResult<T> {
    * aggregate(users).distinct("country")      // ["TR", "US", "DE"]
    * ```
    */
-  distinct(field?: string): any[] {
+  distinct(field?: string): unknown[] {
     const values = field ? this.extractValues(field) : this.items;
-    const seen = new Set<any>();
-    const result: any[] = [];
+    const seen = new Set<unknown>();
+    const result: unknown[] = [];
 
     for (const val of values) {
       // Use JSON.stringify for object comparison
@@ -380,17 +403,9 @@ export class AggregationResult<T> {
    * Calculate statistics for numeric field
    *
    * @param field - Optional field name
-   * @returns Statistics object
+   * @returns Statistics object with count, sum, avg, min, max, variance, stdDev
    */
-  stats(field?: string): {
-    count: number;
-    sum: number;
-    avg: number;
-    min: number | undefined;
-    max: number | undefined;
-    variance: number;
-    stdDev: number;
-  } {
+  stats(field?: string): StatisticsResult {
     const values = this.extractNumericValues(field);
     const count = values.length;
 
@@ -446,10 +461,10 @@ export class AggregationResult<T> {
    * @param depth - Maximum depth to flatten (default: 1)
    * @returns Flattened AggregationResult
    */
-  flatten(depth: number = 1): AggregationResult<any> {
-    const result: any[] = [];
+  flatten(depth: number = 1): AggregationResult<unknown> {
+    const result: unknown[] = [];
 
-    const flattenRecursive = (arr: any[], currentDepth: number) => {
+    const flattenRecursive = (arr: unknown[], currentDepth: number) => {
       for (const item of arr) {
         if (Array.isArray(item) && currentDepth < depth) {
           flattenRecursive(item, currentDepth + 1);
@@ -459,7 +474,7 @@ export class AggregationResult<T> {
       }
     };
 
-    flattenRecursive(this.items, 0);
+    flattenRecursive(this.items as unknown[], 0);
     return new AggregationResult(result, this.options);
   }
 
@@ -526,6 +541,10 @@ export class AggregationResult<T> {
 
   /**
    * Extract a field value from an item
+   *
+   * SECURITY: Validates property names to prevent prototype pollution
+   *
+   * @throws {SecurityError} If field contains dangerous property names
    */
   private getFieldValue(item: any, field: string): any {
     if (item === null || item === undefined) return undefined;
@@ -535,6 +554,14 @@ export class AggregationResult<T> {
     let current = item;
 
     for (const part of parts) {
+      // SECURITY: Validate property name to prevent prototype pollution
+      if (isDangerousProperty(part)) {
+        throw new SecurityError(
+          `Cannot access field '${part}': prototype pollution protection`,
+          { field, property: part, operation: 'aggregate' }
+        );
+      }
+
       if (current === null || current === undefined) return undefined;
       if (typeof current !== 'object') return undefined;
       current = current[part];
@@ -659,13 +686,13 @@ export const agg = {
   /**
    * Get distinct values
    */
-  distinct: <T>(items: T[], field?: string): any[] =>
+  distinct: <T>(items: T[], field?: string): unknown[] =>
     aggregate(items).distinct(field),
 
   /**
    * Calculate statistics
    */
-  stats: <T>(items: T[], field?: string) => aggregate(items).stats(field),
+  stats: <T>(items: T[], field?: string): StatisticsResult => aggregate(items).stats(field),
 
   /**
    * Get frequency distribution

@@ -371,6 +371,49 @@ users[2]{id:u32,name:str,role:str}:
   2, "Bob, Jr.", user
 ```
 
+#### Missing Fields in Tabular Format
+
+When objects in a tabular array have different fields, missing fields are represented by an empty value (nothing after the delimiter):
+
+**JSON:**
+```json
+{
+  "items": [
+    { "name": "Alice", "age": 30, "city": "NYC" },
+    { "name": "Bob", "city": "LA" },
+    { "name": "Charlie", "age": 25 }
+  ]
+}
+```
+
+**TONL:**
+```
+items[3]{name,age,city}:
+  Alice,30,NYC
+  Bob,,LA
+  Charlie,25,
+```
+
+**Field Value Types:**
+
+- **Missing field**: Empty after delimiter (e.g., `,,` or trailing `,`)
+- **Empty string**: Quoted empty string `""`
+- **Explicit null**: The literal `null`
+
+**Example with all value types:**
+```
+data[3]{name,value,note}:
+  Alice,test,hello
+  Bob,"",        # empty string (quoted)
+  Charlie,,null  # missing value, explicit null
+```
+
+**Decoding behavior:**
+
+- Empty/missing → field omitted from object
+- `""` → empty string `""`
+- `null` → null value
+
 ### Arrays of Primitives
 
 #### Single-Line Format
@@ -569,7 +612,7 @@ company{id:u32,name:str,employees:obj}:
       design, Carol
 
 metadata{created:str,version:str}:
-  created: "2024-01-15T10:30:00Z"
+  created: "2025-01-15T10:30:00Z"
   version: 1.0
 ```
 

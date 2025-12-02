@@ -18,6 +18,9 @@
 
 import { SecurityError } from '../errors/index.js';
 
+// Task 013: Import from centralized security limits
+import { MAX_STRING_LENGTH } from '../utils/security-limits.js';
+
 /**
  * Options for fuzzy matching operations
  */
@@ -65,11 +68,6 @@ const DEFAULT_OPTIONS: Required<FuzzyOptions> = {
   algorithm: 'levenshtein',
   timeout: 100
 };
-
-/**
- * Maximum string length for fuzzy operations (DoS protection)
- */
-const MAX_STRING_LENGTH = 10000;
 
 // ========================================
 // Core Distance/Similarity Algorithms

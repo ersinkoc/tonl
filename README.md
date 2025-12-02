@@ -470,13 +470,14 @@ logs[1000]{timestamp:i64,level:str,message:str,metadata:obj}:
 ```typescript
 // Creation
 TONLDocument.fromJSON(data)
-TONLDocument.fromTONL(text)
-TONLDocument.load(filepath)
+TONLDocument.parse(text)                           // Parse TONL string
+TONLDocument.fromFile(filepath)                    // Async file load
+TONLDocument.fromFileSync(filepath)                // Sync file load
 
 // Query
 doc.get(path: string)                              // Single value
 doc.query(query: string)                           // Multiple values
-doc.has(path: string)                              // Check existence
+doc.exists(path: string)                           // Check existence
 
 // Modification
 doc.set(path: string, value: any)                  // Set value
@@ -496,16 +497,16 @@ doc.some(predicate: Predicate)                     // Any match
 doc.every(predicate: Predicate)                    // All match
 
 // Indexing
-doc.createIndex(field: string, type?: IndexType)   // Create index
-doc.removeIndex(field: string)                     // Remove index
-doc.getIndex(field: string)                        // Get index
+doc.createIndex(name: string, path: string, type?) // Create index
+doc.dropIndex(name: string)                        // Remove index
+doc.getIndex(name: string)                         // Get index
 
 // Export
 doc.toTONL(options?: EncodeOptions)                // Export as TONL
 doc.toJSON()                                       // Export as JSON
 doc.save(filepath: string, options?)               // Save to file
-doc.getSize()                                      // Size in bytes
-doc.getStats()                                     // Statistics object
+doc.size()                                         // Size in bytes
+doc.stats()                                        // Statistics object
 ```
 
 ### Encode/Decode API

@@ -5,13 +5,12 @@
 import type { ParserState, ParserMode, TONLDelimiter, TONLObjectHeader, TONLColumnDef } from "./types.js";
 import { TONLParseError } from "./errors/index.js";
 
-/**
- * Input validation limits to prevent DoS attacks
- * SECURITY: These limits prevent parser crashes, stack overflow, and memory exhaustion
- */
-const MAX_LINE_LENGTH = 100_000;   // 100KB per line
-const MAX_FIELDS_PER_LINE = 10_000; // Maximum fields in a single line
-const MAX_NESTING_DEPTH = 100;      // Maximum nesting levels
+// Task 013: Import from centralized security limits
+import {
+  MAX_LINE_LENGTH,
+  MAX_FIELDS_PER_LINE,
+  MAX_NESTING_DEPTH,
+} from "./utils/security-limits.js";
 
 /**
  * Parse a single TONL line into array of field values

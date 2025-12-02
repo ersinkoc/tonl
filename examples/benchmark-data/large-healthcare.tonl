@@ -85,8 +85,8 @@ root{appointments,billing,hospital,inventory,patients,staff}:
         emergencyContact{name,phone,relation}: name: Mehmet Demir phone: +905322222222 relation: Eş
         phone: +905321111111
       currentMedications[2]{dosage,name,prescribedBy,startDate}:
-        1x1,Losartan 50mg,Dr. Ahmet Yılmaz,2024-03-15
-        1x2,Metformin 1000mg,Dr. Fatma Öztürk,2024-09-20
+        1x1,Losartan 50mg,Dr. Ahmet Yılmaz,2025-03-15
+        1x2,Metformin 1000mg,Dr. Fatma Öztürk,2025-09-20
       firstName: Ayşe
       gender: Kadın
       id: PAT_00001
@@ -106,8 +106,8 @@ root{appointments,billing,hospital,inventory,patients,staff}:
             HbA1c,4.0-5.6,Yüksek,%,7.8
       lastName: Demir
       medicalHistory[2]{date,diagnosis,doctor,treatment}:
-        2024-03-15,Hipertansiyon,Dr. Ahmet Yılmaz,Tansiyon ilacı tedavisi
-        2024-09-20,Tip 2 Diyabet,Dr. Fatma Öztürk,Insülin tedavisi başlandı
+        2025-03-15,Hipertansiyon,Dr. Ahmet Yılmaz,Tansiyon ilacı tedavisi
+        2025-09-20,Tip 2 Diyabet,Dr. Fatma Öztürk,Insülin tedavisi başlandı
       tcNo: "12345678901"
       visits[1]:
         [0]{complaint,date,department,diagnosis,doctor,id,notes,status,treatment,vitalSigns}:

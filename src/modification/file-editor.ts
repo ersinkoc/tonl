@@ -50,9 +50,10 @@ class FileLock {
     if (this.locked && existsSync(this.lockPath)) {
       try {
         await fs.unlink(this.lockPath);
-      } catch (error) {
-        // Log error but don't throw - lock cleanup failure shouldn't break the application
-        console.warn(`Warning: Failed to release file lock at ${this.lockPath}:`, error);
+      } catch {
+        // BUG-NEW-007 FIX: Silently ignore lock cleanup failures
+        // Lock cleanup failure shouldn't break the application
+        // Library code should not produce console output
       }
       this.locked = false;
     }
@@ -62,9 +63,10 @@ class FileLock {
     if (this.locked && existsSync(this.lockPath)) {
       try {
         unlinkSync(this.lockPath);
-      } catch (error) {
-        // Log error but don't throw - lock cleanup failure shouldn't break the application
-        console.warn(`Warning: Failed to release file lock at ${this.lockPath}:`, error);
+      } catch {
+        // BUG-NEW-007 FIX: Silently ignore lock cleanup failures
+        // Lock cleanup failure shouldn't break the application
+        // Library code should not produce console output
       }
       this.locked = false;
     }

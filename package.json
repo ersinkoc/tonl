@@ -20,10 +20,16 @@
     "README.md",
     "LICENSE"
   ],
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "browser": "./dist/browser/tonl.esm.js",
       "import": "./dist/index.js"
+    },
+    "./browser": {
+      "types": "./dist/browser-core.d.ts",
+      "import": "./dist/browser/tonl.esm.js"
     },
     "./schema": {
       "types": "./dist/schema/index.d.ts",
