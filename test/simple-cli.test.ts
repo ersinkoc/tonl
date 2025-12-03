@@ -23,14 +23,17 @@ const tonlContent = `#version 1.0
 root{name:str,version:str,users:list}:
   "TONL Test","2.2.0",2`;
 
-// Helper functions
+// Helper functions - use unique file names to avoid conflicts when run in parallel
+const testId = `simple-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
 function createTempFile(name: string, content: string): string {
   const tempDir = join(process.cwd(), "temp");
   if (!existsSync(tempDir)) {
     mkdirSync(tempDir, { recursive: true });
   }
 
-  const filePath = join(tempDir, name);
+  const uniqueName = `${testId}-${name}`;
+  const filePath = join(tempDir, uniqueName);
   writeFileSync(filePath, content);
   return filePath;
 }

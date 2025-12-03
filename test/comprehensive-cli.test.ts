@@ -42,14 +42,17 @@ const testFixtures = {
   }
 };
 
-// Helper functions
+// Helper functions - use unique file names to avoid conflicts when run in parallel
+const testId = `comp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
 function createTempFile(name: string, content: any): string {
   const tempDir = join(process.cwd(), "temp");
   if (!existsSync(tempDir)) {
     mkdirSync(tempDir, { recursive: true });
   }
 
-  const filePath = join(tempDir, name);
+  const uniqueName = `${testId}-${name}`;
+  const filePath = join(tempDir, uniqueName);
   const fileContent = typeof content === "string" ? content : JSON.stringify(content, null, 2);
   writeFileSync(filePath, fileContent);
   return filePath;
