@@ -4,7 +4,7 @@
 
 import { test, describe, after } from "node:test";
 import { strict as assert } from "node:assert";
-import { writeFileSync, readFileSync, unlinkSync, mkdirSync } from "fs";
+import { writeFileSync, readFileSync, unlinkSync, mkdirSync, existsSync } from "fs";
 import { join } from "path";
 import { execSync } from "child_process";
 import { SimpleInteractiveStats } from "../dist/cli/simple-interactive.js";
@@ -63,7 +63,7 @@ const testFixtures = {
 // Test helper functions
 function createTestFile(name: string, data: any): string {
   const testDir = join(process.cwd(), 'test-temp');
-  if (!require('fs').existsSync(testDir)) {
+  if (!existsSync(testDir)) {
     mkdirSync(testDir, { recursive: true });
   }
   const filePath = join(testDir, name);

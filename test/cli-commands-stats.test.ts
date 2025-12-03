@@ -4,19 +4,24 @@
 
 import { test, describe } from "node:test";
 import { strict as assert } from "node:assert";
-import { writeFileSync, unlinkSync } from "fs";
+import { writeFileSync, unlinkSync, mkdirSync, existsSync } from "fs";
+import { join } from "path";
 import { StatsCommand } from "../dist/cli/commands/stats.js";
 import type { CommandContext } from "../dist/cli/types.js";
 
-// Mock file operations for testing
+// Mock file operations for testing - cross-platform temp directory
 function createMockFile(content: string): { path: string; cleanup: () => void } {
-  const path = `/tmp/test-${Date.now()}.json`;
-  writeFileSync(path, content);
+  const tempDir = join(process.cwd(), 'temp');
+  if (!existsSync(tempDir)) {
+    mkdirSync(tempDir, { recursive: true });
+  }
+  const filePath = join(tempDir, `test-${Date.now()}.json`);
+  writeFileSync(filePath, content);
   return {
-    path,
+    path: filePath,
     cleanup: () => {
       try {
-        unlinkSync(path);
+        unlinkSync(filePath);
       } catch {
         // Ignore cleanup errors
       }
